@@ -1,0 +1,11 @@
+
+:root {
+    /* custom variables */
+    --custom-variable: "my-property";
+}
+
+* {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+/* HEADER */
