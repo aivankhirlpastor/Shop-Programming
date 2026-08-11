@@ -4,19 +4,22 @@
 
 {% block content %}
     <body>
-        <section class="grid grid-display">
+        <section class="grid grid-display product-info">
             <!-- I: PHOTO -->
-            <img class="product-photo-large">
+            <img class="product-img-large">
 
             <!-- II: DETAILS -->
             <div id="product-details">
                 <!-- Row I: Name and Author -->
-                <div class="box-acc name-author">
-                    <h2>Product Name</h2>
-                    <p>Author</p>
+                <div class="box-acc name-author grid">
+                    <div>
+                        <h2>Product Name</h2>
+                        <p>Author</p>
+                    </div>
+                    <button type="button">WISHLIST</button>
                 </div>
                 <!-- Row II: Model, Label, Genre -->
-                <div class="box-acc showcase">
+                <div class="box-acc showcase grid">
                     <div class="classif-cont model">
                         <span>Model</span>
                         <p>M-129492385</p>
@@ -30,6 +33,18 @@
                         <p>What's my genre?</p>
                     </div>
                 </div>
+                <!-- Row III: Form Price, Input Quantity, Add-To-Cart/View-My-Cart -->
+                <form class="box-acc price-and-quantity" action="" method="post">
+                    <div class="classif-cont price">
+                        <span>Price</span>
+                        <p class="emphasise">$20.99</p>
+                    </div>
+                    <div class="classif-cont quantity">
+                        <label for="quantity">QUANTITY • In Stock</label>
+                        <input type="number" id="quantity" name="quantity" min="1" max="5" value="1">
+                    </div>
+                    <button type="submit" class="add-to-cart">Add to Cart</button>
+                </form>
             </div>
         </section>
     </body>
