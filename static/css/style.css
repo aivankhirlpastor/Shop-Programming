@@ -2,10 +2,89 @@
 :root {
     /* custom variables */
     --custom-variable: "my-property";
+
+    /* color palettes */
+    --color-1: rgb(255, 210, 105);
+
+    /* anchor <a> color */
+    --anchor-color: #000000;
+    --anchor-hover-color: #784200;
+
+    /* text color */
+
+    /* for header */
+    --title-size: 20px;
+    --header-encapsulated-el-padding: 9px;
+
 }
 
 * {
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-family: 'Cabin', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
-/* HEADER */
+.grid {
+    display: grid;
+}
+
+/* BODY */
+body {
+    margin: 1vw;
+}
+
+/* MAIN */
+main {
+    min-height: 90vh;
+    padding: 20px 100px;
+}
+
+/* =============== HEADER =============== */
+header {
+    align-items: center;
+    display: flex;
+    gap: 18px;
+    justify-content: center;
+    /* position: fixed; */
+}
+
+/* all elements that is only encapsulated by <header> */
+header > * {
+    background-color: var(--color-1);
+    border-radius: 1299px;
+    font-size: 18px;
+    padding: var(--header-encapsulated-el-padding) calc(var(--header-encapsulated-el-padding) * 3);
+}
+
+/* all <a> anchor element */
+header a {
+    color: var(--anchor-color);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+header a:hover {
+    color: var(--anchor-hover-color);
+}
+
+header nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* Lists of all quick directable links */
+header nav ul li {
+    display: inline;
+    margin-inline: 18px;
+}
+
+/* ======== PRODUCT INFO PAGE ======== */
+section.grid-display {
+    gap: 16px;
+    grid-template-columns: repeat(8, 1fr);
+}
+
+
+/* FOOTER */
+footer {
+    background-color: var(--color-1);
+}
