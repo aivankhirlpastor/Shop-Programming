@@ -12,6 +12,19 @@ app.secret_key = "your-secret-key"
 def index():
     return render_template("index.html")
 
+@app.route("/product")
+def product_information():
+    return render_template("product_info.html")
+
+@app.route("/cart")
+def cart():
+    return render_template("cart.html")
+
+# ==== dynamic route instance ==== #
+@app.route("/category/<string:genre>")
+def category(genre):
+    return genre
+
 # [comes the last]
 # if __name__ == 'main': checks if file is being run directly - only runs code if opened directly.
 if __name__ == "__main__":
