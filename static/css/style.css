@@ -26,6 +26,28 @@
     display: grid;
 }
 
+.classif-cont {
+    display: flex;
+    flex-direction: column;
+}
+
+.classif-cont :is(span, label) {
+    display: block;
+    font-size: 14px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    opacity: 75%;
+}
+
+.classif-cont label {
+    text-transform: none;
+}
+
+.classif-cont .emphasise  {
+    font-size: 20px;
+    font-weight: 700;
+}
+
 /* BODY */
 body {
     margin: 1vw;
@@ -78,10 +100,59 @@ header nav ul li {
 }
 
 /* ======== PRODUCT INFO PAGE ======== */
+
 section.grid-display {
     gap: 16px;
     grid-template-columns: repeat(8, 1fr);
 }
+
+/* product image */
+section.product-info > img.product-img-large {
+    grid-area: 1 / 1 / span 1 / span 4;
+}
+
+/* product details */
+section.product-info #product-details {
+    grid-area: 1 / 5 / span 1 / span 4;
+}
+
+/* container account */
+section.product-info #product-details > .box-acc {
+    padding-block: 16px;
+}
+
+/* underline appearance for container account excluding the last */
+section.product-info #product-details > .box-acc:not(:last-child) {
+    border-bottom: 3px solid #000000;
+}
+
+/* name and author, PLUS wishlist button */
+section.product-info #product-details > .box-acc.name-author {
+    grid-template-columns: 3fr 1fr;
+}
+
+/* showcase in grid display */
+section.product-info #product-details > .box-acc.showcase {
+    gap: 16px;
+    grid-template: 1fr 1fr / 1fr 1fr;
+}
+
+/* price and quantity */
+section.product-info #product-details > .box-acc.price-and-quantity {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* text for detail */
+section.product-info #product-details :is(h2, p) {
+    margin-block: 0;
+}
+
+/* section.product-info #product-details .emphasise  {
+    font-size: 20px;
+    font-weight: 700;
+} */
 
 
 /* FOOTER */
