@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Product... | The Music Shop{% endblock %}
+{% block title %}{{ product_name }} | The Music Shop{% endblock %}
 
 {% block content %}
     <body>
@@ -13,8 +13,8 @@
                 <!-- Row I: Name and Author -->
                 <div class="box-acc name-author grid">
                     <div>
-                        <h2>Product Name</h2>
-                        <p>Author</p>
+                        <h2>{{ product_name }}</h2>
+                        <p>{{ product["author"] }}</p>
                     </div>
                     <button type="button">WISHLIST</button>
                 </div>
@@ -22,25 +22,25 @@
                 <div class="box-acc showcase grid">
                     <div class="classif-cont model">
                         <span>Model</span>
-                        <p>M-129492385</p>
+                        <p>M-{{ product["model"] }}</p>
                     </div>
                     <div class="classif-cont label">
                         <span>Label</span>
-                        <p>My Label</p>
+                        <p>{{ product["label"] }}</p>
                     </div>
                     <div class="classif-cont genre">
                         <span>Genre</span>
-                        <p>What's my genre?</p>
+                        <p>{{ product["genre"] }}</p>
                     </div>
                 </div>
                 <!-- Row III: Form Price, Input Quantity, Add-To-Cart/View-My-Cart -->
                 <form class="box-acc price-and-quantity" action="" method="post">
                     <div class="classif-cont price">
-                        <span>Price</span>
-                        <p class="emphasise">$20.99</p>
+                        <span>Price per each</span>
+                        <p class="emphasise">${{ '%.2f' % product["price"] }}</p>
                     </div>
                     <div class="classif-cont quantity">
-                        <label for="quantity">QUANTITY • In Stock</label>
+                        <label for="quantity">QUANTITY • {% if product["stock"] > 0 %}In Stock{% else %}Out of Stock{% endif %}</label>
                         <input type="number" id="quantity" name="quantity" min="1" max="5" value="1">
                     </div>
                     <button type="submit" class="add-to-cart">Add to Cart</button>
