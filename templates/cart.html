@@ -5,5 +5,52 @@
 {% block content %}
     <body>
         <h2>My Cart</h2>
+        <section class="grid grid-display my-cart">
+            <!-- I: ITEM LISTS -->
+            <ul class="item-list">
+                <li class="item-details grid">
+                    <div class="product-img-small"></div>
+                    <div class="name-author-label">
+                        <span class="label">IN STOCK</span>
+                        <div class="block-name-author">
+                            <h3>A</h3>
+                            <span class="label">Author</span>
+                        </div>
+                        <p>Label</p>
+                    </div>
+                    <div class="quantity">
+                        <label for="quantity">QUANTITY</label>
+                        <input type="number" id="quantity" name="quantity" min="1" max="5" value="1">
+                    </div>
+                    <div class="price-action">
+                        <p class="emphasise">$59.99</p>
+                        <form class="delete-item" action="" method="post">
+                            <button type="submit">D</button>
+                        </form>
+                    </div>
+                </li>
+            </ul>
+
+            <!-- II: ORDER DETAILS -->
+            <form class="panel-details" action="">
+                <span class="label">Order Details</span>
+                <div id="coupon-layout">
+                    <input type="text" name="coupon" id="coupon">
+                    <button type="button">Apply</button>
+                </div>
+                <div class="cost-precalc">
+                    <div class="text-nudge">
+                        <span>Subtotal</span>
+                        <p class="emphasise">$30.00</p>
+                    </div>
+                    <div class="text-nudge">
+                        <span>GST</span>
+                        <p class="emphasise">$35.00</p>
+                    </div>
+                    <span class="label lite">Include GST. Shipping will be calculated at checkout. Delivery fee included.</span>
+                </div>
+                <button type="submit">Go To Checkout</button>
+            </form>
+        </section>
     </body>
 {% endblock %}
