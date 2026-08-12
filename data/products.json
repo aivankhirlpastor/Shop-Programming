@@ -1,10 +1,18 @@
 {
     "The Usher's Place": {
-        "title": "The Usher's Place",
         "author": "The STARS",
+        "model": "341989599010",
         "label": "My Label",
         "genre": "ambience",
         "price": 45,
         "stock": 15
+    },
+    "The Key To Withstand": {
+        "author": "Oblong Communion",
+        "model": "391928751095",
+        "label": "The Motel",
+        "genre": "Lo-Fi",
+        "price": 35,
+        "stock": 9
     }
 }
