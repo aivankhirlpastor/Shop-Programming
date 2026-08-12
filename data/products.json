@@ -2,17 +2,37 @@
     "The Usher's Place": {
         "author": "The STARS",
         "model": "341989599010",
-        "label": "My Label",
-        "genre": "ambience",
-        "price": 45,
+        "label": "Universal Audio Company",
+        "tracks": 12,
+        "genre": "Ambience",
+        "price": 45.99,
         "stock": 15
+    },
+    "I'm Not Cryin'": {
+        "author": "Ellyster P.",
+        "model": "312817745129",
+        "label": "-",
+        "tracks": 1,
+        "genre": "Electronic",
+        "price": 12.49,
+        "stock": 18
+    },
+    "West Country's Mankind": {
+        "author": "Richard Tyson",
+        "model": "380781429665",
+        "label": "-",
+        "tracks": 4,
+        "genre": "Acoustic",
+        "price": 18.39,
+        "stock": 17
     },
     "The Key To Withstand": {
         "author": "Oblong Communion",
         "model": "391928751095",
         "label": "The Motel",
+        "tracks": 3,
         "genre": "Lo-Fi",
-        "price": 35,
+        "price": 34.99,
         "stock": 9
     }
 }
