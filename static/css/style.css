@@ -158,9 +158,19 @@ section.my-cart ul.item-list {
 
 /* item list layout */
 section.my-cart li.item-details {
+    align-items: center;
     gap: 16px;
     grid-template-columns: repeat(5, 1fr);
-    align-items: center;
+    padding-block: 14px;
+}
+
+/* remove padding top for first child */
+section.my-cart li.item-details:first-child {
+    padding-top: 0;
+}
+
+section.my-cart li.item-details:not(:last-child) {
+    border-bottom: 3px solid black;
 }
 
 section.my-cart li.item-details > .product-img-small {
