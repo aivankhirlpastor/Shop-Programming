@@ -6,5 +6,19 @@
     <body>
         <h2>Welcome to Music Shop!</h2>
         <p>Columns</p>
+
+        <form action="{{ url_for('visit') }}" method="post">
+            
+            <select name="item_selector" id="item_selector">
+                {% for model_name, acc in models.items() %}
+                    <option style="font-size: 18px;" value="{{ acc['model'] }}">
+                        {{ model_name }} - ${{ '%.2f' % acc["price"] }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <button type="submit">     Visit     </button>
+        </form>
+
     </body>
 {% endblock %}
