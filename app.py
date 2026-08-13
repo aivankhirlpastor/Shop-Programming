@@ -25,7 +25,9 @@ def calculate_total(c):
 # ROUTES <------------------->
 @app.route("/")
 def index():
-    return render_template("index.html")
+    load_models = load_data_products()
+
+    return render_template("index.html", models = load_models)
 
 @app.route("/category/item/<int:m>")
 def product_information(m):
@@ -111,6 +113,15 @@ def cart():
 
     return render_template("cart.html", cart = cart, model = models,
                            subtotal = subtotal, gst = gst)
+
+# temporary routes
+@app.route("/visit", methods=["POST"])
+def visit():
+    item_model = request.form['item_selector']
+
+    return redirect(url_for("product_information", m = item_model))
+
+
 
 # ==== dynamic route instance ==== #
 # @app.route("/category/<string:genre>")
