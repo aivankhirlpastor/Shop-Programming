@@ -16,9 +16,9 @@
                             <span class="stock-status label">{% if model[name_product]['stock'] > 0 %}IN STOCK{% else %}OUT OF STOCK{% endif %}</span>
                             <div class="block-name-author">
                                 <h3><a href="{{ url_for('product_information', m = item['model']) }}">{{ name_product }}</a></h3>
-                                <span class="label">{{ item['author'] }}</span>
+                                <p>{{ item['author'] }}</p>
                             </div>
-                            <p>{{ item['label'] }}</p>
+                            <span class="label">{{ item['label'] }}</span>
                         </div>
                         <div class="quantity">
                             <label for="quantity">QUANTITY</label>
@@ -27,7 +27,7 @@
                         <div class="price-action">
                             <p class="emphasise">${{ '%.2f' % (item['quantity'] * item['price']) }}</p>
                             <form class="delete-item" action="" method="post">
-                                <button type="submit">D</button>
+                                <button type="submit" class="rounded destructive">D</button>
                             </form>
                         </div>
                     </li>
@@ -37,7 +37,7 @@
 
             <!-- II: ORDER DETAILS -->
             <form class="panel-details" action="">
-                <span class="label">Order Details</span>
+                <span class="label centre">Order Details</span>
                 <div id="coupon-layout">
                     <input type="text" name="coupon" id="coupon">
                     <button type="button">Apply</button>
