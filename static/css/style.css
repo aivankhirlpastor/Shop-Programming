@@ -4,7 +4,11 @@
     --custom-variable: "my-property";
 
     /* color palettes */
-    --color-1: rgb(255, 210, 105);
+    --color-1: #ffed28;
+    --color-2: #faf8c6;
+    --color-3: #F85E00;
+    --color-4: #d80e1f;
+    --color-5: #916b50;
 
     /* anchor <a> color */
     --anchor-color: #000000;
@@ -12,10 +16,28 @@
 
     /* text color */
 
+    /* text label */
+    --label-font-size: 14px;
+    --label-lsp: 1px;
+    --label-opacity: 75%;
+
     /* for header */
     --title-size: 20px;
     --header-encapsulated-el-padding: 9px;
 
+    /* Buttons (hue and saturation) */
+    /* --btn-destructive: hsl(4, 92%, 50%);
+    --btn-positive: hsl(232, 80%, 50%);
+    --btn-neutral: hsl(235, 8%, 30%); */
+
+    --btn-destructive: 4, 92%;
+    --btn-positive: 43, 100%;
+    --btn-neutral: 60, 5%;
+
+    /* Lightness */
+    --btn-normal: 50%;
+    --btn-hover: 20%;
+    --btn-active: 30%;
 }
 
 * {
@@ -26,17 +48,50 @@
     display: grid;
 }
 
+/* BUTTONS */
+button {
+    --btn-lightness: 50%;
+
+    background-color: hsl(var(--btn-positive), calc(var(--btn-lightness) * 1.5));
+    border: none;
+    font-weight: 700;
+    outline: none;
+    padding-block: 5px;
+}
+
+button.destructive {
+    background-color: hsl(var(--btn-destructive), calc(var(--btn-lightness) / 1.2));
+    color: #FFFFFF;
+}
+
+button.neutral {
+    background-color: hsl(var(--btn-neutral), var(--btn-lightness));
+}
+
+button:hover {
+    --btn-lightness: 32%;
+}
+
+button:active {
+    --btn-lightness: 40%;
+}
+
+/* blank container or image */
+img {
+    background-color: var(--color-2);
+}
+
 .classif-cont {
     display: flex;
     flex-direction: column;
 }
 
-.classif-cont :is(span, label) {
+.classif-cont :is(span, label), span.label {
     display: block;
-    font-size: 14px;
-    letter-spacing: 1px;
+    font-size: var(--label-font-size);
+    letter-spacing: var(--label-lsp);
     text-transform: uppercase;
-    opacity: 75%;
+    opacity: var(--label-opacity);
 }
 
 label {
@@ -46,6 +101,26 @@ label {
 .emphasise  {
     font-size: 20px;
     font-weight: 700;
+}
+
+.text-nudge {
+    align-items: end;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* label */
+.text-nudge :first-child {
+    height: fit-content;
+}
+
+/* right-side text */
+.text-nudge p.emphasise {
+    margin: 0;
+}
+
+.centre {
+    text-align: center;
 }
 
 /* BODY */
@@ -109,6 +184,10 @@ section.grid-display {
 /* product image */
 section.product-info > img.product-img-large {
     grid-area: 1 / 1 / span 1 / span 4;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
 }
 
 /* product details */
@@ -174,7 +253,7 @@ section.my-cart li.item-details:not(:last-child) {
 }
 
 section.my-cart li.item-details > .product-img-small {
-    grid-area: 1 / 1 span 1 / span 1;
+    grid-area: 1 / 1 / span 1 / span 1;
     width: 100px;
     height: 100px;
 }
@@ -190,6 +269,11 @@ section.my-cart li.item-details > .name-author-label {
 /* texts */
 section.my-cart .name-author-label :is(h3, p) {
     margin: 0;
+}
+
+/* anchor inside product title <h3> */
+section.my-cart .name-author-label h3 > a {
+    text-decoration: none;
 }
 
 section.my-cart li.item-details > :is(.quantity, .price-action) {
@@ -209,18 +293,23 @@ section.my-cart .price-action > p.emphasise {
 }
 
 /* PANEL DETAILS */
-
 section.my-cart .panel-details {
-    background-color: bisque;
+    background-color: var(--color-2);
     padding: 16px;
     grid-area: 1 / 6 / span 1 / 9;
+    max-height: 300px;
 }
 
-/* section.product-info #product-details .emphasise  {
-    font-size: 20px;
-    font-weight: 700;
-} */
+section.my-cart .panel-details > #coupon-layout {
+    display: flex;
+    gap: 16px;
+    margin-block: 12px;
+}
 
+/* Coupon Input Textbox */
+section.my-cart .panel-details > #coupon-layout input[type=text] {
+    width: 100%;
+}
 
 /* FOOTER */
 footer {
