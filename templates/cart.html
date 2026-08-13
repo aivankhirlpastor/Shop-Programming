@@ -7,29 +7,33 @@
         <h2>My Cart</h2>
         <section class="grid grid-display my-cart">
             <!-- I: ITEM LISTS -->
+            
             <ul class="item-list">
-                <li class="item-details grid">
-                    <div class="product-img-small"></div>
-                    <div class="name-author-label">
-                        <span class="label">IN STOCK</span>
-                        <div class="block-name-author">
-                            <h3>A</h3>
-                            <span class="label">Author</span>
+                {% for name_product, item in cart.items() %}
+                    <li class="item-details grid">
+                        <div class="product-img-small"></div>
+                        <div class="name-author-label">
+                            <span class="stock-status label">{% if model[name_product]['stock'] > 0 %}IN STOCK{% else %}OUT OF STOCK{% endif %}</span>
+                            <div class="block-name-author">
+                                <h3><a href="{{ url_for('product_information', m = item['model']) }}">{{ name_product }}</a></h3>
+                                <span class="label">{{ item['author'] }}</span>
+                            </div>
+                            <p>{{ item['label'] }}</p>
                         </div>
-                        <p>Label</p>
-                    </div>
-                    <div class="quantity">
-                        <label for="quantity">QUANTITY</label>
-                        <input type="number" id="quantity" name="quantity" min="1" max="5" value="1">
-                    </div>
-                    <div class="price-action">
-                        <p class="emphasise">$59.99</p>
-                        <form class="delete-item" action="" method="post">
-                            <button type="submit">D</button>
-                        </form>
-                    </div>
-                </li>
+                        <div class="quantity">
+                            <label for="quantity">QUANTITY</label>
+                            <input type="number" id="quantity" name="quantity" min="1" max="5" value="{{ item['quantity'] }}">
+                        </div>
+                        <div class="price-action">
+                            <p class="emphasise">${{ '%.2f' % (item['quantity'] * item['price']) }}</p>
+                            <form class="delete-item" action="" method="post">
+                                <button type="submit">D</button>
+                            </form>
+                        </div>
+                    </li>
+                {% endfor %}
             </ul>
+
 
             <!-- II: ORDER DETAILS -->
             <form class="panel-details" action="">
@@ -41,11 +45,11 @@
                 <div class="cost-precalc">
                     <div class="text-nudge">
                         <span>Subtotal</span>
-                        <p class="emphasise">$30.00</p>
+                        <p class="emphasise">${{ '%.2f' % subtotal }}</p>
                     </div>
                     <div class="text-nudge">
                         <span>GST</span>
-                        <p class="emphasise">$35.00</p>
+                        <p class="emphasise">${{ '%.2f' % gst }}</p>
                     </div>
                     <span class="label lite">Include GST. Shipping will be calculated at checkout. Delivery fee included.</span>
                 </div>
