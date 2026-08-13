@@ -12,6 +12,16 @@ def load_data_products():
     with open("data/products.json") as product:
         return json.load(product)
 
+def calculate_total(c):
+    cart_total = sum(item["price"] * item["quantity"] for item in c.values())
+    gst = cart_total * 0.15
+
+    # Shipping Fee: Determined by the amount of quantity
+    quantity = sum(i["quantity"] for i in c.values())
+    shipping_fee = 0
+
+    return cart_total + gst + shipping_fee, cart_total, gst, shipping_fee
+
 # ROUTES <------------------->
 @app.route("/")
 def index():
@@ -57,7 +67,7 @@ def add_to_cart(m_value, product_name):
 
     # [ Check whether the variable "m" matches with each of the model value,
     # then return a valid format for the outputs. ]
-    for items, mvt in model.items():
+    for i, mvt in model.items():
         # If found and matched
         if int(m_value) == int(mvt["model"]):            
             break
@@ -95,8 +105,12 @@ def cart():
     # Get cart via session.get
     cart = session.get("cart", {})
 
+    # Get price calculation
+    __n, subtotal, gst, ship_fee = calculate_total(cart)
 
-    return render_template("cart.html", cart = cart, model = models)
+
+    return render_template("cart.html", cart = cart, model = models,
+                           subtotal = subtotal, gst = gst)
 
 # ==== dynamic route instance ==== #
 # @app.route("/category/<string:genre>")
