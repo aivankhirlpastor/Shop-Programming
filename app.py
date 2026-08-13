@@ -38,13 +38,16 @@ def product_information(m):
     # print(product_name, pack_data["label"])
     # Disable button of add-to-cart if product is in the cart.
     cart = session.get("cart", {})
-    current_item = cart[product_name]
+
+    # Used for some modification for if this product is in the cart.
+    if product_name in cart:
+        current_item = cart[product_name]
 
     # If the condition was passed, move on to prepare for the outputs.
     return render_template("product_info.html",
                            product_name = product_name, product = pack_data,
                            already_in_cart = (product_name in cart),
-                           item_in_hold = current_item)
+                           item_in_hold = current_item if product_name in cart else False)
 
 # Add to Cart Route
 @app.route("/add_to_cart/<int:m_value><string:product_name>", methods=["POST"])
@@ -87,7 +90,13 @@ def add_to_cart(m_value, product_name):
 
 @app.route("/cart")
 def cart():
-    return render_template("cart.html")
+    models = load_data_products()
+
+    # Get cart via session.get
+    cart = session.get("cart", {})
+
+
+    return render_template("cart.html", cart = cart, model = models)
 
 # ==== dynamic route instance ==== #
 # @app.route("/category/<string:genre>")
