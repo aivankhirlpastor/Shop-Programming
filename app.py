@@ -34,8 +34,7 @@ def product_information(m):
     models = load_data_products()
     pack_data = None
 
-    # [ Check whether the variable "m" matches with each of the model value,
-    # then return a valid format for the outputs. ]
+    # Check whether the variable "m" matches with each of the model int.
     for items, mv in models.items():
         # print(int(m) == int(mv["model"]))
         if int(m) == int(mv["model"]):
@@ -47,8 +46,6 @@ def product_information(m):
     else:
         abort(404)
 
-    # print(product_name, pack_data["label"])
-    # Disable button of add-to-cart if product is in the cart.
     cart = session.get("cart", {})
 
     # Used for some modification for if this product is in the cart.
@@ -62,13 +59,12 @@ def product_information(m):
                            item_in_hold = current_item if product_name in cart else False)
 
 # Add to Cart Route
-@app.route("/add_to_cart/<int:m_value><string:product_name>", methods=["POST"])
-def add_to_cart(m_value, product_name):
+@app.route("/add_to_cart/<int:m_value><string:product_name>/<string:input_selector>", methods=["POST"])
+def add_to_cart(m_value, product_name, input_selector):
     model = load_data_products()
-    quantity = int(request.form["quantity"])
+    quantity = int(request.form[input_selector])
 
-    # [ Check whether the variable "m" matches with each of the model value,
-    # then return a valid format for the outputs. ]
+    # Check whether the variable "m" matches with each of the model int.
     for i, mvt in model.items():
         # If found and matched
         if int(m_value) == int(mvt["model"]):            
@@ -99,6 +95,24 @@ def add_to_cart(m_value, product_name):
     session.modified = True
 
     return redirect(url_for("product_information", m = m_value))
+
+@app.route("/category/item-<string:genre>")
+def category(genre):
+    model = load_data_products()
+    stored_models = {}
+
+    # Get all the products based on the genre given.
+    for album_name, u in model.items():
+        # One product's genre matches to <genre> adds to the dictionary.
+        if str(genre).lower() == str(u["genre"]).lower():
+            stored_models[album_name] = u
+
+    # Abort if the dictionary is empty.
+    if stored_models == {}:
+        abort(404)
+
+    return render_template("item_genre.html", g = genre,
+                           imported_data = stored_models)
 
 @app.route("/cart")
 def cart():
