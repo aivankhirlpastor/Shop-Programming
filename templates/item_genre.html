@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Genre - The Music Shop{% endblock %}
+
+{% block content %}
+    <body>
+        <h2>Genre: {{ g }}</h2>
+        <section class="grid grid-display item-display">
+            <div class="item-card" id="display-1">
+                <!-- Row I: Clickable Info -->
+                <a href="o">
+                    <!-- I: Album Image -->
+                    <img class="img-item">
+    
+                    <!-- II: Text Information -->
+                    <div class="album-txt-info">
+                        <div class="album-title emphasise">Album Title</div>
+                        <span class="author">Author</span>
+                        <p class="price-track emphasise">$19.99</p>
+                    </div>
+                </a>
+
+                <!-- Row II: Form -->
+                <form action="/d" method="post", class="add-to-cart-action">
+                    <input type="number" name="i-quantity-2" id="i-quantity-2" min="1" max="5" value="1">
+                    <button type="submit">Add</button>
+                </form>
+            </div>
+        </section>
+    </body>
+{% endblock %}
