@@ -16,7 +16,7 @@
                             <span class="stock-status label">{% if model[name_product]['stock'] > 0 %}IN STOCK{% else %}OUT OF STOCK{% endif %}</span>
                             <div class="block-name-author">
                                 <h3><a href="{{ url_for('product_information', m = item['model']) }}">{{ name_product }}</a></h3>
-                                <p>{{ item['author'] }}</p>
+                                <p class="author">{{ item['author'] }}</p>
                             </div>
                             <span class="label">{{ item['label'] }}</span>
                         </div>
