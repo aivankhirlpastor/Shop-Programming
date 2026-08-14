@@ -55,6 +55,7 @@ button {
     background-color: hsl(var(--btn-positive), calc(var(--btn-lightness) * 1.5));
     border: none;
     font-weight: 700;
+    font-size: 16px;
     outline: none;
     padding-block: 5px;
 }
@@ -81,6 +82,11 @@ img {
     background-color: var(--color-2);
 }
 
+/* all inputs */
+input {
+    font-size: 16px;
+}
+
 .classif-cont {
     display: flex;
     flex-direction: column;
@@ -96,6 +102,11 @@ img {
 
 label {
     text-transform: none;
+}
+
+.author {
+    display: block;
+    margin: 0;
 }
 
 .emphasise  {
@@ -267,7 +278,7 @@ section.my-cart li.item-details > .name-author-label {
 }
 
 /* texts */
-section.my-cart .name-author-label :is(h3, p) {
+section.my-cart .name-author-label h3 {
     margin: 0;
 }
 
@@ -308,6 +319,44 @@ section.my-cart .panel-details > #coupon-layout {
 
 /* Coupon Input Textbox */
 section.my-cart .panel-details > #coupon-layout input[type=text] {
+    width: 100%;
+}
+
+/* ======== ITEMS IN GRID DISPLAY (any genre) ======== */
+section.item-display {
+    gap: 32px;
+    grid-auto-rows: auto;
+    grid-template-columns: repeat(4, 1fr);
+}
+
+/* Item card */
+section.item-display .item-card {
+    padding: 12px;
+    height: auto;
+}
+
+/* Image inside the item card */
+section.item-display .item-card img.img-item {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+}
+
+/* ALBUM: title | author | price track */
+section.item-display .item-card .album-txt-info {
+    margin-block: 8px;
+}
+
+/* remove the default style for anchor links in card*/
+section.item-display .item-card > a {
+    color: #000000;
+    text-decoration: none;
+}
+
+/* mini form of input and submit form */
+section.item-display form.add-to-cart-action {
+    display: grid;
+    gap: 8px;
+    grid-template-columns: 1.2fr 0.8fr;
     width: 100%;
 }
 
