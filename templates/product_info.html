@@ -14,7 +14,7 @@
                 <div class="box-acc name-author grid">
                     <div>
                         <h2>{{ product_name }}</h2>
-                        <p>{{ product["author"] }}</p>
+                        <p class="author">{{ product["author"] }}</p>
                     </div>
                     <button type="button">WISHLIST</button>
                 </div>
@@ -38,7 +38,7 @@
                     </div>
                 </div>
                 <!-- Row III: Form Price, Input Quantity, Add-To-Cart/View-My-Cart -->
-                <form class="box-acc price-and-quantity" action="{{ url_for('add_to_cart', m_value=product['model'], product_name=product_name) }}" method="post">
+                <form class="box-acc price-and-quantity" action="{{ url_for('add_to_cart', m_value=product['model'], product_name=product_name, input_selector='quantity') }}" method="post">
                     <div class="classif-cont price">
                         <span>Price per each</span>
                         <p class="emphasise">${{ '%.2f' % product["price"] }}</p>
