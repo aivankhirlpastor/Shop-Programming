@@ -6,26 +6,28 @@
     <body>
         <h2>Genre: {{ g }}</h2>
         <section class="grid grid-display item-display">
-            <div class="item-card" id="display-1">
-                <!-- Row I: Clickable Info -->
-                <a href="o">
-                    <!-- I: Album Image -->
-                    <img class="img-item">
-    
-                    <!-- II: Text Information -->
-                    <div class="album-txt-info">
-                        <div class="album-title emphasise">Album Title</div>
-                        <span class="author">Author</span>
-                        <p class="price-track emphasise">$19.99</p>
-                    </div>
-                </a>
+            {% for album_name, i in imported_data.items() %}
+                <div class="item-card" id="card-{{ i['model'] }}">
+                    <!-- Row I: Clickable Info -->
+                    <a href="{{ url_for('product_information', m = i['model']) }}">
+                        <!-- I: Album Image -->
+                        <img class="img-item">
+        
+                        <!-- II: Text Information -->
+                        <div class="album-txt-info">
+                            <div class="album-title emphasise">{{ album_name }}</div>
+                            <span class="author">{{ i['author'] }}</span>
+                            <p class="price-track emphasise">${{ "%.2f" % i['price'] }}<span class="label">/EA</span></p>
+                        </div>
+                    </a>
 
-                <!-- Row II: Form -->
-                <form action="/d" method="post", class="add-to-cart-action">
-                    <input type="number" name="i-quantity-2" id="i-quantity-2" min="1" max="5" value="1">
-                    <button type="submit">Add</button>
-                </form>
-            </div>
+                    <!-- Row II: Form -->
+                    <form action="{{ url_for('add_to_cart', m_value = i['model'], product_name = album_name, input_selector = 'i-quantity-' + i['model'], pole_end = '1%' + g) }}" method="post" class="add-to-cart-action">
+                        <input type="number" name="i-quantity-{{ i['model'] }}" id="i-quantity-{{ i['model'] }}" min="1" max="5" value="{% if album_name in cart %}{{ cart[album_name]['quantity'] }}{% else %}1{% endif %}">
+                        <button type="submit" {% if album_name in cart %}disabled{% endif %}>Add</button>
+                    </form>
+                </div>
+            {% endfor %}
         </section>
     </body>
 {% endblock %}
