@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, abort
-import json, datetime, sqlite3
+import json, datetime, sqlite3, re
 import os
 import sys
 
@@ -59,12 +59,12 @@ def product_information(m):
                            item_in_hold = current_item if product_name in cart else False)
 
 # Add to Cart Route
-@app.route("/add_to_cart/<int:m_value><string:product_name>/<string:input_selector>", methods=["POST"])
-def add_to_cart(m_value, product_name, input_selector):
+@app.route("/add_to_cart/<int:m_value><string:product_name>/<string:input_selector>/<pole_end>", methods=["POST"])
+def add_to_cart(m_value, product_name, input_selector, pole_end):
     model = load_data_products()
     quantity = int(request.form[input_selector])
 
-    # Check whether the variable "m" matches with each of the model int.
+    # 1. Check whether the variable "m" matches with each of the model int.
     for i, mvt in model.items():
         # If found and matched
         if int(m_value) == int(mvt["model"]):            
@@ -74,10 +74,10 @@ def add_to_cart(m_value, product_name, input_selector):
         return "Item not found."
         abort(404)
 
-    # If the condition was passed, prompt the program to add items in cart.
+    # 2. If the condition was passed, prompt the program to define cart via session.get.
     cart = session.get("cart", {})
 
-    # Check whether the item is in cart already.
+    # 3. Check whether the item is in cart already.
     if product_name not in cart:
         cart[product_name] = {
             "author": model[product_name]["author"],
@@ -90,9 +90,31 @@ def add_to_cart(m_value, product_name, input_selector):
     else:
         raise KeyError("Item is already at the cart.")
 
-    # Update the session
+    # 4. Update the session
     session["cart"] = cart
     session.modified = True
+
+    # 5. A pole_end is just another way whether to redirect the user back into grid display page after the action.
+    # This pattern must correspond to the pole_end as string.
+    redirect_to_grid_pattern = re.compile(r'^\d{1}[%][a-z-]+', re.IGNORECASE)
+    genre_pattern = re.compile(r'[a-z-]+', re.IGNORECASE)
+
+    redirect_condition = redirect_to_grid_pattern.findall(pole_end)
+    genre_condition = genre_pattern.findall(pole_end)
+
+    # // Consistent debugging over tuple indices error and rechecking string patterns
+    print(pole_end)
+    print(redirect_condition)
+    print(genre_condition[0])
+
+    if type(pole_end) == str and pole_end[0] == "1" and redirect_condition:
+        # verify if there is an existing genre
+        try:
+            for i in model.items():
+                if str(genre_condition[0]).lower() == str(i[1]["genre"]).lower():
+                    return redirect(url_for("category", genre = str(genre_condition[0]).lower()))                
+        except Exception as e:
+            print("Something went wrong. We can't transfer you back to the current genre of page:", e)
 
     return redirect(url_for("product_information", m = m_value))
 
@@ -100,19 +122,21 @@ def add_to_cart(m_value, product_name, input_selector):
 def category(genre):
     model = load_data_products()
     stored_models = {}
+    cart = session.get("cart", {})
 
     # Get all the products based on the genre given.
     for album_name, u in model.items():
         # One product's genre matches to <genre> adds to the dictionary.
         if str(genre).lower() == str(u["genre"]).lower():
             stored_models[album_name] = u
+            stored_models[album_name]["in_cart"] = True if album_name in cart else False
 
     # Abort if the dictionary is empty.
     if stored_models == {}:
         abort(404)
 
     return render_template("item_genre.html", g = genre,
-                           imported_data = stored_models)
+                           imported_data = stored_models, cart = cart)
 
 @app.route("/cart")
 def cart():
