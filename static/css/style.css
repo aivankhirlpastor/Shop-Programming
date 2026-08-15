@@ -16,11 +16,6 @@
 
     /* text color */
 
-    /* text label */
-    --label-font-size: 14px;
-    --label-lsp: 1px;
-    --label-opacity: 75%;
-
     /* for header */
     --title-size: 20px;
     --header-encapsulated-el-padding: 9px;
@@ -93,11 +88,23 @@ input {
 }
 
 .classif-cont :is(span, label), span.label {
+    /* text label */
+    --label-font-size: 14px;
+    --label-lsp: 1.25px;
+    --label-opacity: 75%;
+    
     display: block;
     font-size: var(--label-font-size);
+    font-weight: 400;
     letter-spacing: var(--label-lsp);
     text-transform: uppercase;
     opacity: var(--label-opacity);
+}
+
+/* encapsulated inside text  */
+:is(p, span) > span.label {
+    display: inline;
+    padding-left: 3px;
 }
 
 label {
@@ -324,7 +331,7 @@ section.my-cart .panel-details > #coupon-layout input[type=text] {
 
 /* ======== ITEMS IN GRID DISPLAY (any genre) ======== */
 section.item-display {
-    gap: 32px;
+    gap: 2vw;
     grid-auto-rows: auto;
     grid-template-columns: repeat(4, 1fr);
 }
@@ -332,6 +339,8 @@ section.item-display {
 /* Item card */
 section.item-display .item-card {
     padding: 12px;
+    background-color: #FAFAFA;
+    box-shadow: 0 3px 20px 1px #00000044;
     height: auto;
 }
 
