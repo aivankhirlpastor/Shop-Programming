@@ -52,8 +52,6 @@ def product_information(m):
     if product_name in cart:
         current_item = cart[product_name]
 
-    print(models[product_name])
-
     # If the condition was passed, move on to prepare for the outputs.
     return render_template("product_info.html",
                            product_name = product_name, product = pack_data,
