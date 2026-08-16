@@ -70,7 +70,7 @@ def add_to_cart(m_value, product_name, input_selector, pole_end):
         if int(m_value) == int(mvt["model"]):            
             break
     else:
-        # If not...
+        # If not... (INVALID)
         return "Item not found."
         abort(404)
 
@@ -103,9 +103,6 @@ def add_to_cart(m_value, product_name, input_selector, pole_end):
     genre_condition = genre_pattern.findall(pole_end)
 
     # // Consistent debugging over tuple indices error and rechecking string patterns
-    print(pole_end)
-    print(redirect_condition)
-    print(genre_condition[0])
 
     if type(pole_end) == str and pole_end[0] == "1" and redirect_condition:
         # verify if there is an existing genre
