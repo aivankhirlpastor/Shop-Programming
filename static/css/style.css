@@ -115,6 +115,19 @@ input {
     text-transform: none !important;
 }
 
+/* Stock Status */
+.stock-status {
+    letter-spacing: 0.75px !important;
+}
+
+.stock-status:not(.out-of-stock) {
+    opacity: 100% !important;
+}
+
+.low {
+    color: #7a0000;
+}
+
 label {
     text-transform: none;
 }

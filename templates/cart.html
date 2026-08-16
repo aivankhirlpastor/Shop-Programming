@@ -13,7 +13,16 @@
                     <li class="item-details grid">
                         <div class="product-img-small"></div>
                         <div class="name-author-label">
-                            <span class="stock-status label">{% if model[name_product]['stock'] > 0 %}IN STOCK{% else %}OUT OF STOCK{% endif %}</span>
+
+                            <!-- Different Labels from Stock Status (High, Low, None) -->
+                            {% if model[name_product]['stock'] > 5 %}
+                                <span class="stock-status lowercase label">In Stock</span>
+                            {% elif 6 > model[name_product]['stock'] and model[name_product]['stock'] > 0 %}
+                                <span class="stock-status low lowercase label"><b>({{ model[name_product]['stock'] }})</b> Low Stock</span>
+                            {% else %}
+                                <span class="stock-status out-of-stock lowercase label">Out of Stock</span>
+                            {% endif %}
+
                             <div class="block-name-author">
                                 <h3><a href="{{ url_for('product_information', m = item['model']) }}">{{ name_product }}</a></h3>
                                 <p class="author">{{ item['author'] }}</p>

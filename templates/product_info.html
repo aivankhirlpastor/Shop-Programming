@@ -44,13 +44,23 @@
                         <p class="emphasise">${{ '%.2f' % product["price"] }}</p>
                     </div>
                     <div class="classif-cont quantity">
-                        <label for="quantity">QUANTITY • <b class="lowercase">{% if product["stock"] > 0 %}In Stock{% else %}Out of Stock{% endif %}</b></label>
-                        <input type="number" id="quantity" name="quantity" min="1" max="5" value="{% if already_in_cart %}{{ item_in_hold['quantity'] }}{% else %}1{% endif %}">
+
+                        <!-- Different Labels from Stock Status (High, Low, None) -->
+                        {% if product['stock'] > 5 %}
+                            <label for="quantity">QUANTITY • <span class="stock-status lowercase">In Stock</span></label>
+                        {% elif 6 > product['stock'] and product['stock'] > 0 %}
+                            <label for="quantity">QUANTITY <b class="low">({{ product['stock'] }})</b> • <span class="stock-status lowercase">Low Stock</span></label>
+                        {% else %}
+                            <label for="quantity">QUANTITY • <span class="stock-status out-of-stock lowercase">Out of Stock</span></label>
+                        {% endif %}
+
+                        <!-- Input Quantity: 5 > P = by its remaining stock (max); else 5 (max) -->
+                        <input type="number" id="quantity" name="quantity" min="1" max="{% if 5 > product['stock'] %}{{ product['stock'] }}{% else %}5{% endif %}" value="{% if already_in_cart %}{{ item_in_hold['quantity'] }}{% else %}1{% endif %}" {% if not in_stock %}disabled{% endif %}>
                     </div>
                     {% if already_in_cart %}
                         <button type="button" class="view-my-cart" onclick=" location.href = `{{ url_for('cart') }}`">View My Cart</button>
                     {% else %}
-                        <button type="submit" class="add-to-cart">Add to Cart</button>
+                        <button type="submit" class="add-to-cart" {% if not in_stock %}disabled{% endif %}>Add to Cart</button>
                     {% endif %}
                 </form>
             </div>
