@@ -8,6 +8,24 @@
         "price": 45.99,
         "stock": 15
     },
+    "Little Life": {
+        "author": "Michell Park",
+        "model": "387105720863",
+        "label": "Lifestyle Community",
+        "tracks": 14,
+        "genre": "Ambience",
+        "price": 36.99,
+        "stock": 16
+    },
+    "Lives In Nature": {
+        "author": "Zeenchenburg Z.",
+        "model": "300612704927",
+        "label": "-",
+        "tracks": 6,
+        "genre": "Ambience",
+        "price": 39.99,
+        "stock": 8
+    },
     "I'm Not Cryin'": {
         "author": "Ellyster P.",
         "model": "312817745129",
@@ -15,7 +33,7 @@
         "tracks": 1,
         "genre": "Electronic",
         "price": 12.49,
-        "stock": 18
+        "stock": 0
     },
     "West Country's Mankind": {
         "author": "Richard Tyson",
@@ -26,6 +44,15 @@
         "price": 18.39,
         "stock": 17
     },
+    "Adreline Soundtrack": {
+        "author": "Dynamic Tussell",
+        "model": "355139801640",
+        "label": "Universal Audio Company",
+        "tracks": 19,
+        "genre": "Acoustic",
+        "price": 29.99,
+        "stock": 4
+    },
     "The Key To Withstand": {
         "author": "Oblong Communion",
         "model": "391928751095",
@@ -34,5 +61,14 @@
         "genre": "Lo-Fi",
         "price": 34.99,
         "stock": 9
+    },
+    "Lo-Fi Beats Study Time": {
+        "author": "Hi-Tech Companion",
+        "model": "372871069270",
+        "label": "Road Rush Company",
+        "tracks": 8,
+        "genre": "Lo-Fi",
+        "price": 40.49,
+        "stock": 15
     }
 }
