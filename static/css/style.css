@@ -101,10 +101,18 @@ input {
     opacity: var(--label-opacity);
 }
 
+.classif-cont :is(span, label) > * {
+    display: inline;
+}
+
 /* encapsulated inside text  */
 :is(p, span) > span.label {
     display: inline;
     padding-left: 3px;
+}
+
+.lowercase {
+    text-transform: none !important;
 }
 
 label {
@@ -239,6 +247,7 @@ section.product-info #product-details > .box-acc.price-and-quantity {
     display: inline-flex;
     flex-direction: column;
     gap: 16px;
+    width: 200px;
 }
 
 /* text for detail */
