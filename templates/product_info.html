@@ -44,13 +44,13 @@
                         <p class="emphasise">${{ '%.2f' % product["price"] }}</p>
                     </div>
                     <div class="classif-cont quantity">
-                        <label for="quantity">QUANTITY • {% if product["stock"] > 0 %}In Stock{% else %}Out of Stock{% endif %}</label>
+                        <label for="quantity">QUANTITY • <b class="lowercase">{% if product["stock"] > 0 %}In Stock{% else %}Out of Stock{% endif %}</b></label>
                         <input type="number" id="quantity" name="quantity" min="1" max="5" value="{% if already_in_cart %}{{ item_in_hold['quantity'] }}{% else %}1{% endif %}">
                     </div>
                     {% if already_in_cart %}
                         <button type="button" class="view-my-cart" onclick=" location.href = `{{ url_for('cart') }}`">View My Cart</button>
                     {% else %}
-                        <button type="submit" class="add-to-cart" {% if already_in_cart %}disabled{% endif %}>Add to Cart</button>
+                        <button type="submit" class="add-to-cart">Add to Cart</button>
                     {% endif %}
                 </form>
             </div>
