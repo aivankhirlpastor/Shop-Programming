@@ -21,10 +21,6 @@
     --header-encapsulated-el-padding: 9px;
 
     /* Buttons (hue and saturation) */
-    /* --btn-destructive: hsl(4, 92%, 50%);
-    --btn-positive: hsl(232, 80%, 50%);
-    --btn-neutral: hsl(235, 8%, 30%); */
-
     --btn-destructive: 4, 92%;
     --btn-positive: 43, 100%;
     --btn-neutral: 60, 5%;
@@ -33,6 +29,11 @@
     --btn-normal: 50%;
     --btn-hover: 20%;
     --btn-active: 30%;
+
+    /* Stock Status */
+    --stock-normal: #000000;
+    --stock-low: #7a0000;
+    --stock-none: #888888;
 }
 
 * {
@@ -79,7 +80,10 @@ img {
 
 /* all inputs */
 input {
+    --input-border-color: #000000;
     font-size: 16px;
+
+    border: 2px solid var(--input-border-color);
 }
 
 .classif-cont {
@@ -125,7 +129,23 @@ input {
 }
 
 .low {
-    color: #7a0000;
+    color: var(--stock-low);
+}
+
+input.emit-stock-status {
+    --input-border-color: var(--stock-normal);
+}
+
+input.emit-stock-status.low {
+    --input-border-color: var(--stock-low);
+}
+
+input.emit-stock-status.none {
+    --input-border-color: var(--stock-none);
+}
+
+.pads {
+    padding-block: 8px;
 }
 
 label {
