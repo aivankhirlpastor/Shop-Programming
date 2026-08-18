@@ -89,7 +89,7 @@ def add_to_cart(m_value, product_name, input_selector, pole_end):
             "quantity": quantity,
         }
     else:
-        raise KeyError("Item is already at the cart.")
+        raise KeyError(f"({product_name}) Item is already at the cart.")
 
     # 4. Update the session
     session["cart"] = cart
@@ -102,6 +102,8 @@ def add_to_cart(m_value, product_name, input_selector, pole_end):
 
     redirect_condition = redirect_to_grid_pattern.findall(pole_end)
     genre_condition = genre_pattern.findall(pole_end)
+
+    flash(f"{product_name} added to cart.")    
 
     # // Consistent debugging over tuple indices error and rechecking string patterns
 
