@@ -22,6 +22,32 @@ def calculate_total(c):
 
     return cart_total + gst + shipping_fee, cart_total, gst, shipping_fee
 
+def add_to_cart_action(mdl, product, qty):
+    cart = session.get("cart", {})
+
+    if mdl[product]["stock"] > 0: # 3. Validate their stock
+        if product not in cart: # Check whether the item is in cart already
+            cart[product] = {
+                "author": mdl[product]["author"],
+                "model": mdl[product]["model"],
+                "label": mdl[product]["label"],
+                "genre": mdl[product]["genre"],
+                "price": mdl[product]["price"],
+                "quantity": qty,
+            }
+
+            # Update the session.
+            session["cart"] = cart
+            session.modified = True
+
+            flash(f"{product} added to cart.")
+
+        else:
+            raise KeyError(f"({product}) Item is already at the cart.")
+    else:
+        # out of stock message
+        flash(f"Sorry, but {product} ran out of stock.")
+
 # ROUTES <------------------->
 @app.route("/")
 def index():
@@ -73,48 +99,27 @@ def add_to_cart(m_value, product_name, input_selector, pole_end):
     else:
         # If not... (INVALID)
         return "Item not found."
-        abort(404)
 
-    # 2. If the condition was passed, prompt the program to define cart via session.get.
-    cart = session.get("cart", {})
+    # 2. Initiate an add to cart action.
+    add_to_cart_action(model, product_name, quantity)
 
-    # 3. Check whether the item is in cart already.
-    if product_name not in cart:
-        cart[product_name] = {
-            "author": model[product_name]["author"],
-            "model": model[product_name]["model"],
-            "label": model[product_name]["label"],
-            "genre": model[product_name]["genre"],
-            "price": model[product_name]["price"],
-            "quantity": quantity,
-        }
-    else:
-        raise KeyError(f"({product_name}) Item is already at the cart.")
-
-    # 4. Update the session
-    session["cart"] = cart
-    session.modified = True
-
-    # 5. A pole_end is just another way whether to redirect the user back into grid display page after the action.
-    # This pattern must correspond to the pole_end as string.
+    # 3. A pole_end is just another way whether to redirect the user back into grid display page after the action.
+    # These pattern must correspond to the pole_end as string.
     redirect_to_grid_pattern = re.compile(r'^\d{1}[%][a-z-]+', re.IGNORECASE)
     genre_pattern = re.compile(r'[a-z-]+', re.IGNORECASE)
 
     redirect_condition = redirect_to_grid_pattern.findall(pole_end)
     genre_condition = genre_pattern.findall(pole_end)
 
-    flash(f"{product_name} added to cart.")    
-
-    # // Consistent debugging over tuple indices error and rechecking string patterns
-
+    # redirect users back based on where they currently at
     if type(pole_end) == str and pole_end[0] == "1" and redirect_condition:
         # verify if there is an existing genre
         try:
-            for i in model.items():
-                if str(genre_condition[0]).lower() == str(i[1]["genre"]).lower():
+            for y in model.items():
+                if str(genre_condition[0]).lower() == str(y[1]["genre"]).lower():
                     return redirect(url_for("category", genre = str(genre_condition[0]).lower()))                
-        except Exception as e:
-            print("Something went wrong. We can't transfer you back to the current genre of page:", e)
+        except Exception as err:
+            print("Something went wrong. We can't transfer you back to the current genre of page:", err)
 
     return redirect(url_for("product_information", m = m_value))
 
