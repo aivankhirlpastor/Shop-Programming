@@ -40,7 +40,7 @@ def add_to_cart_action(mdl, product, qty):
             session["cart"] = cart
             session.modified = True
 
-            flash(f"{product} added to cart.")
+            flash(f"({qty}) {product} added to cart.")
 
         else:
             raise KeyError(f"({product}) Item is already at the cart.")
