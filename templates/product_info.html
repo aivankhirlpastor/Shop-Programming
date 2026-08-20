@@ -63,12 +63,12 @@
                         {% endif %}
 
                         <!-- Input Quantity: 5 > P = by its remaining stock (max); else 5 (max) -->
-                        <input type="number" id="quantity" name="quantity" min="1" max="{% if 5 > product['stock'] %}{{ product['stock'] }}{% else %}5{% endif %}" value="{% if already_in_cart %}{{ item_in_hold['quantity'] }}{% else %}1{% endif %}" {% if not in_stock %}disabled{% endif %}>
+                        <input type="number" id="quantity" name="quantity" min="1" max="{% if 5 > product['stock'] and product['stock'] > 0 %}{{ product['stock'] }}{% else %}5{% endif %}" value="{% if already_in_cart %}{{ item_in_hold['quantity'] }}{% else %}1{% endif %}" {% if not in_stock %}disabled{% endif %}>
                     </div>
                     {% if already_in_cart %}
                         <button type="button" class="view-my-cart" onclick=" location.href = `{{ url_for('cart') }}`">View My Cart</button>
                     {% else %}
-                        <button type="submit" class="add-to-cart" {% if not in_stock %}disabled{% endif %}>Add to Cart</button>
+                        <button type="submit" class="add-to-cart" {% if not in_stock %}disabled title="Out of Stock"{% endif %}>Add to Cart</button>
                     {% endif %}
                 </form>
             </div>
