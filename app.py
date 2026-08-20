@@ -26,6 +26,7 @@ def add_to_cart_action(mdl, product, qty):
     cart = session.get("cart", {})
 
     if mdl[product]["stock"] > 0: # 3. Validate their stock
+
         if product not in cart: # Check whether the item is in cart already
             cart[product] = {
                 "author": mdl[product]["author"],
@@ -41,9 +42,9 @@ def add_to_cart_action(mdl, product, qty):
             session.modified = True
 
             flash(f"({qty}) {product} added to cart.")
-
         else:
-            raise KeyError(f"({product}) Item is already at the cart.")
+            flash(f"({product}) Item was already in cart.")
+            
     else:
         # out of stock message
         flash(f"Sorry, but {product} ran out of stock.")
@@ -93,20 +94,20 @@ def add_to_cart(m_value, product_name, input_selector, pole_end):
     try:
         # validate whether the number have entered a number
         quantity = int(request.form[input_selector])
+        
+        # 1. Check whether the variable "m" matches with each of the model int.
+        for i, mvt in model.items():
+            # If found and matched
+            if int(m_value) == int(mvt["model"]):            
+                break
+        else:
+            # If not... (INVALID)
+            return "Item not found."
+
+        # 2. Initiate an add to cart action.
+        add_to_cart_action(model, product_name, quantity)
     except:
         flash("We could not add that item. Please enter a number in integer only.")
-
-        # 1. Check whether the variable "m" matches with each of the model int.
-    for i, mvt in model.items():
-        # If found and matched
-        if int(m_value) == int(mvt["model"]):            
-            break
-    else:
-        # If not... (INVALID)
-        return "Item not found."
-
-    # 2. Initiate an add to cart action.
-    add_to_cart_action(model, product_name, quantity)
 
     # A pole_end is just another way whether to redirect the user back into grid display page after the action.
     # These pattern must correspond to the pole_end as string.
