@@ -35,7 +35,7 @@
                             <input type="number" class="emit-stock-status {% if 6 > i['stock'] and i['stock'] > 0 %}low{% elif 1 > i['stock'] %}none{% endif %}" name="i-quantity-{{ i['model'] }}" id="i-quantity-{{ i['model'] }}" min="1" max="{% if 5 > i['stock'] %}{{ i['stock'] }}{% else %}5{% endif %}" value="{% if album_name in cart %}{{ cart[album_name]['quantity'] }}{% else %}1{% endif %}">
                             <button type="submit" title="Add to Cart" {% if album_name in cart %}disabled{% endif %}>Add</button>
                         {% else %}
-                            <input type="number" class="emit-stock-status {% if 6 > i['stock'] and i['stock'] > 0 %}low{% elif 1 > i['stock'] %}none{% endif %}" name="i-quantity-{{ i['model'] }}" id="i-quantity-{{ i['model'] }}" min="1" max="5" value="{% if album_name in cart %}{{ cart[album_name]['quantity'] }}{% else %}1{% endif %}" disabled>
+                            <input type="number" class="emit-stock-status none" name="i-quantity-{{ i['model'] }}" id="i-quantity-{{ i['model'] }}" min="1" max="5" value="{% if album_name in cart %}{{ cart[album_name]['quantity'] }}{% else %}1{% endif %}" disabled>
                             <button type="submit" title="Out of Stock" disabled>OOS</button>
                         {% endif %}
 
