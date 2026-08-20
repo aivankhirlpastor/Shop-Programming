@@ -24,7 +24,7 @@
         "tracks": 6,
         "genre": "Ambience",
         "price": 39.99,
-        "stock": 0
+        "stock": 20
     },
     "I'm Not Cryin'": {
         "author": "Ellyster P.",
@@ -42,7 +42,7 @@
         "tracks": 4,
         "genre": "Acoustic",
         "price": 18.39,
-        "stock": 2
+        "stock": 3
     },
     "Adreline Soundtrack": {
         "author": "Dynamic Tussell",

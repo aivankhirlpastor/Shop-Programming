@@ -89,21 +89,26 @@ def product_information(m):
 @app.route("/add_to_cart/<int:m_value><string:product_name>/<string:input_selector>/<pole_end>", methods=["POST"])
 def add_to_cart(m_value, product_name, input_selector, pole_end):
     model = load_data_products()
-    quantity = int(request.form[input_selector])
 
-    # 1. Check whether the variable "m" matches with each of the model int.
-    for i, mvt in model.items():
-        # If found and matched
-        if int(m_value) == int(mvt["model"]):            
-            break
-    else:
-        # If not... (INVALID)
-        return "Item not found."
+    try:
+        # validate whether the number have entered a number
+        quantity = int(request.form[input_selector])
 
-    # 2. Initiate an add to cart action.
-    add_to_cart_action(model, product_name, quantity)
+        # 1. Check whether the variable "m" matches with each of the model int.
+        for i, mvt in model.items():
+            # If found and matched
+            if int(m_value) == int(mvt["model"]):            
+                break
+        else:
+            # If not... (INVALID)
+            return "Item not found."
 
-    # 3. A pole_end is just another way whether to redirect the user back into grid display page after the action.
+        # 2. Initiate an add to cart action.
+        add_to_cart_action(model, product_name, quantity)
+    except:
+        flash("We could not add that item. Please enter a number in integer only.")
+
+    # A pole_end is just another way whether to redirect the user back into grid display page after the action.
     # These pattern must correspond to the pole_end as string.
     redirect_to_grid_pattern = re.compile(r'^\d{1}[%][a-z-]+', re.IGNORECASE)
     genre_pattern = re.compile(r'[a-z-]+', re.IGNORECASE)
