@@ -64,6 +64,17 @@ cancel.addEventListener("click", e => {
     }
 });
 
+window.addEventListener("load", e => {
+    for (let l = 0; l < getInputs.length; l++) {
+
+        const il = getInputs[l];
+
+        if (il.value !== initialQuantity[l] ) {
+            il.value = initialQuantity[l];
+        }        
+    }
+})
+
 window.addEventListener("beforeunload", e => {
     if (isUnsavedChanges) {
         e.preventDefault();
