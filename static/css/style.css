@@ -412,7 +412,7 @@ section.my-cart .price-action > form.delete-item button {
 /* modified appearance */
 section.my-cart li.item-details:has(.quantity input.modified) > .price-action p.recalculation {
     text-shadow: 0 2px 4px #00000040;
-    color: #041593;
+    color: #0d22c5;
 }
 
 /* PANEL DETAILS */
