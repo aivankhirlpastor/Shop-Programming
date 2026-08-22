@@ -1,5 +1,6 @@
 // General elements
 const configPanel = document.getElementById("config-bottom-bar");
+const targetForm = document.getElementById("target-form");
 const cancel = document.getElementById("cancel");
 const save = document.getElementById("save-changes");
 
@@ -29,13 +30,20 @@ for (let z = 0; z < getInputs.length; z++) {
         i.classList.add("modified");
 
         // if condition to text changes
-        if (i.value > 0) {
+        if (0 < i.value && i.value <= i.max) {
             u.textContent = `$${Math.round((unitPrice[z] * i.value) * 100) / 100}`
         }
 
         if (!configPanel.classList.contains("arise")) {
             configPanel.classList.add("arise");
         }
+
+        // adding invisible input for purpose of sending data to Python
+
+        const iid = `i-invn-${i.dataset.ctgnumber}`;
+        // const lin = document.createElement("input");
+        document.getElementById(iid).value = i.value;
+        
     });
 
     initialQuantity.push(Number(i.value));
