@@ -1,5 +1,5 @@
 // General elements
-const configPanel = document.getElementById("config-panel");
+const configPanel = document.getElementById("config-bottom-bar");
 const cancel = document.getElementById("cancel");
 const save = document.getElementById("save-changes");
 
