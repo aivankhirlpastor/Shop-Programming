@@ -146,14 +146,30 @@ def remove_item(ctg_number, album_name):
 
 @app.route("/apply_changes", methods = ["POST"])
 def apply_changes():
+    album_products = load_data_products()
     cart = session.get("cart", {})
 
     for n, items in cart.items():
 
         # value validation
-        qty = request.form.get(f"e-quantity-{items["model"]}")
+        try:
+            max_quantity = album_products[n]["stock"] if album_products[n]["stock"] < 5 else 5
+            qty = int(request.form[f"i-invn-{items['model']}"])
 
-        cart[n]["quantity"] = qty
+            if 0 < qty <= max_quantity and items['quantity'] != qty:
+                cart[n]["quantity"] = (qty)
+            elif qty > max_quantity:
+                flash(f"({n}) That value should not exceed more than {max_quantity} maximum.")
+            elif 0 >= qty:
+                flash(f"({n}) That value should not be less than 1 minimum.")
+                # raise Exception("The value is out of range.")
+
+        except ValueError as e:
+            flash(f"({n}) Please enter a number to adjust that quantity.")
+            # raise ValueError(f"Input {items['model']} is missing its value.")
+
+    session["cart"] = cart
+    session.modified = True
 
     return redirect(url_for("cart"))
 
@@ -187,7 +203,6 @@ def cart():
 
     # Get price calculation
     __n, subtotal, gst, ship_fee = calculate_total(cart)
-
 
     return render_template("cart.html", cart = cart, albums = albums,
                            subtotal = subtotal, gst = gst)
