@@ -5,44 +5,60 @@
 {% block content %}
     <body>
         <h2>My Cart</h2>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <!-- 'flash' message from Python Flask -->
+                    {% for m in messages %}
+                        <p>{{ m }}</p>
+                    {% endfor %}
+                <!-- boundary "for" -->
+            {% endif %}
+        {% endwith %}
+
         <section class="grid grid-display my-cart">
-            <!-- I: ITEM LISTS -->
             
+            <!-- I: ITEM LISTS -->
             <ul class="item-list">
-                {% for name_product, item in cart.items() %}
+                {% for album_name, item in cart.items() %}
                     <li class="item-details grid">
                         <div class="product-img-small"></div>
                         <div class="name-author-label">
 
                             <!-- Different Labels from Stock Status (High, Low, None) -->
-                            {% if model[name_product]['stock'] > 5 %}
+                            {% if albums[album_name]['stock'] > 5 %}
                                 <span class="stock-status lowercase label">In Stock</span>
-                            {% elif 6 > model[name_product]['stock'] and model[name_product]['stock'] > 0 %}
-                                <span class="stock-status low lowercase label"><b>({{ model[name_product]['stock'] }})</b> Low Stock</span>
+                            {% elif 6 > albums[album_name]['stock'] and albums[album_name]['stock'] > 0 %}
+                                <span class="stock-status low lowercase label"><b>({{ albums[album_name]['stock'] }})</b> Low Stock</span>
                             {% else %}
                                 <span class="stock-status out-of-stock lowercase label">Out of Stock</span>
                             {% endif %}
 
                             <div class="block-name-author">
-                                <h3><a href="{{ url_for('product_information', m = item['model']) }}">{{ name_product }}</a></h3>
+                                <!-- Album Name and Author -->
+                                <h3><a href="{{ url_for('product_information', m = item['model']) }}">{{ album_name }}</a></h3>
                                 <p class="author">{{ item['author'] }}</p>
                             </div>
+
                             <span class="label">{{ item['label'] }}</span>
                         </div>
+
                         <div class="quantity">
-                            <label for="quantity">QUANTITY</label>
-                            <input type="number" id="quantity" name="quantity" min="1" max="5" value="{{ item['quantity'] }}">
+                            <!-- Editable Quantity Input -->
+                            <label for="e-quantity-{{ item['model'] }}">QUANTITY</label>
+                            <input type="number" name="e-quantity-{{ item['model'] }}" id="e-quantity-{{ item['model'] }}" min="1" max="5" value="{{ item['quantity'] }}">
                         </div>
+
                         <div class="price-action">
-                            <p class="emphasise">${{ '%.2f' % (item['quantity'] * item['price']) }}</p>
-                            <form class="delete-item" action="" method="post">
+                            <!-- Price -->
+                            <p class="price recalculation emphasise" data-unitprice="{{ albums[album_name]['price'] }}" id="atr-price-{{ item['model'] }}">${{ '%.2f' % (item['quantity'] * item['price']) }}</p>
+                            <form class="delete-item" action="{{ url_for('remove_item', ctg_number = item['model'], album_name = album_name) }}" method="post">
                                 <button type="submit" class="rounded destructive">D</button>
                             </form>
                         </div>
                     </li>
                 {% endfor %}
             </ul>
-
 
             <!-- II: ORDER DETAILS -->
             <form class="panel-details" action="">
@@ -65,5 +81,16 @@
                 <button type="submit">Go To Checkout</button>
             </form>
         </section>
+
+        <!-- a panel that appears when the change was detected -->
+        <div id="config-panel">
+            <form action="" method="post">
+                <button type="submit" id="save-changes">Save Changes</button>
+                <button type="button" id="cancel">Cancel</button>
+            </form>
+        </div>
+
+        <!-- Script -->
+        <script src="{{ url_for('static', filename='js/item_modifier.js') }}"></script></script>
     </body>
 {% endblock %}
