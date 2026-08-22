@@ -87,7 +87,7 @@ def product_information(m):
                            in_stock = (models[product_name]["stock"] > 0))
 
 # Add to Cart Route
-@app.route("/add_to_cart/<int:m_value><string:product_name>/<string:input_selector>/<pole_end>", methods=["POST"])
+@app.route("/add_to_cart/<int:m_value><string:product_name>/<string:input_selector>/<pole_end>", methods = ["POST"])
 def add_to_cart(m_value, product_name, input_selector, pole_end):
     model = load_data_products()
 
@@ -129,6 +129,21 @@ def add_to_cart(m_value, product_name, input_selector, pole_end):
 
     return redirect(url_for("product_information", m = m_value))
 
+@app.route("/remove_item/<int:ctg_number>/<string:process_album>", methods = ["POST"])
+def remove_item(ctg_number, process_album):
+    cart = session.get("cart", {})
+
+    if process_album in cart:
+        del cart[process_album]
+        session["cart"] = cart
+        session.modified = True
+
+        flash(f"Removed all '{process_album}' in your cart")
+    else:
+        flash(f"'{process_album}' was not found in your cart or was already removed.")
+
+    return redirect(url_for("cart"))
+
 @app.route("/category/item-<string:genre>")
 def category(genre):
     model = load_data_products()
@@ -164,7 +179,7 @@ def cart():
                            subtotal = subtotal, gst = gst)
 
 # temporary routes
-@app.route("/visit", methods=["POST"])
+@app.route("/visit", methods = ["POST"])
 def visit():
     item_model = request.form['item_selector']
 
