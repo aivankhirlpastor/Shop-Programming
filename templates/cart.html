@@ -53,7 +53,7 @@
                             <!-- Price -->
                             <p class="price recalculation emphasise" data-unitprice="{{ albums[album_name]['price'] }}" id="atr-price-{{ item['model'] }}">${{ '%.2f' % (item['quantity'] * item['price']) }}</p>
                             <form class="delete-item" action="{{ url_for('remove_item', ctg_number = item['model'], album_name = album_name) }}" method="post">
-                                <button type="submit" class="rounded destructive">D</button>
+                                <button type="submit" class="rounded squared destructive">D</button>
                             </form>
                         </div>
                     </li>
@@ -83,10 +83,10 @@
         </section>
 
         <!-- a panel that appears when the change was detected -->
-        <div id="config-panel">
-            <form action="" method="post">
+        <div id="config-bottom-bar">
+            <form action="{{ url_for('apply_changes') }}" method="post">
                 <button type="submit" id="save-changes">Save Changes</button>
-                <button type="button" id="cancel">Cancel</button>
+                <button type="button" class="neutral outlined" id="cancel">Cancel</button>
             </form>
         </div>
 
