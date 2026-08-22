@@ -129,20 +129,34 @@ def add_to_cart(m_value, product_name, input_selector, pole_end):
 
     return redirect(url_for("product_information", m = m_value))
 
-@app.route("/remove_item/<int:ctg_number>/<string:process_album>", methods = ["POST"])
-def remove_item(ctg_number, process_album):
+@app.route("/remove_item/<int:ctg_number>/<string:album_name>", methods = ["POST"])
+def remove_item(ctg_number, album_name):
     cart = session.get("cart", {})
 
-    if process_album in cart:
-        del cart[process_album]
+    if album_name in cart:
+        del cart[album_name]
         session["cart"] = cart
         session.modified = True
 
-        flash(f"Removed all '{process_album}' in your cart")
+        flash(f"Removed all '{album_name}' in your cart")
     else:
-        flash(f"'{process_album}' was not found in your cart or was already removed.")
+        flash(f"'{album_name}' was not found in your cart or was already removed.")
 
     return redirect(url_for("cart"))
+
+@app.route("/apply_changes", methods = ["POST"])
+def apply_changes():
+    cart = session.get("cart", {})
+
+    for n, items in cart.items():
+
+        # value validation
+        qty = request.form.get(f"e-quantity-{items["model"]}")
+
+        cart[n]["quantity"] = qty
+
+    return redirect(url_for("cart"))
+
 
 @app.route("/category/item-<string:genre>")
 def category(genre):
@@ -166,7 +180,7 @@ def category(genre):
 
 @app.route("/cart")
 def cart():
-    models = load_data_products()
+    albums = load_data_products()
 
     # Get cart via session.get
     cart = session.get("cart", {})
@@ -175,7 +189,7 @@ def cart():
     __n, subtotal, gst, ship_fee = calculate_total(cart)
 
 
-    return render_template("cart.html", cart = cart, model = models,
+    return render_template("cart.html", cart = cart, albums = albums,
                            subtotal = subtotal, gst = gst)
 
 # temporary routes
