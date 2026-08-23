@@ -26,12 +26,14 @@ for (let z = 0; z < getInputs.length; z++) {
 
     // immediately respond to changes
     i.addEventListener("input", e => {
+        let mx = parseInt(i.max); // max value
+        
         isUnsavedChanges = true;
         i.classList.add("modified");
 
         // if condition to text changes
-        if (0 < i.value && i.value <= i.max) {
-            u.textContent = `$${Math.round((unitPrice[z] * i.value) * 100) / 100}`
+        if (0 < i.value && i.value <= mx) {
+            u.textContent = `$${Math.round((unitPrice[z] * i.value) * 100) / 100}`;
         }
 
         if (!configPanel.classList.contains("arise")) {
