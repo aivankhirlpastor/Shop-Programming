@@ -3,6 +3,10 @@
     /* custom variables */
     --custom-variable: "my-property";
 
+    --body-margin: 1vw;
+    --main-pad-block: 28px;
+    --main-pad-inline: 96px;
+
     /* color palettes */
     --color-1: #f1dd00;
     --color-2: #faf8c6;
@@ -225,15 +229,35 @@ label {
     text-align: center;
 }
 
+/* Flash Message Stylinf */
+.toast-flash {
+    position: fixed;
+    top: calc(70px + var(--main-pad-block));
+    right: calc(var(--body-margin) + var(--main-pad-inline));
+    z-index: 99;
+}
+
+.toast-flash > * {
+    border: 2px solid #00000022;
+    background-color: #ffffffcc;
+    font-weight: 500;
+    margin-block: 8px;
+    padding: 8px 16px;
+    width: 250px;
+
+    box-shadow: 0 3px 3px #00000024;
+    backdrop-filter: blur(5px) saturate(1280%) contrast(95%);
+}
+
 /* BODY */
 body {
-    margin: 1vw;
+    margin: var(--body-margin);
 }
 
 /* MAIN */
 main {
     min-height: 90vh;
-    padding: 28px 96px;
+    padding: var(--main-pad-block) var(--main-pad-inline);
 }
 
 /* =============== HEADER =============== */
