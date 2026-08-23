@@ -27,12 +27,14 @@ for (let z = 0; z < getInputs.length; z++) {
     // immediately respond to changes
     i.addEventListener("input", e => {
         let mx = parseInt(i.max); // max value
-        
+
         isUnsavedChanges = true;
         i.classList.add("modified");
 
+        console.log(i.value % 1, i.value % 1 == 0);
+
         // if condition to text changes
-        if (0 < i.value && i.value <= mx) {
+        if ((0 < i.value && i.value <= mx) && i.value % 1 == 0) {
             u.textContent = `$${Math.round((unitPrice[z] * i.value) * 100) / 100}`;
         }
 
