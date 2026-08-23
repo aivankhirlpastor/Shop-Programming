@@ -164,7 +164,8 @@ def apply_changes():
                 flash(f"({n}) That value should not be less than 1 minimum.")
                 # raise Exception("The value is out of range.")
 
-        except ValueError as e:
+        except Exception as e:
+            print(e)
             flash(f"({n}) Please enter a number to adjust that quantity.")
             # raise ValueError(f"Input {items['model']} is missing its value.")
 
