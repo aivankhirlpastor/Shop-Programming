@@ -261,20 +261,51 @@ label {
     position: fixed;
     width: 300px;
     
+    /* offset positions */
     top: 0;
     right: 0;
     bottom: 0;
 
+    /* Glass Effect */
     box-shadow: -3px 0 3px #00000024;
     backdrop-filter: blur(5px) saturate(180%);
+    z-index: 999;
 
     /* transition animation */
     transform: translateX(380px);
-    transition: transform 0.4s ease-out;
+    transition: transform 0.4s ease-in-out;
 }
 
+/* slide to the screen, where it is noticeable */
 #panel-frame.appear {
     transform: none;
+}
+
+/* black */
+.black-overlay {
+    display: block;
+    background-color: transparent;
+    position: fixed;
+
+    /* offsets and sizes */
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    z-index: 998;
+
+    /* transition */
+    transition: background-color 0.4s ease-in-out;
+}
+
+#panel-frame.appear ~ .black-overlay {
+    background-color: #00000099;
+}
+
+.btn-stack-inline {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(2, auto);
 }
 
 /* mini list version */
