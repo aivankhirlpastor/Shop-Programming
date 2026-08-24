@@ -20,5 +20,44 @@
             <button type="submit">     Visit     </button>
         </form>
 
+        {% with panel = panel_params %}
+            <p>{{ panel['cart'] }}</p>
+            <div id="panel-frame">
+                <h3>Item Added</h3>
+                <hr>
+                <ul class="mini-list-container">
+
+                    <!-- list per item -->
+                    <li class="mini-list-item">
+
+                        <!-- I: Image and Quantity -->
+                        <div class="img-qty-placer">
+                            <img class="img-item">
+                            <span class="counter">2</span>
+                        </div>
+
+                        <!-- II: Name, Author, and Price -->
+                        <div class="txt-const">
+                            <div class="name-author">
+                                <span class="emphasise">Amazing</span>
+                                <p>Author</p>
+                            </div>
+                            <!-- Price -->
+                            <p class="price">$19.00</p>
+                        </div>
+
+                    </li>
+                </ul>
+                <button type="button">Continue Shopping</button>
+                <button type="button" class="outlined">View My Cart</button>
+            </div>
+        {% endwith %}
+
+        <script>
+            setTimeout(() => {
+                document.getElementById("panel-frame").classList.add("appear");
+            }, 100);
+        </script>
+
     </body>
 {% endblock %}

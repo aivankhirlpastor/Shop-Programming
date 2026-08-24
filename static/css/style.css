@@ -209,6 +209,10 @@ label {
     font-weight: 700;
 }
 
+.emphasise.f16  {
+    font-size: 16px;
+}
+
 .text-nudge {
     align-items: end;
     display: flex;
@@ -231,6 +235,7 @@ label {
 
 /* Flash Message Stylinf */
 .toast-flash {
+    
     position: fixed;
     top: calc(70px + var(--main-pad-block));
     right: calc(var(--body-margin) + var(--main-pad-inline));
@@ -247,6 +252,86 @@ label {
 
     box-shadow: 0 3px 3px #00000024;
     backdrop-filter: blur(5px) saturate(1280%) contrast(95%);
+}
+
+/* panel */
+#panel-frame {
+    background-color: #ffffffbb;
+    padding: 40px;
+    position: fixed;
+    width: 300px;
+    
+    top: 0;
+    right: 0;
+    bottom: 0;
+
+    box-shadow: -3px 0 3px #00000024;
+    backdrop-filter: blur(5px) saturate(180%);
+
+    /* transition animation */
+    transform: translateX(380px);
+    transition: transform 0.4s ease-out;
+}
+
+#panel-frame.appear {
+    transform: none;
+}
+
+/* mini list version */
+ul.mini-list-container {
+    padding: 0;
+    list-style: none;
+    position: relative;
+}
+
+ul.mini-list-container > li.mini-list-item {
+    display: flex;
+    gap: 20px;
+    max-height: 100px;
+    padding-block: 14px;
+}
+
+ul.mini-list-container .img-qty-placer {
+    --img-placer-height: 100px;
+    --counter-extent: 28px;
+    --counter-pad: 8px;
+
+    position: relative;
+}
+
+ul.mini-list-container .img-qty-placer img.img-item {
+    aspect-ratio: 1 / 1;
+    height: var(--img-placer-height);
+}
+
+ul.mini-list-container .img-qty-placer .counter {
+    aspect-ratio: 1 / 1; /* the height will be the same as the width */
+    align-content: center;
+    background-color: var(--color-3);
+    font-size: calc(var(--counter-extent) - var(--counter-pad));
+    font-weight: 700;
+    text-align: center;
+    width: var(--counter-extent);
+
+    top: -8px;
+    left: calc(var(--img-placer-height) - var(--counter-extent) + 8px);
+    position: absolute;
+}
+
+ul.mini-list-container .txt-const {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 180px;
+}
+
+/* TEXTS */
+ul.mini-list-container .txt-const :is(p) {
+    margin: 0;
+}
+
+ul.mini-list-container .txt-const p.price {
+    text-align: right;
 }
 
 /* BODY */
@@ -305,6 +390,10 @@ header nav ul li {
 section.grid-display {
     gap: 16px;
     grid-template-columns: repeat(8, 1fr);
+}
+
+section.product-info {
+    margin-block: 48px;
 }
 
 /* product image */
