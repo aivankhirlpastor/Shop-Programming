@@ -233,15 +233,15 @@ label {
     text-align: center;
 }
 
-/* Flash Message Stylinf */
+/* Flash Message Styling */
 .toast-flash {
-    
     position: fixed;
     top: calc(70px + var(--main-pad-block));
     right: calc(var(--body-margin) + var(--main-pad-inline));
     z-index: 99;
 }
 
+/* to any element based text: a FLASH message */
 .toast-flash > * {
     border: 2px solid #00000022;
     background-color: #ffffffcc;
@@ -250,6 +250,7 @@ label {
     padding: 8px 16px;
     width: 250px;
 
+    /* GLASS EFFECT */
     box-shadow: 0 3px 3px #00000024;
     backdrop-filter: blur(5px) saturate(1280%) contrast(95%);
 }
@@ -311,7 +312,7 @@ label {
 /* mini list version */
 ul.mini-list-container {
     padding: 0;
-    list-style: none;
+    list-style: none; /* remove bullet points to all lists */
     position: relative;
 }
 
@@ -327,7 +328,7 @@ ul.mini-list-container .img-qty-placer {
     --counter-extent: 28px;
     --counter-pad: 8px;
 
-    position: relative;
+    position: relative; /* for quantity counter */
 }
 
 ul.mini-list-container .img-qty-placer img.img-item {
@@ -338,7 +339,9 @@ ul.mini-list-container .img-qty-placer img.img-item {
 ul.mini-list-container .img-qty-placer .counter {
     aspect-ratio: 1 / 1; /* the height will be the same as the width */
     align-content: center;
-    background-color: var(--color-3);
+    background-color: var(--color-4);
+    color: #FFFFFF;
+
     font-size: calc(var(--counter-extent) - var(--counter-pad));
     font-weight: 700;
     text-align: center;
@@ -349,6 +352,7 @@ ul.mini-list-container .img-qty-placer .counter {
     position: absolute;
 }
 
+/* texts container */
 ul.mini-list-container .txt-const {
     display: flex;
     flex-direction: column;
@@ -356,7 +360,7 @@ ul.mini-list-container .txt-const {
     width: 180px;
 }
 
-/* TEXTS */
+/* texts */
 ul.mini-list-container .txt-const :is(p) {
     margin: 0;
 }
