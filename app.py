@@ -42,6 +42,17 @@ def add_to_cart_action(mdl, product, qty):
             session.modified = True
 
             flash(f"({qty}) {product} added to cart.")
+
+            # key variables by item in order to show
+            key_var = {
+                product: {
+                    "author": mdl[product]["author"],
+                    "price": mdl[product]["price"],
+                    "quantity": qty,
+                }
+            }
+
+            panel_access_by_item(key_var)
         else:
             flash(f"({product}) Item was already in cart.")
             
@@ -49,10 +60,35 @@ def add_to_cart_action(mdl, product, qty):
         # out of stock message
         flash(f"Sorry, but {product} ran out of stock.")
 
+# panel access key function
+def panel_access_by_item(a):
+    # Types
+    # 0 = mini-list (Show Items)
+    key = {
+        "show": True,
+        "type": "show_added_item",
+        "by": {}
+    }
+
+    for name, item in a.items():
+        # Get Each of
+        key["by"][name] = {
+            "album_name": name,
+            "author": item["author"],
+            "price": item["price"] * item["quantity"],
+            "quantity": item["quantity"]
+        }
+
+    return key
+
 # ROUTES <------------------->
 @app.route("/")
 def index():
     load_models = load_data_products()
+
+    # access to show a side panel
+    # key_param = panel_access_by_item(1)
+    # print(key_param['show'])
 
     return render_template("index.html", models = load_models)
 
@@ -106,8 +142,9 @@ def add_to_cart(m_value, product_name, input_selector, pole_end):
 
         # 2. Initiate an add to cart action.
         add_to_cart_action(model, product_name, quantity)
-    except:
+    except Exception as e:
         flash("We could not add that item. Please enter a number in integer only.")
+        raise Exception(e)
 
     # A pole_end is just another way whether to redirect the user back into grid display page after the action.
     # These pattern must correspond to the pole_end as string.
