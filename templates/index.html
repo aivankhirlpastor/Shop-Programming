@@ -20,8 +20,8 @@
             <button type="submit">     Visit     </button>
         </form>
 
-        {% with panel = panel_params %}
-            <p>{{ panel['cart'] }}</p>
+        {% if panel_params %}
+            <p>{{ panel_params['cart'] }}</p>
             <div id="panel-frame">
                 <h3>Item Added</h3>
                 <hr>
@@ -48,16 +48,37 @@
 
                     </li>
                 </ul>
-                <button type="button">Continue Shopping</button>
-                <button type="button" class="outlined">View My Cart</button>
+                <div class="btn-stack-inline">
+                    <button type="button" id="btn-continued">Continue Shopping</button>
+                    <button type="button" class="outlined">View My Cart</button>
+                </div>
             </div>
-        {% endwith %}
+            <div class="black-overlay"></div>
 
-        <script>
-            setTimeout(() => {
-                document.getElementById("panel-frame").classList.add("appear");
-            }, 100);
-        </script>
+            <script>
+                function closure() {
+                    panel.classList.remove("appear");
+                    
+                    // After the transform effect, trigger in 500 ms delay
+                    setTimeout(() => {
+                        panel.remove();
+                        blackOverlay.remove();
+                    }, 500);
+                }
+
+                const panel = document.getElementById("panel-frame");
+                const blackOverlay = document.querySelector(".black-overlay")
+
+                // prevents automatic appear
+                setTimeout(() => {
+                    panel.classList.add("appear");
+                }, 3);
+
+                document.getElementById("btn-continued").addEventListener("click", closure);
+                blackOverlay.addEventListener("click", closure);
+            </script>
+        {% endif %}
+
 
     </body>
 {% endblock %}
