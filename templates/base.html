@@ -21,5 +21,64 @@
     </header>
     <main class="grid-layout">{% block content %}{% endblock %}</main>
     <footer>@ 2026 The Music Shop.</footer>
+
+    {% if key_param and key_param["show"] == True %}
+        <p>{{ key_param['show'] }}</p>
+        <div id="panel-frame">
+            <h3>Item Added</h3>
+            <hr>
+            <ul class="mini-list-container">
+
+                <!-- list per item -->
+                <li class="mini-list-item">
+
+                    <!-- I: Image and Quantity -->
+                    <div class="img-qty-placer">
+                        <img class="img-item">
+                        <span class="counter">2</span>
+                    </div>
+
+                    <!-- II: Name, Author, and Price -->
+                    <div class="txt-const">
+                        <div class="name-author">
+                            <span class="emphasise">Amazing</span>
+                            <p>Author</p>
+                        </div>
+                        <!-- Price -->
+                        <p class="price">$19.00</p>
+                    </div>
+
+                </li>
+            </ul>
+            <div class="btn-stack-inline">
+                <button type="button" id="btn-continued">Continue Shopping</button>
+                <button type="button" class="outlined" onclick="location.href = `{{ url_for('cart') }}`">View My Cart</button>
+            </div>
+        </div>
+        <div class="black-overlay"></div>
+
+        <script>
+            function closure() {
+                panel.classList.remove("appear");
+                    
+                // After the transform effect, trigger in 500 ms delay
+                setTimeout(() => {
+                    panel.remove();
+                    blackOverlay.remove();
+                }, 500);
+            }
+
+            const panel = document.getElementById("panel-frame");
+            const blackOverlay = document.querySelector(".black-overlay")
+
+            // prevents automatic appear
+            setTimeout(() => {
+                panel.classList.add("appear");
+            }, 3);
+
+            document.getElementById("btn-continued").addEventListener("click", closure);
+            blackOverlay.addEventListener("click", closure);
+        </script>
+    {% endif %}
 </body>
 </html>
