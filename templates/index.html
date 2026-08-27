@@ -4,8 +4,22 @@
 
 {% block content %}
     <body>
-        <h2>Welcome to Music Shop!</h2>
-        <p>Columns</p>
+        <section id="static-banner">
+            <!-- Filled Up Image in the Entire Section -->
+            <img>
+            <div>
+                <h3>Forever</h3>
+                <p>1</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>Shop By Categories!</h2>
+            <a href="{{ url_for('category', genre = 'ambience') }}">Ambience</a>
+            <a href="{{ url_for('category', genre = 'acoustic') }}">Acoustic</a>
+            <a href="{{ url_for('category', genre = 'classical') }}">Classical</a>
+            <a href="{{ url_for('category', genre = 'lo-fi') }}">Lo-Fi</a>
+        </section>
 
         <form action="{{ url_for('visit') }}" method="post">
             

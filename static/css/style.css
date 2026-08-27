@@ -380,6 +380,11 @@ main {
     padding: var(--main-pad-block) var(--main-pad-inline);
 }
 
+img {
+    object-fit: cover;
+    object-position: center;
+}
+
 /* =============== HEADER =============== */
 header {
     align-items: center;
@@ -419,6 +424,31 @@ header nav ul li {
     display: inline;
     margin-inline: 18px;
 }
+
+/* ======== INDEX PAGE ======== */
+section#static-banner {
+    --banner-height: 300px;
+
+    background-color: var(--color-3);
+    margin-block: 30px;
+    position: relative;
+    width: 100%;
+    height: 300px;
+}
+
+section#static-banner > img {
+    /* aspect-ratio: 25 / 9; */
+    width: 100%;
+    height: var(--banner-height);
+    background-color: #475cfb;
+}
+
+section#static-banner > div {
+    bottom: 0;
+    position: absolute;
+    width: 100%;
+}
+
 
 /* ======== PRODUCT INFO PAGE ======== */
 
