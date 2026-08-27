@@ -132,6 +132,13 @@ def panel_access_from_flash():
 def index():
     load_models = load_data_products()
 
+    # blank {} is for the album items
+    segment_modules = {
+        "Latest Release": {},
+        "Featured": {},
+        "Pre-Order": {}
+    }
+
     # access to show a side panel
     # key_param = panel_access_by_item(1)
     # print(key_param['show'])
