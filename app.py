@@ -265,6 +265,7 @@ def category(genre):
     model = load_data_products()
     stored_models = {}
     cart = session.get("cart", {})
+    key = panel_access_from_flash()
 
     # Get all the products based on the genre given.
     for album_name, u in model.items():
@@ -278,7 +279,7 @@ def category(genre):
         abort(404)
 
     return render_template("item_genre.html", g = genre,
-                           imported_data = stored_models, cart = cart)
+                           imported_data = stored_models, cart = cart, key_param = key)
 
 @app.route("/cart")
 def cart():
