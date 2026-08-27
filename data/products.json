@@ -26,14 +26,14 @@
         "price": 39.99,
         "stock": 20
     },
-    "I'm Not Cryin'": {
-        "author": "Ellyster P.",
-        "model": "312817745129",
-        "label": "-",
-        "tracks": 1,
-        "genre": "Electronic",
-        "price": 12.49,
-        "stock": 24
+    "Echoes": {
+        "author": "Luke O.",
+        "model": "310867917310",
+        "label": "'For Me' Soundtrack",
+        "tracks": 5,
+        "genre": "Ambience",
+        "price": 17.99,
+        "stock": 17
     },
     "West Country's Mankind": {
         "author": "Richard Tyson",
@@ -52,6 +52,51 @@
         "genre": "Acoustic",
         "price": 29.99,
         "stock": 4
+    },
+    "Mozart's Theme": {
+        "author": "Faustine Lizon",
+        "model": "369910418589",
+        "label": "-",
+        "tracks": 1,
+        "genre": "Classic",
+        "price": 12.99,
+        "stock": 5
+    },
+    "The Lines": {
+        "author": "Elizabeth R.",
+        "model": "314186107624",
+        "label": "Aires Air Original Track",
+        "tracks": 4,
+        "genre": "Classic",
+        "price": 9.99,
+        "stock": 11
+    },
+    "Fantasia Winter": {
+        "author": "Zuucschenci L.",
+        "model": "333861402300",
+        "label": "Classic FM Tracks",
+        "tracks": 4,
+        "genre": "Classic",
+        "price": 13.49,
+        "stock": 6
+    },
+    "A Time Of Night": {
+        "author": "Rose Wellington",
+        "model": "309511473296",
+        "label": "-",
+        "tracks": 1,
+        "genre": "Classic",
+        "price": 13.99,
+        "stock": 10
+    },
+    "Zen": {
+        "author": "Ben Laurache",
+        "model": "377661497021",
+        "label": "NoteLive Motion",
+        "tracks": 3,
+        "genre": "Lo-Fi",
+        "price": 25.49,
+        "stock": 2
     },
     "The Key To Withstand": {
         "author": "Oblong Communion",
