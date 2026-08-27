@@ -23,62 +23,82 @@
     <footer>@ 2026 The Music Shop.</footer>
 
     {% if key_param and key_param["show"] == True %}
-        <p>{{ key_param['show'] }}</p>
-        <div id="panel-frame">
-            <h3>Item Added</h3>
-            <hr>
-            <ul class="mini-list-container">
+        <!-- <p>{{ key_param['show'] }}</p> -->
 
-                <!-- list per item -->
-                <li class="mini-list-item">
+        {% with by_item = key_param["by"] %}
+            <div id="panel-frame">
+                <h3>Item Added</h3>
+                <hr>
+                <ul class="mini-list-container">
+                    {% for _, b in by_item.items() %}
 
-                    <!-- I: Image and Quantity -->
-                    <div class="img-qty-placer">
-                        <img class="img-item">
-                        <span class="counter">2</span>
-                    </div>
+                        <!-- list per item -->
+                        <li class="mini-list-item">
 
-                    <!-- II: Name, Author, and Price -->
-                    <div class="txt-const">
-                        <div class="name-author">
-                            <span class="emphasise">Amazing</span>
-                            <p>Author</p>
-                        </div>
-                        <!-- Price -->
-                        <p class="price">$19.00</p>
-                    </div>
+                            <!-- I: Image and Quantity -->
+                            <div class="img-qty-placer">
+                                <img class="img-item">
+                                <span class="counter">{{ b["quantity"] }}</span>
+                            </div>
 
-                </li>
-            </ul>
-            <div class="btn-stack-inline">
-                <button type="button" id="btn-continued">Continue Shopping</button>
-                <button type="button" class="outlined" onclick="location.href = `{{ url_for('cart') }}`">View My Cart</button>
+                            <!-- II: Name, Author, and Price -->
+                            <div class="txt-const">
+                                <div class="name-author">
+                                    <span class="emphasise">{{ b["name"] }}</span>
+                                    <p>{{ b["author"] }}</p>
+                                </div>
+                                <!-- Price -->
+                                <p class="price">${{ '%.2f' % b["total_price"] }}</p>
+                            </div>
+
+                        </li>
+                    {% endfor %}
+                </ul>
+                <div class="btn-stack-inline">
+                    <button type="button" id="btn-continued">Continue Shopping</button>
+                    <button type="button" class="outlined" onclick="location.href = `{{ url_for('cart') }}`">View My Cart</button>
+                </div>
             </div>
-        </div>
-        <div class="black-overlay"></div>
+            <div class="black-overlay"></div>
 
-        <script>
-            function closure() {
-                panel.classList.remove("appear");
-                    
-                // After the transform effect, trigger in 500 ms delay
+            <script>
+                function closure() {
+                    panel.classList.remove("appear");
+                            
+                    // After the transform effect, trigger in 500 ms delay
+                    setTimeout(() => {
+                        panel.remove();
+                        blackOverlay.remove();
+                    }, 500);
+                }
+
+                const flashChildren = document.querySelector(".toast-flash").children; // select all flash messages
+                const panel = document.getElementById("panel-frame");
+                const blackOverlay = document.querySelector(".black-overlay")
+
+                // removing Flash Message with raw prompts
+                for (let m = flashChildren.length - 1; m >= 0; m--) {
+                    // matching prompt pattern
+                    if (flashChildren[m].textContent.match(/%.show_panel/i)) {
+                        // remove the adjacent flash message first
+                        if (flashChildren[m + 1]) {
+                            flashChildren[m + 1].remove();
+                        }
+
+                        // then remove the message where it is tested via match pattern
+                        flashChildren[m].remove();
+                    }
+                }
+
+                // prevents automatic appear
                 setTimeout(() => {
-                    panel.remove();
-                    blackOverlay.remove();
-                }, 500);
-            }
+                    panel.classList.add("appear");
+                }, 3);
 
-            const panel = document.getElementById("panel-frame");
-            const blackOverlay = document.querySelector(".black-overlay")
-
-            // prevents automatic appear
-            setTimeout(() => {
-                panel.classList.add("appear");
-            }, 3);
-
-            document.getElementById("btn-continued").addEventListener("click", closure);
-            blackOverlay.addEventListener("click", closure);
-        </script>
+                document.getElementById("btn-continued").addEventListener("click", closure);
+                blackOverlay.addEventListener("click", closure);
+            </script>
+        {% endwith %}
     {% endif %}
 </body>
 </html>
