@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash, abort
+from flask import Flask, render_template, request, redirect, url_for, session, flash, get_flashed_messages, abort
 import json, datetime, sqlite3, re
 import os
 import sys
@@ -52,7 +52,8 @@ def add_to_cart_action(mdl, product, qty):
                 }
             }
 
-            panel_access_by_item(key_var)
+            flash("%.show_panel;")
+            flash(key_var) # critical for side panel key access
         else:
             flash(f"({product}) Item was already in cart.")
             
@@ -61,25 +62,70 @@ def add_to_cart_action(mdl, product, qty):
         flash(f"Sorry, but {product} ran out of stock.")
 
 # panel access key function
-def panel_access_by_item(a):
-    # Types
-    # 0 = mini-list (Show Items)
-    key = {
+def panel_access_from_flash():
+    flash_syntax = get_flashed_messages() # as flash message
+    post_key_access = {
         "show": True,
-        "type": "show_added_item",
+        "type": "show_specific_items", # for most of this project
         "by": {}
     }
 
-    for name, item in a.items():
-        # Get Each of
-        key["by"][name] = {
-            "album_name": name,
-            "author": item["author"],
-            "price": item["price"] * item["quantity"],
-            "quantity": item["quantity"]
-        }
+    # print(35150, "o", flash_syntax)
 
-    return key
+    try:
+        # regexp compilation
+        show_panel_pattern = re.compile(r'%.show_panel', re.IGNORECASE)
+
+        # execute section if contains flash message
+        for m in range(len(flash_syntax)):
+            matching_var = show_panel_pattern.search(str(flash_syntax[m]))
+
+            # matching pair to proceed for returned key access
+            if not matching_var:
+                continue
+
+            # get the dictionary after "%.show_panel" message 
+            by_pair = flash_syntax[m + 1]
+
+            print(True, "matched")
+            print(by_pair)
+
+            # Check if the adjacent obj is dictionary:
+            if type(by_pair) is dict:
+                for album_name, a in by_pair.items():
+                    post_key_access["by"][album_name] = {
+                        "author": a["author"],
+                        "image": None,
+                        "name": album_name,
+                        "quantity": a["quantity"],
+                        "total_price": a["price"] * a["quantity"],
+                    }
+
+                return post_key_access
+
+    except Exception as e:
+        print("Failed to initiate side panel order:", e)
+        return None
+
+# --------------------------------------
+
+# POST variable declaration
+# @app.before_request
+# def before_request_function():
+#     global key
+    
+#     key = {
+#         "show": False, # replaceable by key-access function
+#         "type": 0,
+#         "by": {}
+#     }
+
+#     print(key)
+
+# @app.after_request
+# def after_request_function(r):
+#     print("HEADING AFTER REQUEST", r.headers)
+#     return r
 
 # ROUTES <------------------->
 @app.route("/")
@@ -110,6 +156,8 @@ def product_information(m):
         abort(404)
 
     cart = session.get("cart", {})
+    key = panel_access_from_flash()
+    print("135", key)
 
     # Used for some modification for if this product is in the cart.
     if product_name in cart:
@@ -120,7 +168,7 @@ def product_information(m):
                            product_name = product_name, product = pack_data,
                            already_in_cart = (product_name in cart),
                            item_in_hold = current_item if product_name in cart else False,
-                           in_stock = (models[product_name]["stock"] > 0))
+                           in_stock = (models[product_name]["stock"] > 0), key_param = key)
 
 # Add to Cart Route
 @app.route("/add_to_cart/<int:m_value><string:product_name>/<string:input_selector>/<pole_end>", methods = ["POST"])
