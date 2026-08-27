@@ -33,7 +33,7 @@
         "tracks": 1,
         "genre": "Electronic",
         "price": 12.49,
-        "stock": 0
+        "stock": 24
     },
     "West Country's Mankind": {
         "author": "Richard Tyson",
@@ -69,6 +69,6 @@
         "tracks": 8,
         "genre": "Lo-Fi",
         "price": 40.49,
-        "stock": 0
+        "stock": 7
     }
 }
