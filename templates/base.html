@@ -17,12 +17,16 @@
                 <li><a>5</a></li>
             </ul>
         </nav>
-        <a href="{{ url_for('cart') }}">My Cart</a>
+        <a href="{{ url_for('cart') }}">
+            <span>My Cart</span>
+            <span class="counter">{{ c }}</span>
+        </a>
     </header>
     <main class="grid-layout">{% block content %}{% endblock %}</main>
     <footer>@ 2026 The Music Shop.</footer>
 
     {% if key_param and key_param["show"] == True %}
+        <!-- Side Panel -->
         <!-- <p>{{ key_param['show'] }}</p> -->
 
         {% with by_item = key_param["by"] %}
