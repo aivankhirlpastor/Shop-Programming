@@ -2,6 +2,7 @@
     "The Usher's Place": {
         "author": "The STARS",
         "id": "918 3048 A",
+        "release_date": "02-03-2026",
         "label": "Universal Audio Company",
         "tracks": 12,
         "genre": "Ambience",
@@ -11,6 +12,7 @@
     "Little Life": {
         "author": "Michell Park",
         "id": "941 4101 A",
+        "release_date": "01-05-2026",
         "label": "Lifestyle Community",
         "tracks": 14,
         "genre": "Ambience",
@@ -20,6 +22,7 @@
     "Lives In Nature": {
         "author": "Zeenchenburg Z.",
         "id": "980 1566 A",
+        "release_date": "30-04-2025",
         "label": "-",
         "tracks": 6,
         "genre": "Ambience",
@@ -29,6 +32,7 @@
     "Echoes": {
         "author": "Luke O.",
         "id": "900 3170 A",
+        "release_date": "30-02-2026",
         "label": "'For Me' Soundtrack",
         "tracks": 5,
         "genre": "Ambience",
@@ -38,6 +42,7 @@
     "West Country's Mankind": {
         "author": "Richard Tyson",
         "id": "979 4428 D",
+        "release_date": "17-04-2026",
         "label": "-",
         "tracks": 4,
         "genre": "Acoustic",
@@ -47,6 +52,7 @@
     "Adreline Soundtrack": {
         "author": "Dynamic Tussell",
         "id": "920 2406 D",
+        "release_date": "13-07-2025",
         "label": "Universal Audio Company",
         "tracks": 19,
         "genre": "Acoustic",
@@ -56,6 +62,7 @@
     "Mozart's Theme": {
         "author": "Faustine Lizon",
         "id": "910 3937 D",
+        "release_date": "22-09-2025",
         "label": "-",
         "tracks": 1,
         "genre": "Classical",
@@ -65,6 +72,7 @@
     "The Lines": {
         "author": "Elizabeth R.",
         "id": "910 3944 C",
+        "release_date": "09-01-2026",
         "label": "Aires Air Original Track",
         "tracks": 4,
         "genre": "Classical",
@@ -74,6 +82,7 @@
     "Fantasia Winter": {
         "author": "Zuucschenci L.",
         "id": "995 0169 C",
+        "release_date": "06-05-2026",
         "label": "Classic FM Tracks",
         "tracks": 4,
         "genre": "Classical",
@@ -83,6 +92,7 @@
     "A Time Of Night": {
         "author": "Rose Wellington",
         "id": "999 9141 C",
+        "release_date": "12-10-2025",
         "label": "-",
         "tracks": 1,
         "genre": "Classical",
@@ -92,6 +102,7 @@
     "Zen": {
         "author": "Ben Laurache",
         "id": "948 1900 H",
+        "release_date": "08-05-2026",
         "label": "NoteVile Motion",
         "tracks": 3,
         "genre": "Lo-Fi",
@@ -101,6 +112,7 @@
     "The Key To Withstand": {
         "author": "Oblong Communion",
         "id": "960 5004 H",
+        "release_date": "17-11-2024",
         "label": "The Motel",
         "tracks": 3,
         "genre": "Lo-Fi",
@@ -110,6 +122,7 @@
     "Lo-Fi Beats Study Time": {
         "author": "Hi-Tech Companion",
         "id": "961 1013 H",
+        "release_date": "01-03-2026",
         "label": "Road Rush Company",
         "tracks": 8,
         "genre": "Lo-Fi",
