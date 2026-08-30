@@ -20,9 +20,9 @@
 
         <section class="grid grid-display item-display">
             {% for album_name, i in imported_data.items() %}
-                <div class="item-card" id="card-{{ i['model'] }}">
+                <div class="item-card" id="card-{{ i['id'] }}">
                     <!-- Row I: Clickable Info -->
-                    <a href="{{ url_for('product_information', m = i['model']) }}">
+                    <a href="{{ url_for('product_information', id = i['id']) }}">
                         <!-- I: Album Image -->
                         <img class="img-item">
         
@@ -35,12 +35,12 @@
                     </a>
 
                     <!-- Row II: Form -->
-                    <form action="{{ url_for('add_to_cart', m_value = i['model'], product_name = album_name, input_selector = 'i-quantity-' + i['model'], pole_end = '1%' + g) }}" method="post" class="add-to-cart-action">
+                    <form action="{{ url_for('add_to_cart', catalogue_id = i['id'], product_name = album_name, input_selector = 'i-quantity-' + i['id'], pole_end = '1%' + g) }}" method="post" class="add-to-cart-action">
                         {% if i['stock'] > 0 %}
-                            <input type="number" class="emit-stock-status {% if 6 > i['stock'] and i['stock'] > 0 %}low{% elif 1 > i['stock'] %}none{% endif %}" name="i-quantity-{{ i['model'] }}" id="i-quantity-{{ i['model'] }}" min="1" max="{% if 5 > i['stock'] %}{{ i['stock'] }}{% else %}5{% endif %}" title="Stock left: {{ i['stock'] }}" value="{% if album_name in cart %}{{ cart[album_name]['quantity'] }}{% else %}1{% endif %}">
+                            <input type="number" class="emit-stock-status {% if 6 > i['stock'] and i['stock'] > 0 %}low{% elif 1 > i['stock'] %}none{% endif %}" name="i-quantity-{{ i['id'] }}" id="i-quantity-{{ i['id'] }}" min="1" max="{% if 5 > i['stock'] %}{{ i['stock'] }}{% else %}5{% endif %}" title="Stock left: {{ i['stock'] }}" value="{% if album_name in cart %}{{ cart[album_name]['quantity'] }}{% else %}1{% endif %}">
                             <button type="submit" title="{% if album_name not in cart %}Add to Cart{% endif %}" {% if album_name in cart %}disabled{% endif %}>Add</button>
                         {% else %}
-                            <input type="number" class="emit-stock-status none" name="i-quantity-{{ i['model'] }}" id="i-quantity-{{ i['model'] }}" min="1" max="5" value="{% if album_name in cart %}{{ cart[album_name]['quantity'] }}{% else %}1{% endif %}" disabled>
+                            <input type="number" class="emit-stock-status none" name="i-quantity-{{ i['id'] }}" id="i-quantity-{{ i['id'] }}" min="1" max="5" value="{% if album_name in cart %}{{ cart[album_name]['quantity'] }}{% else %}1{% endif %}" disabled>
                             <button type="submit" title="Out of Stock" disabled>OOS</button>
                         {% endif %}
 

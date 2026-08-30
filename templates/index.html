@@ -58,9 +58,9 @@
         <form action="{{ url_for('visit') }}" method="post">
             
             <select name="item_selector" id="item_selector">
-                {% for model_name, acc in models.items() %}
+                {% for album_name, acc in albums.items() %}
                     <option style="font-size: 18px;" value="{{ acc['model'] }}">
-                        {{ model_name }} - ${{ '%.2f' % acc["price"] }} <b>({{ acc["stock"] }})</b>
+                        {{ album_name }} - ${{ '%.2f' % acc["price"] }} <b>({{ acc["stock"] }})</b>
                     </option>
                 {% endfor %}
             </select>

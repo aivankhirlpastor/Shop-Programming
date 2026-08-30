@@ -30,7 +30,7 @@ def add_to_cart_action(mdl, product, qty):
         if product not in cart: # Check whether the item is in cart already
             cart[product] = {
                 "author": mdl[product]["author"],
-                "model": mdl[product]["model"],
+                "id": mdl[product]["id"],
                 "label": mdl[product]["label"],
                 "genre": mdl[product]["genre"],
                 "price": mdl[product]["price"],
@@ -107,6 +107,15 @@ def panel_access_from_flash():
         print("Failed to initiate side panel order:", e)
         return None
 
+def cart_amount():
+    cart = session.get("cart", {})
+    count = 0
+
+    for _, n in cart.items():
+        count += 1
+
+    return count
+
 # --------------------------------------
 
 # POST variable declaration
@@ -130,7 +139,7 @@ def panel_access_from_flash():
 # ROUTES <------------------->
 @app.route("/")
 def index():
-    load_models = load_data_products()
+    load_albums = load_data_products()
 
     # blank {} is for the album items
     segment_modules = {
@@ -139,23 +148,27 @@ def index():
         "Pre-Order": {}
     }
 
+    # c = cart_amount()
+
+
     # access to show a side panel
     # key_param = panel_access_by_item(1)
     # print(key_param['show'])
 
-    return render_template("index.html", models = load_models)
+    return render_template("index.html", albums = load_albums,
+                           segment_modules = segment_modules)
 
-@app.route("/category/item/<int:m>")
-def product_information(m):
-    models = load_data_products()
+@app.route("/category/item/<id>")
+def product_information(id):
+    albums = load_data_products()
     pack_data = None
 
-    # Check whether the variable "m" matches with each of the model int.
-    for items, mv in models.items():
+    # Check whether the variable "id" matches with each of the album's ID.
+    for items, mv in albums.items():
         # print(int(m) == int(mv["model"]))
-        if int(m) == int(mv["model"]):
+        if id.lower() == mv["id"].lower():
             # Product
-            product_name = items
+            album_name = items
             pack_data = mv
 
             break
@@ -167,36 +180,36 @@ def product_information(m):
     print("135", key)
 
     # Used for some modification for if this product is in the cart.
-    if product_name in cart:
-        current_item = cart[product_name]
+    if album_name in cart:
+        current_item = cart[album_name]
 
     # If the condition was passed, move on to prepare for the outputs.
     return render_template("product_info.html",
-                           product_name = product_name, product = pack_data,
-                           already_in_cart = (product_name in cart),
-                           item_in_hold = current_item if product_name in cart else False,
-                           in_stock = (models[product_name]["stock"] > 0), key_param = key)
+                           product_name = album_name, product = pack_data,
+                           already_in_cart = (album_name in cart),
+                           item_in_hold = current_item if album_name in cart else False,
+                           in_stock = (albums[album_name]["stock"] > 0), key_param = key)
 
 # Add to Cart Route
-@app.route("/add_to_cart/<int:m_value><string:product_name>/<string:input_selector>/<pole_end>", methods = ["POST"])
-def add_to_cart(m_value, product_name, input_selector, pole_end):
-    model = load_data_products()
+@app.route("/add_to_cart/<catalogue_id>/<string:product_name>/<string:input_selector>/<pole_end>", methods = ["POST"])
+def add_to_cart(catalogue_id, product_name, input_selector, pole_end):
+    albums = load_data_products()
 
     try:
         # validate whether the number have entered a number
         quantity = int(request.form[input_selector])
         
-        # 1. Check whether the variable "m" matches with each of the model int.
-        for i, mvt in model.items():
+        # 1. Check whether the variable "id" matches with each of the album's ID.
+        for i, mvt in albums.items():
             # If found and matched
-            if int(m_value) == int(mvt["model"]):            
+            if catalogue_id.lower() == mvt["id"].lower():            
                 break
         else:
             # If not... (INVALID)
             return "Item not found."
 
         # 2. Initiate an add to cart action.
-        add_to_cart_action(model, product_name, quantity)
+        add_to_cart_action(albums, product_name, quantity)
     except Exception as e:
         flash("We could not add that item. Please enter a number in integer only.")
         raise Exception(e)
@@ -213,15 +226,15 @@ def add_to_cart(m_value, product_name, input_selector, pole_end):
     if type(pole_end) == str and pole_end[0] == "1" and redirect_condition:
         # verify if there is an existing genre
         try:
-            for y in model.items():
+            for y in albums.items():
                 if str(genre_condition[0]).lower() == str(y[1]["genre"]).lower():
                     return redirect(url_for("category", genre = str(genre_condition[0]).lower()))                
         except Exception as err:
             print("Something went wrong. We can't transfer you back to the current genre of page:", err)
 
-    return redirect(url_for("product_information", m = m_value))
+    return redirect(url_for("product_information", id = catalogue_id))
 
-@app.route("/remove_item/<int:ctg_number>/<string:album_name>", methods = ["POST"])
+@app.route("/remove_item/<ctg_number>/<string:album_name>", methods = ["POST"])
 def remove_item(ctg_number, album_name):
     cart = session.get("cart", {})
 
@@ -246,7 +259,7 @@ def apply_changes():
         # value validation
         try:
             max_quantity = album_products[n]["stock"] if album_products[n]["stock"] < 5 else 5
-            qty = int(request.form[f"i-invn-{items['model']}"])
+            qty = int(request.form[f"i-invn-{items['id']}"])
 
             if 0 < qty <= max_quantity and items['quantity'] != qty:
                 cart[n]["quantity"] = (qty)
@@ -259,7 +272,7 @@ def apply_changes():
         except Exception as e:
             print(e)
             flash(f"({n}) Please enter a number to adjust that quantity.")
-            # raise ValueError(f"Input {items['model']} is missing its value.")
+            # raise ValueError(f"Input {items['id']} is missing its value.")
 
     session["cart"] = cart
     session.modified = True
@@ -269,24 +282,24 @@ def apply_changes():
 
 @app.route("/category/item-<string:genre>")
 def category(genre):
-    model = load_data_products()
-    stored_models = {}
+    data_album = load_data_products()
+    stored_data = {}
     cart = session.get("cart", {})
     key = panel_access_from_flash()
 
     # Get all the products based on the genre given.
-    for album_name, u in model.items():
+    for album_name, u in data_album.items():
         # One product's genre matches to <genre> adds to the dictionary.
         if str(genre).lower() == str(u["genre"]).lower():
-            stored_models[album_name] = u
-            stored_models[album_name]["in_cart"] = True if album_name in cart else False
+            stored_data[album_name] = u
+            stored_data[album_name]["in_cart"] = True if album_name in cart else False
 
     # Abort if the dictionary is empty.
-    if stored_models == {}:
+    if stored_data == {}:
         abort(404)
 
     return render_template("item_genre.html", g = genre,
-                           imported_data = stored_models, cart = cart, key_param = key)
+                           imported_data = stored_data, cart = cart, key_param = key)
 
 @app.route("/cart")
 def cart():

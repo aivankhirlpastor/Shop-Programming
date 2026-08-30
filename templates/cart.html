@@ -38,7 +38,7 @@
 
                             <div class="block-name-author">
                                 <!-- Album Name and Author -->
-                                <h3><a href="{{ url_for('product_information', m = item['model']) }}">{{ album_name }}</a></h3>
+                                <h3><a href="{{ url_for('product_information', id = item['id']) }}">{{ album_name }}</a></h3>
                                 <p class="author">{{ item['author'] }}</p>
                             </div>
 
@@ -47,14 +47,14 @@
 
                         <div class="quantity">
                             <!-- Editable Quantity Input -->
-                            <label for="e-{{ item['model'] }}">QUANTITY</label>
-                            <input type="number" name="e-{{ item['model'] }}" id="e-{{ item['model'] }}" data-ctgnumber="{{ item['model'] }}" min="1" max="{% if 5 > albums[album_name]['stock'] and albums[album_name]['stock'] > 0 %}{{ albums[album_name]['stock'] }}{% else %}5{% endif %}" value="{{ item['quantity'] }}">
+                            <label for="e-{{ item['id'] }}">QUANTITY</label>
+                            <input type="number" name="e-{{ item['id'] }}" id="e-{{ item['id'] }}" data-ctgnumber="{{ item['id'] }}" min="1" max="{% if 5 > albums[album_name]['stock'] and albums[album_name]['stock'] > 0 %}{{ albums[album_name]['stock'] }}{% else %}5{% endif %}" value="{{ item['quantity'] }}">
                         </div>
 
                         <div class="price-action">
                             <!-- Price -->
-                            <p class="price recalculation emphasise" data-unitprice="{{ albums[album_name]['price'] }}" id="atr-price-{{ item['model'] }}">${{ '%.2f' % (item['quantity'] * item['price']) }}</p>
-                            <form class="delete-item" action="{{ url_for('remove_item', ctg_number = item['model'], album_name = album_name) }}" method="post">
+                            <p class="price recalculation emphasise" data-unitprice="{{ albums[album_name]['price'] }}" id="atr-price-{{ item['id'] }}">${{ '%.2f' % (item['quantity'] * item['price']) }}</p>
+                            <form class="delete-item" action="{{ url_for('remove_item', ctg_number = item['id'], album_name = album_name) }}" method="post">
                                 <button type="submit" class="rounded squared destructive">D</button>
                             </form>
                         </div>
@@ -88,7 +88,7 @@
         <div id="config-bottom-bar">
             <form action="{{ url_for('apply_changes') }}" method="post" id="target-form">
                 {% for n, i in cart.items() %}
-                    <input name="i-invn-{{ i['model'] }}" id="i-invn-{{ i['model'] }}" value="{{ i['quantity'] }}" style="display: none;">
+                    <input name="i-invn-{{ i['id'] }}" id="i-invn-{{ i['id'] }}" value="{{ i['quantity'] }}" style="display: none;">
                 {% endfor %}
                 <button type="submit" id="save-changes">Save Changes</button>
                 <button type="button" class="neutral outlined" id="cancel">Cancel</button>
