@@ -107,6 +107,60 @@ def panel_access_from_flash():
         print("Failed to initiate side panel order:", e)
         return None
 
+def index_album_modules():
+    ach = load_data_products()
+
+    ahr = {}
+    bhr = {}
+    chr = {}
+
+    day_released = 10
+    day_prereleased = 14
+    current_date = "20-04-2026"
+    date_pattern = re.compile(r'(\d{2})-(\d{2})-(\d{4})')
+
+    # [0] as first index, since it was a list
+    p_day, p_month, p_year = date_pattern.findall(current_date)[0]
+    # turning a string into integer
+    day, month, year = int(p_day), int(p_month), int(p_year)
+
+    for n, albm in ach.items():
+        album_id = albm["id"]
+        dz = albm["release_date"] # date
+
+        # "ID" segment pattern
+        id_prime_ptrn = re.compile(r'^\d{3}') # first segment
+        id_mid_ptrn = re.compile(r'\d{4}') # middle segment
+
+        # 'before' integer variable
+        pdx, pmx, pyx = date_pattern.findall(dz)[0]
+        pre_id_prime = id_prime_ptrn.findall(album_id)
+        pre_id_mid = id_mid_ptrn.findall(album_id)
+
+        # Turning string into integers to be calculatable
+        dx, mx, yx = int(pdx), int(pmx), int(pyx)
+        id_prime, id_mid = int(pre_id_prime[0]), int(pre_id_mid[0])
+
+        # latest release
+        if dx + day_released > day and mx >= month and yx >= year:
+            ahr[n] = albm
+
+        # featured > calculated value == remainder
+        elif (id_mid // day % 10) == (id_prime % 10):
+            bhr[n] = albm
+
+        # pre-released
+        elif dx - day_prereleased < day and mx <= month and yx <= year:
+            chr[n] = albm
+    
+    # print(re.sub(r"-", " ", current_date)) # 
+
+    # latest release (show until 14 days away)
+
+    return ahr, bhr, chr
+
+    
+
 def cart_amount():
     cart = session.get("cart", {})
     count = 0
@@ -140,21 +194,17 @@ def cart_amount():
 @app.route("/")
 def index():
     load_albums = load_data_products()
+    ar, br, cr = index_album_modules()
 
     # blank {} is for the album items
     segment_modules = {
-        "Latest Release": {},
-        "Featured": {},
-        "Pre-Order": {}
+        "Latest Release": ar,
+        "Featured": br,
+        "Pre-Order": cr
     }
 
+    print(segment_modules)
     # c = cart_amount()
-
-
-    # access to show a side panel
-    # key_param = panel_access_by_item(1)
-    # print(key_param['show'])
-
     return render_template("index.html", albums = load_albums,
                            segment_modules = segment_modules)
 
