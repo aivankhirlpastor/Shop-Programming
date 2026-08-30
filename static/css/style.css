@@ -325,8 +325,6 @@ ul.mini-list-container > li.mini-list-item {
 
 ul.mini-list-container .img-qty-placer {
     --img-placer-height: 100px;
-    --counter-extent: 28px;
-    --counter-pad: 8px;
 
     position: relative; /* for quantity counter */
 }
@@ -336,7 +334,10 @@ ul.mini-list-container .img-qty-placer img.img-item {
     height: var(--img-placer-height);
 }
 
-ul.mini-list-container .img-qty-placer .counter {
+.counter {
+    --counter-extent: 28px;
+    --counter-pad: 8px;
+
     aspect-ratio: 1 / 1; /* the height will be the same as the width */
     align-content: center;
     background-color: var(--color-4);
@@ -346,10 +347,15 @@ ul.mini-list-container .img-qty-placer .counter {
     font-weight: 700;
     text-align: center;
     width: var(--counter-extent);
+    position: absolute;
 
+    /* default value */
+    top: 0;
+}
+
+ul.mini-list-container .img-qty-placer .counter {
     top: -8px;
     left: calc(var(--img-placer-height) - var(--counter-extent) + 8px);
-    position: absolute;
 }
 
 /* texts container */
@@ -407,10 +413,17 @@ header a {
     color: var(--anchor-color);
     font-weight: 700;
     text-decoration: none;
+    position: relative;
 }
 
 header a:hover {
     color: var(--anchor-hover-color);
+}
+
+header a .counter {
+    background-color: var(--color-3);
+    top: -8px;
+    right: -8px;
 }
 
 header nav ul {
