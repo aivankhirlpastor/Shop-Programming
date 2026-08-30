@@ -1,7 +1,7 @@
 {
     "The Usher's Place": {
         "author": "The STARS",
-        "model": "341989599010",
+        "id": "918 3048 A",
         "label": "Universal Audio Company",
         "tracks": 12,
         "genre": "Ambience",
@@ -10,7 +10,7 @@
     },
     "Little Life": {
         "author": "Michell Park",
-        "model": "387105720863",
+        "id": "941 4101 A",
         "label": "Lifestyle Community",
         "tracks": 14,
         "genre": "Ambience",
@@ -19,7 +19,7 @@
     },
     "Lives In Nature": {
         "author": "Zeenchenburg Z.",
-        "model": "300612704927",
+        "id": "980 1566 A",
         "label": "-",
         "tracks": 6,
         "genre": "Ambience",
@@ -28,7 +28,7 @@
     },
     "Echoes": {
         "author": "Luke O.",
-        "model": "310867917310",
+        "id": "900 3170 A",
         "label": "'For Me' Soundtrack",
         "tracks": 5,
         "genre": "Ambience",
@@ -37,7 +37,7 @@
     },
     "West Country's Mankind": {
         "author": "Richard Tyson",
-        "model": "380781429665",
+        "id": "979 4428 D",
         "label": "-",
         "tracks": 4,
         "genre": "Acoustic",
@@ -46,7 +46,7 @@
     },
     "Adreline Soundtrack": {
         "author": "Dynamic Tussell",
-        "model": "355139801640",
+        "id": "920 2406 D",
         "label": "Universal Audio Company",
         "tracks": 19,
         "genre": "Acoustic",
@@ -55,44 +55,44 @@
     },
     "Mozart's Theme": {
         "author": "Faustine Lizon",
-        "model": "369910418589",
+        "id": "910 3937 D",
         "label": "-",
         "tracks": 1,
-        "genre": "Classic",
+        "genre": "Classical",
         "price": 12.99,
         "stock": 5
     },
     "The Lines": {
         "author": "Elizabeth R.",
-        "model": "314186107624",
+        "id": "910 3944 C",
         "label": "Aires Air Original Track",
         "tracks": 4,
-        "genre": "Classic",
+        "genre": "Classical",
         "price": 9.99,
         "stock": 11
     },
     "Fantasia Winter": {
         "author": "Zuucschenci L.",
-        "model": "333861402300",
+        "id": "995 0169 C",
         "label": "Classic FM Tracks",
         "tracks": 4,
-        "genre": "Classic",
+        "genre": "Classical",
         "price": 13.49,
         "stock": 6
     },
     "A Time Of Night": {
         "author": "Rose Wellington",
-        "model": "309511473296",
+        "id": "999 9141 C",
         "label": "-",
         "tracks": 1,
-        "genre": "Classic",
+        "genre": "Classical",
         "price": 13.99,
         "stock": 10
     },
     "Zen": {
         "author": "Ben Laurache",
-        "model": "377661497021",
-        "label": "NoteLive Motion",
+        "id": "948 1900 H",
+        "label": "NoteVile Motion",
         "tracks": 3,
         "genre": "Lo-Fi",
         "price": 25.49,
@@ -100,7 +100,7 @@
     },
     "The Key To Withstand": {
         "author": "Oblong Communion",
-        "model": "391928751095",
+        "id": "960 5004 H",
         "label": "The Motel",
         "tracks": 3,
         "genre": "Lo-Fi",
@@ -109,7 +109,7 @@
     },
     "Lo-Fi Beats Study Time": {
         "author": "Hi-Tech Companion",
-        "model": "372871069270",
+        "id": "961 1013 H",
         "label": "Road Rush Company",
         "tracks": 8,
         "genre": "Lo-Fi",
