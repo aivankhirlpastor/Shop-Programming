@@ -612,6 +612,9 @@ section.my-cart .panel-details {
     padding: 16px;
     grid-area: 1 / 6 / span 1 / 9;
     max-height: 300px;
+
+    position: sticky;
+    top: 75px;
 }
 
 section.my-cart .panel-details > #coupon-layout {
