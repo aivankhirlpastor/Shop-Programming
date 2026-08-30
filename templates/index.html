@@ -13,13 +13,47 @@
             </div>
         </section>
 
+        <h2>Shop By Categories!</h2>
         <section>
-            <h2>Shop By Categories!</h2>
             <a href="{{ url_for('category', genre = 'ambience') }}">Ambience</a>
             <a href="{{ url_for('category', genre = 'acoustic') }}">Acoustic</a>
             <a href="{{ url_for('category', genre = 'classical') }}">Classical</a>
             <a href="{{ url_for('category', genre = 'lo-fi') }}">Lo-Fi</a>
         </section>
+
+        {% for _, t in segment_modules.items() %}
+            <hr>
+            <h2>{{ _ }}</h2>
+            <section class="grid grid-display item-display">
+                <!-- for now -->
+                {% for album_name in range(4) %}
+                    <div class="item-card" id="card-model">
+                        <!-- Row I: Clickable Info -->
+                        <a href="">
+                            <!-- I: Album Image -->
+                            <img class="img-item">
+            
+                            <!-- II: Text Information -->
+                            <div class="album-txt-info">
+                                <div class="album-title emphasise">{{ album_name }}</div>
+                                <span class="author">{{ "Author" }}</span>
+                                <p class="price-track emphasise">${{ "%.2f" % 49 }}<span class="label">/EA</span></p>
+                            </div>
+
+                            <!-- Row II: Form -->
+                            <form action="" method="post" class="add-to-cart-action">
+                                <input type="number" class="emit-stock-status none" name="i-quantity-{{ album_name }}" id="i-quantity-{{ album_name }}" min="1" max="5" value="{% if album_name in cart %}{{ cart[album_name]['quantity'] }}{% else %}1{% endif %}" disabled>
+                                <button type="submit" title="Out of Stock" disabled>OOS</button>
+                            </form>
+                        </a>
+                    </div>
+
+
+                {% endfor %}
+
+            </section>
+        {% endfor %}
+
 
         <form action="{{ url_for('visit') }}" method="post">
             
