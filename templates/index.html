@@ -21,34 +21,36 @@
             <a href="{{ url_for('category', genre = 'lo-fi') }}">Lo-Fi</a>
         </section>
 
-        {% for _, t in segment_modules.items() %}
-            <hr>
-            <h2>{{ _ }}</h2>
+        {% for sg, t in segment_modules.items() %}
+            <!-- <hr> -->
+            <h2>{{ sg }}</h2> <!-- Segment Heading -->
             <section class="grid grid-display item-display">
-                <!-- for now -->
-                {% for album_name in range(4) %}
+                <!-- expansion -->
+                {% for album_name, tt in t.items() %}
                     <div class="item-card" id="card-model">
                         <!-- Row I: Clickable Info -->
-                        <a href="">
+                        <a href="{{ url_for('product_information', id = tt['id']) }}">
                             <!-- I: Album Image -->
                             <img class="img-item">
             
                             <!-- II: Text Information -->
                             <div class="album-txt-info">
                                 <div class="album-title emphasise">{{ album_name }}</div>
-                                <span class="author">{{ "Author" }}</span>
-                                <p class="price-track emphasise">${{ "%.2f" % 49 }}<span class="label">/EA</span></p>
+                                <span class="author">{{ tt["author"] }}</span>
+                                <p class="price-track emphasise">${{ "%.2f" % tt["price"] }}<span class="label">/EA</span></p>
                             </div>
-
-                            <!-- Row II: Form -->
-                            <form action="" method="post" class="add-to-cart-action">
-                                <input type="number" class="emit-stock-status none" name="i-quantity-{{ album_name }}" id="i-quantity-{{ album_name }}" min="1" max="5" value="{% if album_name in cart %}{{ cart[album_name]['quantity'] }}{% else %}1{% endif %}" disabled>
-                                <button type="submit" title="Out of Stock" disabled>OOS</button>
-                            </form>
                         </a>
+                        <!-- Row II: Form -->
+                        <form action="{{ url_for('add_to_cart', catalogue_id = tt['id'], product_name = album_name, input_selector = 'i-quantity-' + tt['id'], pole_end = 'index') }}" method="post" class="add-to-cart-action">
+                            {% if tt['stock'] > 0 %}
+                                <input type="number" class="emit-stock-status {% if 6 > tt['stock'] and tt['stock'] > 0 %}low{% elif 1 > tt['stock'] %}none{% endif %}" name="i-quantity-{{ tt['id'] }}" id="i-quantity-{{ tt['id'] }}" min="1" max="{% if 5 > tt['stock'] %}{{ tt['stock'] }}{% else %}5{% endif %}" title="Stock left: {{ tt['stock'] }}" value="{% if album_name in cart %}{{ cart[album_name]['quantity'] }}{% else %}1{% endif %}">
+                                <button type="submit" title="{% if album_name not in cart %}Add to Cart{% endif %}" {% if album_name in cart %}disabled{% endif %}>Add</button>
+                            {% else %}
+                                <input type="number" class="emit-stock-status none" name="i-quantity-{{ tt['id'] }}" id="i-quantity-{{ tt['id'] }}" min="1" max="5" value="{% if album_name in cart %}{{ cart[album_name]['quantity'] }}{% else %}1{% endif %}" disabled>
+                                <button type="submit" title="Out of Stock" disabled>OOS</button>
+                            {% endif %}
+                        </form>
                     </div>
-
-
                 {% endfor %}
 
             </section>
