@@ -5,19 +5,6 @@
 {% block content %}
     <body>
         <h2>My Cart</h2>
-
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <div class="toast-flash">
-                <!-- 'flash' message from Python Flask -->
-                    {% for m in messages %}
-                        <p>{{ m }}</p>
-                    {% endfor %}
-                <!-- boundary "for" -->
-                </div>
-            {% endif %}
-        {% endwith %}
-
         <section class="grid grid-display my-cart">
             
             <!-- I: ITEM LISTS -->

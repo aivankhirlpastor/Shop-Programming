@@ -4,17 +4,6 @@
 
 {% block content %}
     <body>
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <div class="toast-flash">
-                <!-- 'flash' message from Python Flask -->
-                    {% for m in messages %}
-                        <p>{{ m }}</p>
-                    {% endfor %}
-                <!-- boundary "for" -->
-                </div>
-            {% endif %}
-        {% endwith %}
         <section class="grid grid-display product-info">
             <!-- I: PHOTO -->
             <img class="product-img-large">

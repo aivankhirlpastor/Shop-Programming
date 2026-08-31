@@ -22,6 +22,19 @@
             <span class="counter">{{ c }}</span>
         </a>
     </header>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="toast-flash">
+            <!-- 'flash' message from Python Flask -->
+                {% for m in messages %}
+                    <p>{{ m }}</p>
+                {% endfor %}
+            <!-- boundary "for" -->
+            </div>
+        {% endif %}
+    {% endwith %}
+    
     <main class="grid-layout">{% block content %}{% endblock %}</main>
     <footer>@ 2026 The Music Shop.</footer>
 

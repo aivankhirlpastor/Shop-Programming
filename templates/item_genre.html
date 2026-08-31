@@ -5,19 +5,6 @@
 {% block content %}
     <body>
         <h2>Genre: {{ g }}</h2>
-        
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <div class="toast-flash">
-                <!-- 'flash' message from Python Flask -->
-                    {% for m in messages %}
-                        <p>{{ m }}</p>
-                    {% endfor %}
-                <!-- boundary "for" -->
-                </div>
-            {% endif %}
-        {% endwith %}
-
         <section class="grid grid-display item-display">
             {% for album_name, i in imported_data.items() %}
                 <div class="item-card" id="card-{{ i['id'] }}">
