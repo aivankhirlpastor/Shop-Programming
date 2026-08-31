@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, get_flashed_messages, abort
+from datetime import datetime, timedelta
 import json, datetime, sqlite3, re
 import os
 import sys
@@ -116,13 +117,14 @@ def index_album_modules():
 
     day_released = 10
     day_prereleased = 14
-    current_date = "20-04-2026"
-    date_pattern = re.compile(r'(\d{2})-(\d{2})-(\d{4})')
 
-    # [0] as first index, since it was a list
-    p_day, p_month, p_year = date_pattern.findall(current_date)[0]
-    # turning a string into integer
-    day, month, year = int(p_day), int(p_month), int(p_year)
+    # ------------------------------
+    day_current = 20
+    rlsd = 10
+    pre_rlsd = 14
+
+    current = datetime.datetime(2026, 4, day_current)
+    date_pattern = re.compile(r'(\d{2})-(\d{2})-(\d{4})')
 
     for n, albm in ach.items():
         album_id = albm["id"]
@@ -140,17 +142,27 @@ def index_album_modules():
         # Turning string into integers to be calculatable
         dx, mx, yx = int(pdx), int(pmx), int(pyx)
         id_prime, id_mid = int(pre_id_prime[0]), int(pre_id_mid[0])
+        album_release_date = datetime.datetime(yx, mx, dx)
+
+        # testing for variable
+        prereleased = album_release_date - timedelta(days = pre_rlsd)
+
+        if n == "Little Life":
+            print(prereleased.timestamp())
+            diff = current - album_release_date
+            print(diff.days)
+            print(prereleased, "\n-------------------------------")
 
         # latest release
-        if dx + day_released > day and mx >= month and yx >= year:
+        if 0 <= (current - album_release_date).days <= rlsd:
             ahr[n] = albm
 
         # featured > calculated value == remainder
-        elif (id_mid // day % 10) == (id_prime % 10):
+        elif (id_mid // day_current % 10) == (id_prime % 10):
             bhr[n] = albm
 
         # pre-released
-        elif dx - day_prereleased < day and mx <= month and yx <= year:
+        elif pre_rlsd >= (album_release_date - current).days > 0:
             chr[n] = albm
     
     # print(re.sub(r"-", " ", current_date)) # 
@@ -203,7 +215,7 @@ def index():
         "Pre-Order": cr
     }
 
-    print(segment_modules)
+    # print(segment_modules)
     # c = cart_amount()
     return render_template("index.html", albums = load_albums,
                            segment_modules = segment_modules)
