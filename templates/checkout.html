@@ -35,7 +35,33 @@
                 </div>
             </form>
 
-            <div class="panel-details"></div>
+            <div class="panel-details">
+                <span>Order Summary</span>
+                <ul class="mini-list-container vrs-2">
+                    {% for n, alb in cart.items() %}
+                                                <!-- list per item -->
+                        <li class="mini-list-item">
+
+                            <!-- I: Image and Quantity -->
+                            <div class="img-qty-placer">
+                                <img class="img-item">
+                                <span class="counter">{{ alb["quantity"] }}</span>
+                            </div>
+
+                            <!-- II: Name, Author, and Price -->
+                            <div class="txt-const">
+                                <div class="name-author">
+                                    <span class="emphasise">{{ n }}</span>
+                                    <p>{{ alb["author"] }}</p>
+                                </div>
+                                <!-- Price -->
+                                <b class="price">${{ '%.2f' % (alb["price"] * alb["quantity"]) }}</b>
+                            </div>
+
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
         </section>
 
     </body>
