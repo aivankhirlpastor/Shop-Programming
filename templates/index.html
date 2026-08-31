@@ -55,19 +55,5 @@
 
             </section>
         {% endfor %}
-
-
-        <form action="{{ url_for('visit') }}" method="post">
-            
-            <select name="item_selector" id="item_selector">
-                {% for album_name, acc in albums.items() %}
-                    <option style="font-size: 18px;" value="{{ acc['model'] }}">
-                        {{ album_name }} - ${{ '%.2f' % acc["price"] }} <b>({{ acc["stock"] }})</b>
-                    </option>
-                {% endfor %}
-            </select>
-
-            <button type="submit">     Visit     </button>
-        </form>
     </body>
 {% endblock %}
