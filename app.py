@@ -207,6 +207,7 @@ def cart_amount():
 def index():
     load_albums = load_data_products()
     ar, br, cr = index_album_modules()
+    cart = session.get("cart", {})
 
     # blank {} is for the album items
     segment_modules = {
@@ -218,7 +219,7 @@ def index():
     # print(segment_modules)
     # c = cart_amount()
     return render_template("index.html", albums = load_albums,
-                           segment_modules = segment_modules)
+                           segment_modules = segment_modules, cart = cart)
 
 @app.route("/category/item/<id>")
 def product_information(id):
