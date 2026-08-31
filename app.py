@@ -381,6 +381,15 @@ def cart():
     return render_template("cart.html", cart = cart, albums = albums,
                            subtotal = subtotal, gst = gst)
 
+@app.route("/checkout")
+def checkout():
+    iii = 34
+    cart = session.get("cart", {})
+
+    return render_template("checkout.html",
+                           cart = cart)
+
+
 # temporary routes
 @app.route("/visit", methods = ["POST"])
 def visit():
