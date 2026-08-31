@@ -208,6 +208,7 @@ def index():
     load_albums = load_data_products()
     ar, br, cr = index_album_modules()
     cart = session.get("cart", {})
+    key = panel_access_from_flash()
 
     # blank {} is for the album items
     segment_modules = {
@@ -219,7 +220,8 @@ def index():
     # print(segment_modules)
     # c = cart_amount()
     return render_template("index.html", albums = load_albums,
-                           segment_modules = segment_modules, cart = cart)
+                           segment_modules = segment_modules, cart = cart,
+                           key_param = key)
 
 @app.route("/category/item/<id>")
 def product_information(id):
@@ -294,6 +296,8 @@ def add_to_cart(catalogue_id, product_name, input_selector, pole_end):
                     return redirect(url_for("category", genre = str(genre_condition[0]).lower()))                
         except Exception as err:
             print("Something went wrong. We can't transfer you back to the current genre of page:", err)
+    elif pole_end == "index":
+        return redirect(url_for("index"))
 
     return redirect(url_for("product_information", id = catalogue_id))
 
