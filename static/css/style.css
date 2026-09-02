@@ -631,7 +631,7 @@ section.my-cart li.item-details:has(.quantity input.modified) > .price-action p.
     background-color: var(--color-2);
     padding: 16px;
     grid-area: 1 / 6 / span 1 / 9;
-    min-height: 300px;
+    max-height: 300px;
 
     position: sticky;
     top: 75px;
@@ -730,6 +730,11 @@ section.checkout form.checkout-form {
     background-color: #FF000012;
 
     transition: all 0.3s ease;
+}
+
+section.checkout .panel-details {
+    max-height: none;
+    min-height: 300px;
 }
 
 
