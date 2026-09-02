@@ -214,9 +214,11 @@ label {
 }
 
 .text-nudge {
-    align-items: end;
+    align-items: baseline;
+    /* align-items: end; */
     display: flex;
     justify-content: space-between;
+    margin-block: 4px;
 }
 
 /* label */
@@ -227,6 +229,22 @@ label {
 /* right-side text */
 .text-nudge p.emphasise {
     margin: 0;
+}
+
+/* between the text */
+.text-nudge.nudge-between {
+    justify-content: start;
+    align-items: baseline;
+}
+
+/* inline v. */
+.text-nudge.nudge-block {
+    gap: 20px;
+    justify-content: start;
+}
+
+.text-nudge.nudge-block :first-child {
+    min-width: 125px;
 }
 
 .centre {
@@ -689,13 +707,7 @@ section.item-display form.add-to-cart-action {
 }
 
 /* ======== CHECKOUT ======== */
-section.checkout .info-reiteration {
-    display: none;
-}
-
 section.checkout form.checkout-form {
-    grid-area: 1 / 1 / span 1 / 6;
-    
     /* grid-template within */
     gap: 8px 24px;
     grid-template-columns: repeat(2, 1fr);
@@ -703,6 +715,10 @@ section.checkout form.checkout-form {
     height: fit-content;
 
     padding: 32px;
+}
+
+section.checkout :is(form.checkout-form, .info-reiteration) {
+    grid-area: 1 / 1 / span 1 / 6;
 }
 
 /* block form */
