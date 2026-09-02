@@ -4,6 +4,103 @@
 
 {% block content %}
     <body>
+        <h2>Review Your Order</h2>
+        <section class="grid grid-display checkout">
+            <form class="info-reiteration" action="">
+                <p>Please review your billing information and your items before placing your order. If you need to edit or something to add, feel free to go back to checkout page.</p>
+    
+                <div class="text-nudge nudge-block">
+                    <span>First Name</span>
+                    <p class="emphasise">{{ saved_billing_info["first_name"] }}</p>
+                </div>
+                <div class="text-nudge nudge-block">
+                    <span>Last Name</span>
+                    <p class="emphasise">{{ saved_billing_info["surname"] }}</p>
+                </div>
+                <div class="text-nudge nudge-block">
+                    <span>Email</span>
+                    <p class="emphasise">{{ saved_billing_info["email"] }}</p>
+                </div>
+                <div class="text-nudge nudge-block">
+                    <span>Physical Address</span>
+                    <p class="emphasise">{{ saved_billing_info["physical_address"] }}</p>
+                </div>
+                <div class="text-nudge nudge-block">
+                    <span>Town</span>
+                    <p class="emphasise">{{ saved_billing_info["town"] }}</p>
+                </div>
+                <div class="text-nudge nudge-block">
+                    <span>Postal Code</span>
+                    <p class="emphasise">{{ saved_billing_info["postal_code"] }}</p>
+                </div>
 
+                <button type="button" class="outlined" onclick="location.href = `{{ url_for('checkout') }}`">Return to Checkout</button>
+                <button type="submit">Place Order</button>
+            </form>
+
+            <div class="panel-details">
+                <span>Order Summary</span>
+                <ul class="mini-list-container vrs-2">
+                    {% for n, alb in cart.items() %}
+                                                <!-- list per item -->
+                        <li class="mini-list-item">
+
+                            <!-- I: Image and Quantity -->
+                            <div class="img-qty-placer">
+                                <img class="img-item">
+                                <span class="counter">{{ alb["quantity"] }}</span>
+                            </div>
+
+                            <!-- II: Name, Author, and Price -->
+                            <div class="txt-const">
+                                <div class="name-author">
+                                    <span class="emphasise">{{ n }}</span>
+                                    <p>{{ alb["author"] }}</p>
+                                </div>
+                                <!-- Price -->
+                                <b class="price">${{ '%.2f' % (alb["price"] * alb["quantity"]) }}</b>
+                            </div>
+
+                        </li>
+                    {% endfor %}
+                </ul>
+                <div class="cost-calc">
+                    {% if subtotal %}
+                        <div class="text-nudge" id="subtotal">
+                            <span>Subtotal</span>
+                            <p class="emphasise">${{ '%.2f' % subtotal }}</p>
+                        </div>
+                    {% endif %}
+
+                    {% if gst %}
+                        <div class="text-nudge" id="gst">
+                            <span>GST</span>
+                            <p class="emphasise">${{ '%.2f' % gst }}</p>
+                        </div>
+                    {% endif %}
+
+                    {% if ship_fee %}
+                        <div class="text-nudge" id="delivery-fee">
+                            <span>Delivery Fee</span>
+                            <p class="emphasise">${{ '%.2f' % ship_fee }}</p>
+                        </div>
+                    {% endif %}
+
+                    {% if discount %}
+                        <div class="text-nudge" id="discount">
+                            <span>Discount</span>
+                            <p class="emphasise">${{ '%.2f' % discount }}</p>
+                        </div>
+                    {% endif %}
+
+                    <div class="text-nudge" id="total">
+                        <span>Total</span>
+                        <p class="emphasise">${{ '%.2f' % total }}</p>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+            
     </body>
 {% endblock %}
