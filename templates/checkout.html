@@ -33,6 +33,7 @@
                     <label for="postal-code">Postal Code</label>
                     <input type="text" name="postal-code" id="postal-code" required>
                 </div>
+                <button type="submit">Place Order</button>
             </form>
 
             <div class="panel-details">
@@ -61,6 +62,41 @@
                         </li>
                     {% endfor %}
                 </ul>
+                <div class="cost-calc">
+                    {% if subtotal %}
+                    <div class="text-nudge" id="subtotal">
+                        <span>Subtotal</span>
+                        <p class="emphasise">${{ '%.2f' % subtotal }}</p>
+                    </div>
+                    {% endif %}
+
+                    {% if gst %}
+                    <div class="text-nudge" id="gst">
+                        <span>GST</span>
+                        <p class="emphasise">${{ '%.2f' % gst }}</p>
+                    </div>
+                    {% endif %}
+
+                    {% if ship_fee %}
+                    <div class="text-nudge" id="delivery-fee">
+                        <span>Delivery Fee</span>
+                        <p class="emphasise">${{ '%.2f' % ship_fee }}</p>
+                    </div>
+                    {% endif %}
+
+                    {% if discount %}
+                    <div class="text-nudge" id="discount">
+                        <span>Discount</span>
+                        <p class="emphasise">${{ '%.2f' % discount }}</p>
+                    </div>
+                    {% endif %}
+
+
+                    <div class="text-nudge" id="total">
+                        <span>Total</span>
+                        <p class="emphasise">${{ '%.2f' % total }}</p>
+                    </div>
+                </div>
             </div>
         </section>
 
