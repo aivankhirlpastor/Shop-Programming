@@ -383,17 +383,47 @@ def cart():
 
 @app.route("/checkout")
 def checkout():
-    iii = 34
     cart = session.get("cart", {})
+    billing_info = session.get("billing_info", {}) # information retrieval in return
 
     total, subtotal, gst, ship_fee = calculate_total(cart)
-
 
     return render_template("checkout.html",
                            total = total, subtotal = subtotal,
                            gst = gst, ship_fee = ship_fee,
-                           cart = cart)
+                           cart = cart, saved_billing_info = billing_info)
 
+@app.route("/continue_to_review", methods = ["POST"])
+def continue_to_review():
+    cart = session.get("cart", {}) # get all the items in cart
+    billing_info = session.get("billing_info", {}) # store within the session
+
+    total, subtotal, gst, ship_fee = calculate_total(cart)
+
+    # organising billing info in dictionary; get input values via "request.form"
+    billing_info = {
+        "first_name": request.form["first-name"],
+        "surname": request.form["surname"],
+        "email": request.form["email"],
+        "physical_address": request.form["physical-addr"],
+        "town": request.form["suburb"],
+        "postal_code": request.form["postal-code"]
+    }
+
+    session["billing_info"] = billing_info
+
+    # save Modification
+    session.modified = True
+
+    return render_template("checkout_review.html",
+                           total = total, subtotal = subtotal, 
+                           gst = gst, ship_fee = ship_fee,
+                           cart = cart, saved_billing_info = billing_info)
+
+# Info Retrieval
+@app.route("/return_to_checkout_page")
+def return_to_checkout():
+    3
 
 # temporary routes
 @app.route("/visit", methods = ["POST"])
