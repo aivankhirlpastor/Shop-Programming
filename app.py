@@ -386,7 +386,12 @@ def checkout():
     iii = 34
     cart = session.get("cart", {})
 
+    total, subtotal, gst, ship_fee = calculate_total(cart)
+
+
     return render_template("checkout.html",
+                           total = total, subtotal = subtotal,
+                           gst = gst, ship_fee = ship_fee,
                            cart = cart)
 
 
