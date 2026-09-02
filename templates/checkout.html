@@ -6,34 +6,32 @@
     <body>
         <h2>Checkout</h2>
         <section class="grid grid-display checkout">
-
-            <div class="info-reiteration"></div>
-            <form action="" method="post" class="checkout-form grid">
+            <form action="{{ url_for('continue_to_review') }}" method="post" class="checkout-form grid">
                 <div class="form-block fr-first-name">
                     <label for="first-name">First Name</label>
-                    <input type="text" name="first-name" id="first-name" required>
+                    <input type="text" name="first-name" id="first-name" value="{% if saved_billing_info['first_name'] %}{{ saved_billing_info['first_name'] }}{% endif %}" required>
                 </div>
                 <div class="form-block fr-surname">
                     <label for="surname">Last Name</label>
-                    <input type="text" name="surname" id="surname" required>
+                    <input type="text" name="surname" id="surname" value="{% if saved_billing_info['surname'] %}{{ saved_billing_info['surname'] }}{% endif %}" required>
                 </div>
                 <div class="form-block fr-email">
                     <label for="email">Email Address</label>
-                    <input type="email" name="email" id="email" required>
+                    <input type="email" name="email" id="email" value="{% if saved_billing_info['email'] %}{{ saved_billing_info['email'] }}{% endif %}" required>
                 </div>
                 <div class="form-block fr-physical-addr">
                     <label for="physical-addr">Physical Address</label>
-                    <input type="text" name="physical-addr" id="physical-addr" required>
+                    <input type="text" name="physical-addr" id="physical-addr" value="{% if saved_billing_info['physical_address'] %}{{ saved_billing_info['physical_address'] }}{% endif %}" required>
                 </div>
                 <div class="form-block fr-suburb">
                     <label for="suburb">Town/Suburb</label>
-                    <input type="text" name="suburb" id="suburb" required>
+                    <input type="text" name="suburb" id="suburb" value="{% if saved_billing_info['town'] %}{{ saved_billing_info['town'] }}{% endif %}" required>
                 </div>
                 <div class="form-block fr-postal-code">
                     <label for="postal-code">Postal Code</label>
-                    <input type="text" name="postal-code" id="postal-code" required>
+                    <input type="text" name="postal-code" id="postal-code" value="{% if saved_billing_info['postal_code'] %}{{ saved_billing_info['postal_code'] }}{% endif %}" required>
                 </div>
-                <button type="submit">Place Order</button>
+                <button type="submit">Continue</button>
             </form>
 
             <div class="panel-details">
@@ -64,33 +62,32 @@
                 </ul>
                 <div class="cost-calc">
                     {% if subtotal %}
-                    <div class="text-nudge" id="subtotal">
-                        <span>Subtotal</span>
-                        <p class="emphasise">${{ '%.2f' % subtotal }}</p>
-                    </div>
+                        <div class="text-nudge" id="subtotal">
+                            <span>Subtotal</span>
+                            <p class="emphasise">${{ '%.2f' % subtotal }}</p>
+                        </div>
                     {% endif %}
 
                     {% if gst %}
-                    <div class="text-nudge" id="gst">
-                        <span>GST</span>
-                        <p class="emphasise">${{ '%.2f' % gst }}</p>
-                    </div>
+                        <div class="text-nudge" id="gst">
+                            <span>GST</span>
+                            <p class="emphasise">${{ '%.2f' % gst }}</p>
+                        </div>
                     {% endif %}
 
                     {% if ship_fee %}
-                    <div class="text-nudge" id="delivery-fee">
-                        <span>Delivery Fee</span>
-                        <p class="emphasise">${{ '%.2f' % ship_fee }}</p>
-                    </div>
+                        <div class="text-nudge" id="delivery-fee">
+                            <span>Delivery Fee</span>
+                            <p class="emphasise">${{ '%.2f' % ship_fee }}</p>
+                        </div>
                     {% endif %}
 
                     {% if discount %}
-                    <div class="text-nudge" id="discount">
-                        <span>Discount</span>
-                        <p class="emphasise">${{ '%.2f' % discount }}</p>
-                    </div>
+                        <div class="text-nudge" id="discount">
+                            <span>Discount</span>
+                            <p class="emphasise">${{ '%.2f' % discount }}</p>
+                        </div>
                     {% endif %}
-
 
                     <div class="text-nudge" id="total">
                         <span>Total</span>
