@@ -432,6 +432,9 @@ def visit():
 
     return redirect(url_for("product_information", m = item_model))
 
+@app.route("/invoice")
+def invoice():
+    return render_template("invoice.html")
 
 
 # ==== dynamic route instance ==== #
