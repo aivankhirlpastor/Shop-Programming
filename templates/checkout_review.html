@@ -7,33 +7,71 @@
         <h2>Review Your Order</h2>
         <section class="grid grid-display checkout">
             <form class="info-reiteration" action="">
-                <p>Please review your billing information and your items before placing your order. If you need to edit or something to add, feel free to go back to checkout page.</p>
-    
-                <div class="text-nudge nudge-block">
-                    <span>First Name</span>
-                    <p class="emphasise">{{ saved_billing_info["first_name"] }}</p>
-                </div>
-                <div class="text-nudge nudge-block">
-                    <span>Last Name</span>
-                    <p class="emphasise">{{ saved_billing_info["surname"] }}</p>
-                </div>
-                <div class="text-nudge nudge-block">
-                    <span>Email</span>
-                    <p class="emphasise">{{ saved_billing_info["email"] }}</p>
-                </div>
-                <div class="text-nudge nudge-block">
-                    <span>Physical Address</span>
-                    <p class="emphasise">{{ saved_billing_info["physical_address"] }}</p>
-                </div>
-                <div class="text-nudge nudge-block">
-                    <span>Town</span>
-                    <p class="emphasise">{{ saved_billing_info["town"] }}</p>
-                </div>
-                <div class="text-nudge nudge-block">
-                    <span>Postal Code</span>
-                    <p class="emphasise">{{ saved_billing_info["postal_code"] }}</p>
-                </div>
+                <p>Please review your billing details and your items before placing your order. If you need to make any changes or add anything, feel free to go back to checkout page.</p>
 
+                <div class="details-container billing-details">
+                    <div class="text-nudge nudge-block">
+                        <span>First Name</span>
+                        <p class="emphasise">{{ saved_billing_info["first_name"] }}</p>
+                    </div>
+                    <div class="text-nudge nudge-block">
+                        <span>Last Name</span>
+                        <p class="emphasise">{{ saved_billing_info["surname"] }}</p>
+                    </div>
+                    <div class="text-nudge nudge-block">
+                        <span>Email</span>
+                        <p class="emphasise">{{ saved_billing_info["email"] }}</p>
+                    </div>
+                    <div class="text-nudge nudge-block">
+                        <span>Physical Address</span>
+                        <p class="emphasise">{{ saved_billing_info["physical_address"] }}</p>
+                    </div>
+                    <div class="text-nudge nudge-block">
+                        <span>Town</span>
+                        <p class="emphasise">{{ saved_billing_info["town"] }}</p>
+                    </div>
+                    <div class="text-nudge nudge-block">
+                        <span>Postal Code</span>
+                        <p class="emphasise">{{ saved_billing_info["postal_code"] }}</p>
+                    </div>
+                </div>
+                <div class="details-container monetary-cost">
+                    {% if subtotal %}
+                        <div class="text-nudge nudge-block c-subtotal">
+                            <span>Subtotal</span>
+                            <p>${{ '%.2f' % subtotal }}</p>
+                        </div>
+                    {% endif %}
+
+                    {% if gst %}
+                        <div class="text-nudge nudge-block c-gst">
+                            <span>GST</span>
+                            <p>${{ '%.2f' % gst }}</p>
+                        </div>
+                    {% endif %}
+
+                    {% if ship_fee %}
+                        <div class="text-nudge" id="delivery-fee">
+                            <span>Delivery Fee</span>
+                            <p>${{ '%.2f' % ship_fee }}</p>
+                        </div>
+                    {% endif %}
+
+                    {% if discount %}
+                        <div class="text-nudge nudge-block discount">
+                            <span>Discount</span>
+                            <p>${{ '%.2f' % discount }}</p>
+                        </div>
+                    {% endif %}
+
+                    <hr>
+
+                    <div class="text-nudge nudge-block total">
+                        <span>Total</span>
+                        <p class="emphasise">${{ '%.2f' % total }}</p>
+                    </div>
+                </div>
+    
                 <button type="button" class="outlined" onclick="location.href = `{{ url_for('checkout') }}`">Return to Checkout</button>
                 <button type="submit">Place Order</button>
             </form>
