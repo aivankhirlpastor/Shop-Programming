@@ -760,6 +760,53 @@ section.checkout .panel-details {
     min-height: 300px;
 }
 
+/* ======== INVOICE PAGE ======== */
+section.invoice-page #order-billing-dt {
+    width: 500px;
+}
+
+section.invoice-page #order-billing-dt p.full-name {
+    margin-block: 6px;
+}
+
+section.invoice-page #order-billing-dt p:not(.emphasise) {
+    margin: 0;
+}
+
+table {
+    border-collapse: separate;
+    empty-cells: hide;
+    table-layout: fixed; /* fixed cell width */
+    margin-block: 20px;
+    width: 100%;
+}
+
+/* table cells */
+th, td {
+    margin: 0;
+    padding-block: 4px;
+}
+
+/* table headings */
+table thead th {
+    text-align: left;
+    border-bottom: 2px solid #00000044;
+}
+
+/* table monetary cost row */
+table tr.monetary-cost.subtotal > td {
+    border-top: 2px solid #00000044;
+    padding-top: 8px;
+}
+
+table tr.monetary-cost.total > td {
+    font-weight: 700;
+    background-color: var(--color-1);
+}
+
+table tr:nth-child(even):not(.monetary-cost) td {
+    background-color: #ffffec;
+}
 
 /* FOOTER */
 footer {
