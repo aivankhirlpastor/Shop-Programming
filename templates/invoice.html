@@ -4,6 +4,84 @@
 
 {% block content %}
     <body>
+        <h2>Thank You!</h2>
 
+        <h3>Invoice Number: #00019</h3>
+        <p>Date: 20/06/10</p>
+
+        <section class="invoice-page">
+            <div id="order-billing-dt">
+                <span class="label">Invoice To</span>
+                <div>
+                    <p class="full-name emphasise">First Name, Surname</p>
+                    <p>Physical Address</p>
+                    <p>Town Postal Code</p>
+                    <p>Email</p>
+                </div>
+            </div>
+
+            <!-- TABLE -->
+            <table>
+                <colgroup>
+                    <col span="1" style="width: 60px;">
+                    <col style="width: 360px;">
+                    <col span="3" style="width: 120px">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th id="th-item-number">No.</th>
+                        <th id="th-album-name">Item</th>
+                        <th id="th-unit-price">Price</th>
+                        <th id="th-quantity">Quantity</th>
+                        <th id="th-total-price">Total Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>My Album</td>
+                        <td>$30.00</td>
+                        <td>3</td>
+                        <td>$90.00</td>
+                    </tr>
+
+                    <tr class="monetary-cost subtotal">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>Subtotal</td>
+                        <td>$90.00</td>
+                    </tr>
+                    <tr class="monetary-cost gst">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>GST</td>
+                        <td>$10.00</td>
+                    </tr>
+                    <tr class="monetary-cost ship-fee">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>Ship Fee</td>
+                        <td>$5.00</td>
+                    </tr>
+                    <tr class="monetary-cost discount">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>Subtotal</td>
+                        <td>$90.00</td>
+                    </tr>
+                    <tr class="monetary-cost total">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>Total</td>
+                        <td>$90.00</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
     </body>
 {% endblock %}
