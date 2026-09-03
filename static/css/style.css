@@ -227,7 +227,7 @@ label {
 }
 
 /* right-side text */
-.text-nudge p.emphasise {
+.text-nudge * {
     margin: 0;
 }
 
@@ -719,6 +719,13 @@ section.checkout form.checkout-form {
 
 section.checkout :is(form.checkout-form, .info-reiteration) {
     grid-area: 1 / 1 / span 1 / 6;
+}
+
+/* container */
+section.checkout .info-reiteration > div.details-container {
+    margin: 20px 30px;
+    padding: 10px 40px;
+    border: 2px solid #00000044;
 }
 
 /* block form */
