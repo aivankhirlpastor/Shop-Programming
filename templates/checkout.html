@@ -29,7 +29,7 @@
                 </div>
                 <div class="form-block fr-postal-code">
                     <label for="postal-code">Postal Code</label>
-                    <input type="text" name="postal-code" id="postal-code" value="{% if saved_billing_info['postal_code'] %}{{ saved_billing_info['postal_code'] }}{% endif %}" required>
+                    <input type="text" name="postal-code" id="postal-code" pattern="\d{4}" placeholder="e.g. AU/NZ: 0000" value="{% if saved_billing_info['postal_code'] %}{{ saved_billing_info['postal_code'] }}{% endif %}">
                 </div>
                 <button type="submit">Continue</button>
             </form>
