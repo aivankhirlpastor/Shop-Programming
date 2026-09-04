@@ -396,6 +396,23 @@ def invoice_selection(inv_number):
             rows = cursor.fetchall()[0] # fetching for one row only
 
             second_row = json.loads(rows[2])
+            load_items = json.loads(rows[3])
+            items = {}
+
+            s = 0 # used for listing
+
+            # at index registration
+            for album_name, m in load_items.items():
+                s += 1
+                items[album_name] = {
+                    "no": s,
+                    "author": m["author"],
+                    "id": m["id"],
+                    "label": m["label"],
+                    "genre": m["genre"],
+                    "price": m["price"],
+                    "quantity": m["quantity"],
+                }
 
             fetched_data = {
                 "id": rows[0],
@@ -407,7 +424,7 @@ def invoice_selection(inv_number):
                     "town": second_row["town"],
                     "postal_code": second_row["postal_code"],
                 },
-                "items": json.loads(rows[3]),
+                "items": items,
                 "subtotal": rows[4],
                 "gst": rows[5],
                 "ship_fee": rows[6],
@@ -516,8 +533,6 @@ def place_order():
             """, (invoice_date, json.dumps(customer), json.dumps(cart), subtotal, gst, ship_fee, 0, total))
 
             conn.commit()
-            # cursor.execute(f"SELECT * FROM orders WHERE date = ")
-
 
         # write an invoice in .txt version
         invoice_file = f"{invoice_date}.txt"
@@ -553,6 +568,21 @@ def place_order():
 
     # Updating the stock will be at the later sprint planning.
     flash("Order Completed")
+
+    # redirect user to invoice section
+    try:
+        with sqlite3.connect("order_history.db") as conn:
+            # fetch for id only
+            cursor.execute(f"SELECT * FROM orders WHERE date = {invoice_date}")
+            lid = cursor.fetchall()[0] # fetching for one row only
+            redirect_id = int(lid[0])
+
+        return redirect(url_for("invoice_selection", inv_number = lid))
+
+    # in case that wasn't exist
+    except Exception as err:
+        print(err)
+
     return redirect(url_for("index"))
 
 # temporary routes

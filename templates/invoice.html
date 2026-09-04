@@ -42,7 +42,7 @@
                     <!-- column item selection -->
                     {% for n, alb in data["items"].items() %}
                         <tr>
-                            <td>1</td>
+                            <td>{{ alb["no"] }}</td>
                             <td>{{ n }}</td>
                             <td>${{ alb["price"] }}</td>
                             <td>{{ alb["quantity"] }}</td>
