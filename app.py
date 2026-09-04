@@ -13,6 +13,23 @@ def load_data_products():
     with open("data/products.json") as product:
         return json.load(product)
 
+def initialise_database():
+    with sqlite3.connect("order_history.db") as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS orders (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    date TEXT,
+                    customer TEXT NOT NULL,
+                    items TEXT NOT NULL,
+                    subtotal REAL,
+                    gst REAL,
+                    ship_fee FLOAT,
+                    discount FLOAT,
+                    total_charges REAL
+                    )
+""")
+
 def calculate_total(c):
     cart_total = sum(item["price"] * item["quantity"] for item in c.values())
     gst = cart_total * 0.15
@@ -346,7 +363,6 @@ def apply_changes():
 
     return redirect(url_for("cart"))
 
-
 @app.route("/category/item-<string:genre>")
 def category(genre):
     data_album = load_data_products()
@@ -367,6 +383,50 @@ def category(genre):
 
     return render_template("item_genre.html", g = genre,
                            imported_data = stored_data, cart = cart, key_param = key)
+
+@app.route("/invoice-<int:inv_number>")
+def invoice_selection(inv_number):
+    # sqlite3 \
+    try:
+        with sqlite3.connect("order_history.db") as conn:
+            cursor = conn.cursor()
+
+            # \fetch
+            cursor.execute(f"SELECT * FROM orders WHERE id = {inv_number}")
+            rows = cursor.fetchall()[0] # fetching for one row only
+
+            second_row = json.loads(rows[2])
+
+            fetched_data = {
+                "id": rows[0],
+                "date": rows[1],
+                "customer": {
+                    "name": second_row["name"],
+                    "email": second_row["email"],
+                    "physical_address": second_row["physical_address"],
+                    "town": second_row["town"],
+                    "postal_code": second_row["postal_code"],
+                },
+                "items": json.loads(rows[3]),
+                "subtotal": rows[4],
+                "gst": rows[5],
+                "ship_fee": rows[6],
+                "discount": rows[7],
+                "total_charges": rows[8]
+            }
+
+            # raise Exception(fetched_data["customer"])
+
+    # usually might suggest that the "id" is not exist
+    except IndexError as index_err:
+        abort(404) # not found
+
+    except Exception as err:
+        # sys.exit("Process aborted.")
+        raise Exception(f"Can't redirect you with the invoice number {inv_number}: {err}")
+
+    # return for template
+    return render_template("invoice.html", data = fetched_data)
 
 @app.route("/cart")
 def cart():
@@ -421,9 +481,79 @@ def continue_to_review():
                            cart = cart, saved_billing_info = billing_info)
 
 # Info Retrieval
-@app.route("/return_to_checkout_page")
-def return_to_checkout():
-    3
+@app.route("/place_order", methods = ["POST"])
+def place_order():
+    # get "Carts" and "Billing Info" from the session
+    cart = session.get("cart", {}) # get all the items in cart
+    billing_info = session.get("billing_info", {}) # store within the session
+
+    customer_name = f"{billing_info["first_name"]} {billing_info["surname"]}"
+    customer = {
+        "name": customer_name,
+        "email": billing_info["email"],
+        "physical_address": billing_info["physical_address"],
+        "town": billing_info["town"],
+        "postal_code": billing_info["postal_code"],
+    }
+
+    # check if the cart and billing info is not empty
+    if not cart and not billing_info:
+        return
+
+    total, subtotal, gst, ship_fee = calculate_total(cart)
+    date = datetime.datetime.now().strftime("%Y-%m-%d")
+    time = datetime.datetime.now().strftime("%H.%M.%S")
+    invoice_date = f"{date} {time}"
+    # invoice number will be declared as soon as we get to the database variables.
+
+    # Save order history to SqLite Database
+    try:
+        with sqlite3.connect("order_history.db") as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                INSERT INTO orders (date, customer, items, subtotal, gst, ship_fee, discount, total_charges)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (invoice_date, json.dumps(customer), json.dumps(cart), subtotal, gst, ship_fee, 0, total))
+
+            conn.commit()
+            # cursor.execute(f"SELECT * FROM orders WHERE date = ")
+
+
+        # write an invoice in .txt version
+        invoice_file = f"{invoice_date}.txt"
+        with open("invoice_file.txt", "w") as f:
+            f.write("<-----> The Music Shop <----->\n")
+
+            f.write(f"Invoice Number: {invoice_date}\n")
+            f.write(f"Customer Name: {customer_name}\n")
+            f.write(f"Date: {invoice_date}\n\n")
+
+            f.write(f"Items:\n\n")
+
+            for album_name, m in cart.items():
+                f.write(f"-- {album_name}: {m["quantity"]} x ${m["price"]} = ${m["quantity"] * m["price"]:.2f}\n")
+
+            f.write(f"Subtotal: ${subtotal:.2f}\n") if subtotal else None
+            f.write(f"Subtotal: ${gst:.2f}\n") if gst else None
+            f.write(f"Subtotal: ${ship_fee:.2f}\n\n") if ship_fee else None
+            f.write(f"Subtotal: ${total:.2f}\n")
+
+    # Except argument and return to home page
+    except Exception as place_order_error:
+        flash("Sorry, but we can't process your order right now.")
+        flash(place_order_error)
+
+        return redirect(url_for("index"))
+
+    try:
+        3
+
+    except Exception as e:
+        return redirect(url_for("index"))
+
+    # Updating the stock will be at the later sprint planning.
+    flash("Order Completed")
+    return redirect(url_for("index"))
 
 # temporary routes
 @app.route("/visit", methods = ["POST"])
@@ -445,4 +575,7 @@ def invoice():
 # [comes the last]
 # if __name__ == 'main': checks if file is being run directly - only runs code if opened directly.
 if __name__ == "__main__":
+
+    initialise_database()
+
     app.run(debug = True)
