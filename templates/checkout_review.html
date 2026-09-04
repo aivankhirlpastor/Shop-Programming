@@ -6,7 +6,7 @@
     <body>
         <h2>Review Your Order</h2>
         <section class="grid grid-display checkout">
-            <form class="info-reiteration" action="">
+            <form class="info-reiteration" action="{{ url_for('place_order') }}" method="post">
                 <p>Please review your billing details and your items before placing your order. If you need to make any changes or add anything, feel free to go back to checkout page.</p>
 
                 <div class="details-container billing-details">
