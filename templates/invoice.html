@@ -5,18 +5,19 @@
 {% block content %}
     <body>
         <h2>Thank You!</h2>
+        <p>We'll remind you on your order placement within 3 business days. If you have any enquiries, contact us.</p>
 
-        <h3>Invoice Number: #00019</h3>
-        <p>Date: 20/06/10</p>
+        <h3>Invoice Number: #{{ data["id"] }}</h3>
+        <p>Date: {{ data["date"] }}</p>
 
         <section class="invoice-page">
             <div id="order-billing-dt">
                 <span class="label">Invoice To</span>
                 <div>
-                    <p class="full-name emphasise">First Name, Surname</p>
-                    <p>Physical Address</p>
-                    <p>Town Postal Code</p>
-                    <p>Email</p>
+                    <p class="full-name emphasise">{{ data["customer"]["name"] }}</p>
+                    <p>{{ data["customer"]["physical_address"] }}</p>
+                    <p>{{ data["customer"]["town"] }} {{ data["customer"]["postal_code"] }}</p>
+                    <p>{{ data["customer"]["email"] }}</p>
                 </div>
             </div>
 
@@ -37,48 +38,52 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>My Album</td>
-                        <td>$30.00</td>
-                        <td>3</td>
-                        <td>$90.00</td>
-                    </tr>
+
+                    <!-- column item selection -->
+                    {% for n, alb in data["items"].items() %}
+                        <tr>
+                            <td>1</td>
+                            <td>{{ n }}</td>
+                            <td>${{ alb["price"] }}</td>
+                            <td>{{ alb["quantity"] }}</td>
+                            <td>${{ '%.2f' % (alb["price"] * alb["quantity"]) }}</td>
+                        </tr>
+                    {% endfor %}
 
                     <tr class="monetary-cost subtotal">
                         <td></td>
                         <td></td>
                         <td></td>
                         <td>Subtotal</td>
-                        <td>$90.00</td>
+                        <td>${{ data["subtotal"] }}</td>
                     </tr>
                     <tr class="monetary-cost gst">
                         <td></td>
                         <td></td>
                         <td></td>
                         <td>GST</td>
-                        <td>$10.00</td>
+                        <td>${{ '%.2f' % data["gst"] }}</td>
                     </tr>
                     <tr class="monetary-cost ship-fee">
                         <td></td>
                         <td></td>
                         <td></td>
                         <td>Ship Fee</td>
-                        <td>$5.00</td>
+                        <td>${{ '%.2f' % data["ship_fee"] }}</td>
                     </tr>
                     <tr class="monetary-cost discount">
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td>Subtotal</td>
-                        <td>$90.00</td>
+                        <td>Discount</td>
+                        <td>${{ '%.2f' % 0 }}</td>
                     </tr>
                     <tr class="monetary-cost total">
                         <td></td>
                         <td></td>
                         <td></td>
                         <td>Total</td>
-                        <td>$90.00</td>
+                        <td>${{ '%.2f' % data["total_charges"] }}</td>
                     </tr>
                 </tbody>
             </table>
