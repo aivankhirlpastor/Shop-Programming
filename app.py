@@ -15,6 +15,7 @@ def load_data_products():
         return json.load(product)
 
 def initialise_database():
+    # ORDER HISTORY
     with sqlite3.connect("order_history.db") as conn:
         cursor = conn.cursor()
         cursor.execute("""
@@ -28,6 +29,22 @@ def initialise_database():
                     ship_fee FLOAT,
                     discount FLOAT,
                     total_charges REAL
+                    )
+""")
+
+    # ACCOUNTS
+    with sqlite3.connect("accounts.db") as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS orders (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    date TEXT,
+                    name TEXT NOT NULL,
+                    email TEXT NOT NULL,
+                    password TEXT NOT NULL,
+                    items TEXT,
+                    wishlists TEXT,
+                    billing_info TEXT
                     )
 """)
 
@@ -603,9 +620,19 @@ def visit():
 
     return redirect(url_for("product_information", m = item_model))
 
-@app.route("/signup_login")
-def signup_login():
-    return render_template("signup_and_login.html")
+@app.route("/accounts/<measure>", defaults = {"subject": None})
+@app.route("/accounts/<measure>/<subject>")
+def signup_login(measure, subject):
+
+    if measure == "signup":
+        print(2)
+    elif measure == "login":
+        print(1)
+    else:
+        # abort(404)
+        raise Exception(f"Unknown measure: {measure}")
+
+    return render_template("signup_and_login.html", msr = measure, sbj = subject)
 
 
 # ==== dynamic route instance ==== #
