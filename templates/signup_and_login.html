@@ -8,20 +8,62 @@
         
         <section class="grid grid-display account-component">
             {% if msr == "signup" %}
-    
+                <form action="" id="log-in">
+                    <div class="main-content">
+                        <h2>Sign Up</h2>
+                        <div class="form-block fr-n-name">
+                            <label for="new-name">Name</label>
+                            <input type="text" name="new-name" id="new-name" required>
+                        </div>
+                        <div class="form-block fr-n-email">
+                            <label for="new-email">Email Address</label>
+                            <input type="email" name="new-email" id="new-email" required>
+                        </div>
+                        <div class="form-block fr-n-password">
+                            <label for="new-password">Password</label>
+                            <input type="password" name="new-password" id="new-password" minlength="7" maxlength="16" autocomplete="new-password" required>
+                        </div>
+                        <div class="form-block fr-n-password">
+                            <label for="new-confirm-password">Confirm Password</label>
+                            <input type="password" name="new-confirm-password" id="new-confirm-password" minlength="7" maxlength="16" autocomplete="new-password" required>
+                        </div>
+                        <button class="complete-action" type="submit">Sign Up</button>
+                        <p>Already have an account? <a href="{{ url_for('signup_login', measure = 'login', subject = sbj) }}">Log In</a></p>
+                    </div>
+
+                    {% if sbj == "for_awaiting_checkout" %}
+                        <div class="awaiting-checkout">
+                            <span class="label lowercase">Continue to Checkout as a guest</span>
+                            <button type="button" class="outlined" onclick="location.href = `{{ url_for('checkout') }}`">Continue to Checkout</button>
+                        </div>
+                    {% endif %}
+                </form>
+                <div class="img-block">
+                    <img>
+                    <span class="attribution-credits">Credits</span>
+                </div>
             {% elif msr == "login" %}
                 <form action="" id="log-in">
-                    <h2>Log In</h2>
-                    <div class="form-block fr-email">
-                        <label for="email">Email Address</label>
-                        <input type="text" name="email" id="email" autocomplete="email" required>
+                    <div class="main-content">
+                        <h2>Log In</h2>
+                        <div class="form-block fr-log-email">
+                            <label for="lg-email">Email Address</label>
+                            <input type="email" name="lg-email" id="lg-email" autocomplete="email" required>
+                        </div>
+                        <div class="form-block fr-log-password">
+                            <label for="lg-password">Password</label>
+                            <input type="password" name="lg-password" id="lg-password" minlength="7" maxlength="16" autocomplete="current-password" required>
+                        </div>
+                        <button class="complete-action" type="submit">Login</button>
+                        <p>New here? <a href="{{ url_for('signup_login', measure = 'signup', subject = sbj) }}">Sign Up</a></p>
                     </div>
-                    <div class="form-block fr-password">
-                        <label for="password">Password</label>
-                        <input type="password" name="password" id="password" autocomplete="current-password" required>
-                    </div>
-                    <button type="submit">Login</button>
-                    <p>New here? <a href="{{ url_for('signup_login', measure = 'signup', subject = sbj) }}">Sign Up</a></p>
+
+                    {% if sbj == "for_awaiting_checkout" %}
+                        <div class="awaiting-checkout">
+                            <span class="label lowercase">Continue to Checkout as a guest</span>
+                            <button type="button" class="outlined" onclick="location.href = `{{ url_for('checkout') }}`">Continue to Checkout</button>
+                        </div>
+                    {% endif %}
                 </form>
                 <div class="img-block">
                     <img>
