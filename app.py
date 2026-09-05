@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, get_flashed_messages, abort
 from datetime import datetime, timedelta
 import json, datetime, sqlite3, re
+import time
 import os
 import sys
 
@@ -32,6 +33,7 @@ def initialise_database():
 
 def calculate_total(c):
     cart_total = sum(item["price"] * item["quantity"] for item in c.values())
+    # cart_total = cart_total
     gst = cart_total * 0.15
 
     # Shipping Fee: Determined by the amount of quantity
@@ -465,6 +467,10 @@ def checkout():
 
     total, subtotal, gst, ship_fee = calculate_total(cart)
 
+    if not cart:
+        flash("You don't have items in your cart yet; start shopping for your favourite music album.")
+        return redirect(url_for("cart"))
+
     return render_template("checkout.html",
                            total = total, subtotal = subtotal,
                            gst = gst, ship_fee = ship_fee,
@@ -500,6 +506,9 @@ def continue_to_review():
 # Info Retrieval
 @app.route("/place_order", methods = ["POST"])
 def place_order():
+    # time delay
+    time.sleep(2.4)
+
     # get "Carts" and "Billing Info" from the session
     cart = session.get("cart", {}) # get all the items in cart
     billing_info = session.get("billing_info", {}) # store within the session
@@ -519,8 +528,8 @@ def place_order():
 
     total, subtotal, gst, ship_fee = calculate_total(cart)
     date = datetime.datetime.now().strftime("%Y-%m-%d")
-    time = datetime.datetime.now().strftime("%H.%M.%S")
-    invoice_date = f"{date} {time}"
+    time_clock = datetime.datetime.now().strftime("%H.%M.%S")
+    invoice_date = f"{date} {time_clock}"
     # invoice number will be declared as soon as we get to the database variables.
 
     # Save order history to SqLite Database
@@ -573,11 +582,11 @@ def place_order():
     try:
         with sqlite3.connect("order_history.db") as conn:
             # fetch for id only
-            cursor.execute(f"SELECT * FROM orders WHERE date = {invoice_date}")
+            cursor.execute(f"SELECT * FROM orders WHERE date = '{invoice_date}'")
             lid = cursor.fetchall()[0] # fetching for one row only
-            redirect_id = int(lid[0])
+            redirect_id = lid[0]
 
-        return redirect(url_for("invoice_selection", inv_number = lid))
+        return redirect(url_for("invoice_selection", inv_number = int(redirect_id)))
 
     # in case that wasn't exist
     except Exception as err:
