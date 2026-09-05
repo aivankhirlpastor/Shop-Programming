@@ -820,34 +820,70 @@ section.account-component {
 
 /* form for both sign up and log in */
 section.account-component form {
+    grid-area: 1 / 1 / span 1 / span 4;
+    margin: var(--block-margin) calc(var(--block-margin) * 1.7);
+}
+
+/* main content */
+section.account-component form :is(.main-content, .awaiting-checkout) {
     align-items: center;
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    grid-area: 1 / 1 / span 1 / span 4;
-    margin: calc(var(--block-margin) * 1.6);
+    gap: 10px;
+
+    transition: opacity 0.3s ease-in-out,
+                background-color 0.3s ease-in-out;
 }
 
 /* headings */
-section.account-component form > :is(h2, h3) {
+section.account-component form .main-content > :is(h2, h3) {
     margin: 0;
 }
 
-section.account-component form > .form-block {
+/* line break */
+section.account-component form hr {
+    width: 100%;
+}
+
+/* form block - few properties */
+section.account-component form .form-block {
     margin-block: 0;
     width: 80%;
 }
 
+/* awaiting checkout content key */
+section.account-component form .awaiting-checkout {
+    padding-block: 8px;
+
+    border: 2px solid #00000044;
+    border-left: none;
+    border-right: none;
+}
+
+/* hover effect */
+section.account-component form .awaiting-checkout:hover {
+    background-color: #00000014;
+}
+
+section.account-component form:has(.awaiting-checkout:hover) .main-content {
+    opacity: 40%;
+
+    transition: opacity 0.1s linear;
+}
+
 /* BUTTON for both sign up and log in */
-section.account-component form > button {
-    margin-top: 20px;
+section.account-component form button {
     width: 60%;
+}
+
+section.account-component form button.complete-action {
+    margin-top: 15px;
 }
 
 section.account-component .img-block {
     background-color: #0d1d91;
     grid-area: 1 / 5 / span 1 / span 4;
-    height: 440px;
+    height: 450px;
     margin: var(--block-margin);
     position: relative;
 }
