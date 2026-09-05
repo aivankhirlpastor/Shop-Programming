@@ -1,9 +1,33 @@
 {% extends "base.html" %}
 
-{% block title %}Log In - The Music Shop{% endblock %}
+{% block title %}{% if msr == "signup" %}Sign Up{% elif msr == "login" %}Log In{% endif %} - The Music Shop{% endblock %}
 
 {% block content %}
     <body>
-        Log In
+
+        
+        <section class="grid grid-display account-component">
+            {% if msr == "signup" %}
+    
+            {% elif msr == "login" %}
+                <form action="" id="log-in">
+                    <h2>Log In</h2>
+                    <div class="form-block fr-email">
+                        <label for="email">Email Address</label>
+                        <input type="text" name="email" id="email" autocomplete="email" required>
+                    </div>
+                    <div class="form-block fr-password">
+                        <label for="password">Password</label>
+                        <input type="password" name="password" id="password" autocomplete="current-password" required>
+                    </div>
+                    <button type="submit">Login</button>
+                    <p>New here? <a href="{{ url_for('signup_login', measure = 'signup', subject = sbj) }}">Sign Up</a></p>
+                </form>
+                <div class="img-block">
+                    <img>
+                    <span class="attribution-credits">Credits</span>
+                </div>
+            {% endif %}
+        </section>
     </body>
 {% endblock %}
