@@ -813,6 +813,56 @@ table tr:nth-child(even):not(.monetary-cost) td {
     background-color: #ffffec;
 }
 
+/* ======== SIGN UP / LOG IN ======== */
+section.account-component {
+    --block-margin: 44px;
+}
+
+/* form for both sign up and log in */
+section.account-component form {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    grid-area: 1 / 1 / span 1 / span 4;
+    margin: calc(var(--block-margin) * 1.6);
+}
+
+/* headings */
+section.account-component form > :is(h2, h3) {
+    margin: 0;
+}
+
+section.account-component form > .form-block {
+    margin-block: 0;
+    width: 80%;
+}
+
+/* BUTTON for both sign up and log in */
+section.account-component form > button {
+    margin-top: 20px;
+    width: 60%;
+}
+
+section.account-component .img-block {
+    background-color: #0d1d91;
+    grid-area: 1 / 5 / span 1 / span 4;
+    height: 440px;
+    margin: var(--block-margin);
+    position: relative;
+}
+
+section.account-component .img-block .attribution-credits {
+    background-color: #00000055;
+    color: #ffffff;
+    position: absolute;
+    padding: 12px 30px;
+
+    /* offsets */
+    right: 0px;
+    bottom: 0px;
+}
+
 /* FOOTER */
 footer {
     background-color: var(--color-1);
