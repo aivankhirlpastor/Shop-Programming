@@ -650,9 +650,14 @@ section.my-cart li.item-details:has(.quantity input.modified) > .price-action p.
     padding: 16px;
     grid-area: 1 / 6 / span 1 / 9;
     max-height: 300px;
+    height: fit-content;
 
     position: sticky;
     top: 75px;
+}
+
+.panel-details hr {
+    border: 1px solid #00000088;
 }
 
 section.my-cart .panel-details > #coupon-layout {
