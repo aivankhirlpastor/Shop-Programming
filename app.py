@@ -32,9 +32,11 @@ def initialise_database():
 """)
 
 def calculate_total(c):
-    cart_total = sum(item["price"] * item["quantity"] for item in c.values())
-    # cart_total = cart_total
-    gst = cart_total * 0.15
+    # round() and *100/100 rule to alleviate math float inaccuracy
+    cart_total = sum((item["price"] * item["quantity"]) * 100 for item in c.values())
+    cart_total = cart_total / 100
+
+    gst = round(cart_total * 0.15, 2)
 
     # Shipping Fee: Determined by the amount of quantity
     quantity = sum(i["quantity"] for i in c.values())
