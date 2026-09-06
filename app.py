@@ -9,6 +9,10 @@ import sys
 app = Flask("__name__")
 app.secret_key = "your-secret-key"
 
+# general variables
+global restore_cart
+restore_cart = {}
+
 # functions
 def load_data_products():
     with open("data/products.json") as product:
@@ -36,7 +40,7 @@ def initialise_database():
     with sqlite3.connect("accounts.db") as conn:
         cursor = conn.cursor()
         cursor.execute("""
-            CREATE TABLE IF NOT EXISTS orders (
+            CREATE TABLE IF NOT EXISTS accounts (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     date TEXT,
                     name TEXT NOT NULL,
@@ -47,6 +51,25 @@ def initialise_database():
                     billing_info TEXT
                     )
 """)
+
+def signin_session(name):
+    # getting onto session
+    with sqlite3.connect("accounts.db") as conn:
+        cursor = conn.cursor()
+        cursor.execute(f"SELECT id, name, items FROM accounts WHERE name = '{name}'")
+
+        uid = cursor.fetchall()[0]
+
+    session_key = session.get("session_key", {})
+    session_key = {
+        "user_id": uid[0],
+        "name": uid[1],
+        "cart": uid[2],
+        "accessed": True
+    }
+
+    session["session_key"] = session_key
+    session.modified = True
 
 def calculate_total(c):
     # round() and *100/100 rule to alleviate math float inaccuracy
@@ -587,13 +610,7 @@ def place_order():
         flash(place_order_error)
 
         return redirect(url_for("index"))
-
-    try:
-        3
-
-    except Exception as e:
-        return redirect(url_for("index"))
-
+    
     # Updating the stock will be at the later sprint planning.
     flash("Order Completed")
 
@@ -613,27 +630,60 @@ def place_order():
 
     return redirect(url_for("index"))
 
-# temporary routes
-@app.route("/visit", methods = ["POST"])
-def visit():
-    item_model = request.form['item_selector']
-
-    return redirect(url_for("product_information", m = item_model))
-
 @app.route("/accounts/<measure>", defaults = {"subject": None})
 @app.route("/accounts/<measure>/<subject>")
 def signup_login(measure, subject):
-
-    if measure == "signup":
-        print(2)
-    elif measure == "login":
-        print(1)
-    else:
-        # abort(404)
-        raise Exception(f"Unknown measure: {measure}")
+    if not measure == "signup" and not measure == "login":
+        abort(404) # not found
 
     return render_template("signup_and_login.html", msr = measure, sbj = subject)
 
+@app.route("/signup", defaults = {"get_subject": None}, methods = ["POST"])
+@app.route("/signup/<get_subject>", methods = ["POST"])
+def signup(get_subject):
+
+    global restore_cart
+
+    # leading whitespaces removed; capitalised words
+    name = request.form["new-name"].strip().title()
+    email = request.form["new-email"]
+    password = request.form["new-password"]
+    confirm_password = request.form["new-confirm-password"]
+
+    date = datetime.datetime.now().strftime("%Y-%m-%d")
+
+    # Complete Registration to Database
+    try:
+        # confirming a password
+        if password == confirm_password:
+            # session detachment from guest account
+            cart = session.get("cart", {})
+            item_estd = None
+            restore_cart = cart
+
+            # empty
+            if not cart == {}:
+                item_estd = cart
+
+            with sqlite3.connect("accounts.db") as conn:
+                cursor = conn.cursor()
+                cursor.execute(""" 
+                    INSERT INTO accounts (date, name, email, password, items)
+                    VALUES (?, ?, ?, ?)
+                """, (date, name, email, password, json.dumps(item_estd) if item_estd else None ))
+
+                conn.commit()
+
+            signin_session(name)
+
+        else:
+            raise Exception("Confirm password is not matched from the password creation.")
+        
+    except Exception as r:
+        flash(f"Can't complete registration: {r}")
+        # raise Exception(r)
+
+    return redirect(url_for("index"))
 
 # ==== dynamic route instance ==== #
 # @app.route("/category/<string:genre>")
