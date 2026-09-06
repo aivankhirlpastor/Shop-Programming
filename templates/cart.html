@@ -50,7 +50,15 @@
             </ul>
 
             <!-- II: ORDER DETAILS -->
-            <form class="panel-details" action="{{ url_for('signup_login', measure = 'login', subject = 'for_awaiting_checkout') }}">
+
+            <!-- TIP ROUTES (CHECKOUT/PRE-CHECKOUT or Sign Up Request) -->
+            {% if session["session_key"] and session["session_key"]["accessed"] %}
+                {% set tip_route = url_for('checkout') %}
+            {% else %}
+                {% set tip_route = url_for('signup_login', measure = 'login', subject = 'for_awaiting_checkout') %}
+            {% endif %}
+
+            <form class="panel-details" action="{{ tip_route }}">
                 <span class="label centre">Order Details</span>
                 <div id="coupon-layout">
                     <input type="text" name="coupon" id="coupon">
