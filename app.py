@@ -737,7 +737,10 @@ def signup(get_subject):
         
     except Exception as r:
         flash(f"Can't complete registration: {r}")
-        # raise Exception(r)
+
+    # redirect to checkout via "get_subject"
+    if get_subject == "for_awaiting_checkout":
+        return redirect(url_for("checkout"))
 
     return redirect(url_for("index"))
 
@@ -760,6 +763,10 @@ def login(get_subject):
 
         # return to log in page
         return redirect(url_for("signup_login", measure = 'login', subject = get_subject))
+
+    # redirect to checkout via "get_subject"
+    if get_subject == "for_awaiting_checkout":
+        return redirect(url_for("checkout"))
 
     return redirect(url_for("index"))
 
