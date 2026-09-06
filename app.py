@@ -62,7 +62,7 @@ def signin_session(email, password, msr = 0):
 
         # if account associated with email was not found; post_identifier is empty
         if not post_identifier:
-            raise Exception(f"Account was not found: {email} at {msr}")
+            raise Exception(f"Account was not found: {email}")
 
         uid = post_identifier[0]
         retrieved_item = None # initial
@@ -752,7 +752,10 @@ def login(get_subject):
     try:
         signin_session(email, password, 1)
     except Exception as error:
-        flash(error)
+        flash(f"{error}")
+
+        # return to log in page
+        return redirect(url_for("signup_login", measure = 'login', subject = get_subject))
 
     return redirect(url_for("index"))
 
