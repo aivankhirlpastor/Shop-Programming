@@ -58,41 +58,38 @@ def signin_session(email, password, msr = 0):
         cursor = conn.cursor()
         cursor.execute(f"SELECT id, name, password, items FROM accounts WHERE email = '{email}'")
 
+        # check for an account associated with email
         post_identifier = cursor.fetchall()
 
-        # if account associated with email was not found; post_identifier is empty
-        if not post_identifier:
-            raise Exception(f"Account was not found: {email}")
+        if post_identifier:
+            uid = post_identifier[0]
+            retrieved_item = None # initial
 
-        uid = post_identifier[0]
-        retrieved_item = None # initial
+            # not matched
+            if not password == uid[2]:
+                raise Exception("Password is incorrect.")
 
-        # not matched
-        if not password == uid[2]:
-            raise Exception("Password is incorrect.")
-
-        # sign up method
-        if msr == 0:
-            pass # no effect
-        elif msr == 1:
             # log in method
-            retrieved_item = json.loads(uid[3])
+            if msr == 1:
+                # replacing cart from retrieval item or setting to  on registered account
+                retrieved_item = json.loads(uid[3])
+                session["cart"] = retrieved_item
+                
+            # In-Session Key in dict (account accessed)
+            session_key = session.get("session_key", {})
+            session_key = {
+                "user_id": uid[0],
+                "name": uid[1],
+                "email": email,
+                "cart": retrieved_item,
+                "accessed": True
+            }
 
-            # replacing cart from retrieval item on registered account
-            session["cart"] = retrieved_item
+            session["session_key"] = session_key # define the session key
             session.modified = True
-
-    session_key = session.get("session_key", {})
-    session_key = {
-        "user_id": uid[0],
-        "name": uid[1],
-        "email": email,
-        "cart": retrieved_item,
-        "accessed": True
-    }
-
-    session["session_key"] = session_key
-    session.modified = True
+        else:
+            # if account associated with email was not found; post_identifier is empty
+            raise Exception(f"Account was not found: {email}")
 
 def calculate_total(c):
     # round() and *100/100 rule to alleviate math float inaccuracy
@@ -255,17 +252,6 @@ def index_album_modules():
 
     return ahr, bhr, chr
 
-    
-
-def cart_amount():
-    cart = session.get("cart", {})
-    count = 0
-
-    for _, n in cart.items():
-        count += 1
-
-    return count
-
 # --------------------------------------
 
 # POST variable declaration
@@ -303,8 +289,6 @@ def after_request_function(req):
                     SET items = ?
                     WHERE name = '{session_key["name"]}' 
                 """, (json.dumps(session_key["cart"]),))
-
-            pass
 
     # throws error due to missing keyword 'cart' error
     except Exception as r:
@@ -721,6 +705,7 @@ def signup(get_subject):
             cart = session.get("cart", {})
             restore_cart = cart
 
+            # Connect to SQLite3: accounts
             with sqlite3.connect("accounts.db") as conn:
                 cursor = conn.cursor()
                 cursor.execute(""" 
@@ -733,7 +718,7 @@ def signup(get_subject):
             signin_session(email, password)
 
         else:
-            raise Exception("Confirm password is not matched from the password creation.")
+            raise Exception("Your password does not matched the one you are trying to confirm. Verify that the password is the same as the one you created.")
         
     except Exception as r:
         flash(f"Can't complete registration: {r}")
