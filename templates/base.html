@@ -14,14 +14,17 @@
                 <li><a href="{{ url_for('index') }}">Home</a></li>
                 <li><a>About</a></li>
                 <li><a>Shop</a></li>
-                <li><a href="{{ url_for('signup_login', measure = 'login') }}">Log In</a></li>
+                <li><a href="{{ url_for('signup_login', measure = 'login') }}">{% if session["session_key"] and session["session_key"]["accessed"] %}Name{% else %}Log In{% endif %}</a></li>
             </ul>
         </nav>
         <a href="{{ url_for('cart') }}">
             <span>My Cart</span>
-            <span class="counter">{{ c }}</span>
+            <span class="counter">{{ session["cart"]|length }}</span>
         </a>
     </header>
+
+    <!-- debugging -->
+    <!-- <p>{{ session["session_key"] }}</p> -->
 
     {% with messages = get_flashed_messages() %}
         {% if messages %}
