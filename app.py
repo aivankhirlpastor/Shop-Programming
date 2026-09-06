@@ -686,6 +686,14 @@ def signup_login(measure, subject):
     if not measure == "signup" and not measure == "login":
         abort(404) # not found
 
+    try:
+        # verify if the user was logged on
+        accessed_logon = session.get("session_key", {})
+        if True in accessed_logon.values():
+            return redirect(url_for("my_account"))
+    except:
+        pass
+
     return render_template("account_access.html", msr = measure, sbj = subject)
 
 @app.route("/signup", defaults = {"get_subject": None}, methods = ["POST"])
@@ -711,12 +719,7 @@ def signup(get_subject):
         if password == confirm_password:
             # session detachment from guest account
             cart = session.get("cart", {})
-            item_estd = None
             restore_cart = cart
-
-            # empty
-            if not cart == {}:
-                item_estd = cart
 
             with sqlite3.connect("accounts.db") as conn:
                 cursor = conn.cursor()
@@ -759,6 +762,29 @@ def login(get_subject):
         return redirect(url_for("signup_login", measure = 'login', subject = get_subject))
 
     return redirect(url_for("index"))
+
+@app.route("/accounts/my_account")
+def my_account():
+    try:
+        # verify if the user was logged on
+        has_session_key = session.get("session_key", {})
+        if has_session_key["accessed"]:
+            return render_template("account_access.html", msr = None, sbj = None)
+    except:
+        pass
+    
+    return redirect(url_for("signup_login", measure = 'login'))
+
+
+@app.route("/logout")
+def logout():
+    # featuring guest cart
+    session["cart"] = restore_cart
+
+    session.pop("session_key", None) # revoke session account
+    session.modified = True
+
+    return redirect(url_for("signup_login", measure = 'login'))
 
 # ==== dynamic route instance ==== #
 # @app.route("/category/<string:genre>")
