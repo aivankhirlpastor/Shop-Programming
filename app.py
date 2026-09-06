@@ -86,6 +86,7 @@ def signin_session(email, password, msr = 0):
     session_key = {
         "user_id": uid[0],
         "name": uid[1],
+        "email": email,
         "cart": retrieved_item,
         "accessed": True
     }
