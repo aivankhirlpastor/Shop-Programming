@@ -5,9 +5,56 @@
 {% block content %}
     <body>
         <section class="grid grid-display account-component">
-            
+            {% if session["session_key"] and session["session_key"]["accessed"] %}
+                {% set sv = session["session_key"] %}
 
-            {% if msr == "signup" %}
+                <ul class="mini-list-container vrs-2">
+                    <!-- cart for now (wishlist to be planned...) -->
+                    <span class="label">Your Cart</span>
+                    {% for _, alb in sv["cart"].items() %}
+                                                <!-- list per item -->
+                        <li class="mini-list-item">
+
+                            <!-- I: Image and Quantity -->
+                            <div class="img-qty-placer">
+                                <img class="img-item">
+                                <span class="counter">{{ alb["quantity"] }}</span>
+                            </div>
+
+                            <!-- II: Name, Author, and Price -->
+                            <div class="txt-const">
+                                <div class="name-author">
+                                    <span class="emphasise">{{ _ }}</span>
+                                    <p>{{ alb["author"] }}</p>
+                                </div>
+                                <!-- Price -->
+                                <b class="price">${{ '%.2f' % (alb["price"] * alb["quantity"]) }}</b>
+                            </div>
+
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                <div class="account-display">
+                    <span class="label">MY ACCOUNT</span>
+    
+                    <h2>Hello, {{ session["session_key"]["name"] }}!</h2>
+
+                    <hr>
+                    <!-- INFORMATION DISPLAY -->
+                    <div class="text-nudge nudge-block">
+                        <span>ID</span>
+                        <p class="emphasise">{{ sv["user_id"] }}</p>
+                    </div>
+                    <div class="text-nudge nudge-block">
+                        <span>Email</span>
+                        <p class="emphasise">{{ sv["email"] }}</p>
+                    </div>
+                    <hr>
+
+                    <a>Log Out</a>
+                </div>
+            {% elif msr == "signup" %}
                 <!-- SIGN UP section  -->
                 <form action="{{ url_for('signup', get_subject = 's3') }}" id="log-in" method="post">
 
