@@ -476,6 +476,22 @@ header nav ul li {
     margin-inline: 18px;
 }
 
+/* special styling identifier */
+header nav ul li > a#link-account-accessed {
+    --brd-inline-style: 3px solid #e7d61c79;
+
+    /* stylistic <a> link */
+    background-color: rgb(211, 36, 13);
+    border: var(--brd-inline-style);
+    color: #fdffff;
+
+    padding-inline: 18px;
+}
+
+header nav ul li:has(a#link-account-accessed) {
+    margin-inline: 0;
+}
+
 /* ======== INDEX PAGE ======== */
 section#static-banner {
     --banner-height: 300px;
