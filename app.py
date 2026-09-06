@@ -685,7 +685,7 @@ def signup_login(measure, subject):
     if not measure == "signup" and not measure == "login":
         abort(404) # not found
 
-    return render_template("signup_and_login.html", msr = measure, sbj = subject)
+    return render_template("account_access.html", msr = measure, sbj = subject)
 
 @app.route("/signup", defaults = {"get_subject": None}, methods = ["POST"])
 @app.route("/signup/<get_subject>", methods = ["POST"])

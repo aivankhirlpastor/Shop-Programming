@@ -5,6 +5,8 @@
 {% block content %}
     <body>
         <section class="grid grid-display account-component">
+            
+
             {% if msr == "signup" %}
                 <!-- SIGN UP section  -->
                 <form action="{{ url_for('signup', get_subject = 's3') }}" id="log-in" method="post">
