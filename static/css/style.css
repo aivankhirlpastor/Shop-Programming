@@ -816,6 +816,7 @@ table tr:nth-child(even):not(.monetary-cost) td {
 /* ======== SIGN UP / LOG IN ======== */
 section.account-component {
     --block-margin: 44px;
+    --brd-account-display: 3px solid #00000044;
 }
 
 /* form for both sign up and log in */
@@ -902,6 +903,27 @@ section.account-component .img-block .attribution-credits {
     /* offsets */
     right: 0px;
     bottom: 0px;
+}
+
+/* within SESSION KEY */
+section.account-component ul.mini-list-container {
+    border-right: var(--brd-account-display);
+    grid-area: 1 / 1 / span 1 / span 3;
+    margin-block: 30px;
+}
+
+section.account-component .account-display {
+    border-left: var(--brd-account-display);
+    grid-area: 1 / 5 / span 1 / span 4;
+    margin-block: 30px;
+    min-height: 500px;
+    padding-left: 16px;
+}
+
+section.account-component .buttons {
+    display: inline-flex;
+    gap: 16px;
+    margin-block: 16px;
 }
 
 /* FOOTER */
