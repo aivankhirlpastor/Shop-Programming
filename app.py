@@ -52,19 +52,41 @@ def initialise_database():
                     )
 """)
 
-def signin_session(name):
+def signin_session(email, password, msr = 0):
     # getting onto session
     with sqlite3.connect("accounts.db") as conn:
         cursor = conn.cursor()
-        cursor.execute(f"SELECT id, name, items FROM accounts WHERE name = '{name}'")
+        cursor.execute(f"SELECT id, name, password, items FROM accounts WHERE email = '{email}'")
 
-        uid = cursor.fetchall()[0]
+        post_identifier = cursor.fetchall()
+
+        # if account associated with email was not found; post_identifier is empty
+        if not post_identifier:
+            raise Exception(f"Account was not found: {email} at {msr}")
+
+        uid = post_identifier[0]
+        retrieved_item = None # initial
+
+        # not matched
+        if not password == uid[2]:
+            raise Exception("Password is incorrect.")
+
+        # sign up method
+        if msr == 0:
+            pass # no effect
+        elif msr == 1:
+            # log in method
+            retrieved_item = json.loads(uid[3])
+
+            # replacing cart from retrieval item on registered account
+            session["cart"] = retrieved_item
+            session.modified = True
 
     session_key = session.get("session_key", {})
     session_key = {
         "user_id": uid[0],
         "name": uid[1],
-        "cart": uid[2],
+        "cart": retrieved_item,
         "accessed": True
     }
 
@@ -258,10 +280,37 @@ def cart_amount():
 
 #     print(key)
 
-# @app.after_request
-# def after_request_function(r):
-#     print("HEADING AFTER REQUEST", r.headers)
-#     return r
+@app.after_request
+def after_request_function(req):
+    cart = session.get("cart", {})
+    session_key = session.get("session_key", {})
+
+    # updating the cart key | disimilarities between keys
+    try:
+        if not cart == session_key["cart"]:
+            session_key["cart"] = cart
+
+            # update account session
+            session["session_key"] = session_key
+            session.modified = True
+
+            # altering the table
+            with sqlite3.connect("accounts.db") as conn:
+                cursor = conn.cursor()
+                cursor.execute(f"""
+                    UPDATE accounts
+                    SET items = ?
+                    WHERE name = '{session_key["name"]}' 
+                """, (json.dumps(session_key["cart"]),))
+
+            pass
+
+    # throws error due to missing keyword 'cart' error
+    except Exception as r:
+        pass
+
+    # print("HEADING AFTER REQUEST", req.headers)
+    return req
 
 # ROUTES <------------------->
 @app.route("/")
@@ -645,11 +694,14 @@ def signup(get_subject):
     global restore_cart
 
     # leading whitespaces removed; capitalised words
-    name = request.form["new-name"].strip().title()
+    fname = request.form["new-fname"].strip().title()
+    lname = request.form["new-lname"].strip().title()
     email = request.form["new-email"]
     password = request.form["new-password"]
     confirm_password = request.form["new-confirm-password"]
 
+    # full name
+    name = f"{fname} {lname}"
     date = datetime.datetime.now().strftime("%Y-%m-%d")
 
     # Complete Registration to Database
@@ -669,12 +721,12 @@ def signup(get_subject):
                 cursor = conn.cursor()
                 cursor.execute(""" 
                     INSERT INTO accounts (date, name, email, password, items)
-                    VALUES (?, ?, ?, ?)
-                """, (date, name, email, password, json.dumps(item_estd) if item_estd else None ))
+                    VALUES (?, ?, ?, ?, ?)
+                """, (date, name, email, password, None,))
 
                 conn.commit()
 
-            signin_session(name)
+            signin_session(email, password)
 
         else:
             raise Exception("Confirm password is not matched from the password creation.")
@@ -682,6 +734,25 @@ def signup(get_subject):
     except Exception as r:
         flash(f"Can't complete registration: {r}")
         # raise Exception(r)
+
+    return redirect(url_for("index"))
+
+@app.route("/login", defaults = {"get_subject": None}, methods = ["POST"])
+@app.route("/login/<get_subject>", methods = ["POST"])
+def login(get_subject):
+    email = request.form["lg-email"]
+    password = request.form["lg-password"]
+
+    # getting cart
+    global restore_cart
+
+    cart = session.get("cart", {})
+    restore_cart = cart
+
+    try:
+        signin_session(email, password, 1)
+    except Exception as error:
+        flash(error)
 
     return redirect(url_for("index"))
 
