@@ -840,6 +840,11 @@ section.account-component form .main-content > :is(h2, h3) {
     margin: 0;
 }
 
+/* paragraph (a little to margin blocks) */
+section.account-component form .main-content > p {
+    margin-block: 8px;
+}
+
 /* line break */
 section.account-component form hr {
     width: 100%;
@@ -855,7 +860,7 @@ section.account-component form .form-block {
 section.account-component form .awaiting-checkout {
     padding-block: 8px;
 
-    border: 2px solid #00000044;
+    border: 3px solid #00000044;
     border-left: none;
     border-right: none;
 }
