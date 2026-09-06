@@ -4,16 +4,21 @@
 
 {% block content %}
     <body>
-
-        
         <section class="grid grid-display account-component">
             {% if msr == "signup" %}
-                <form action="" id="log-in">
+                <!-- SIGN UP section  -->
+                <form action="{{ url_for('signup', get_subject = 's3') }}" id="log-in" method="post">
+
+                    <!-- main content -->
                     <div class="main-content">
                         <h2>Sign Up</h2>
-                        <div class="form-block fr-n-name">
-                            <label for="new-name">Name</label>
-                            <input type="text" name="new-name" id="new-name" required>
+                        <div class="form-block fr-n-fname">
+                            <label for="new-fname">First Name</label>
+                            <input type="text" name="new-fname" id="new-fname" required>
+                        </div>
+                        <div class="form-block fr-n-lname">
+                            <label for="new-lname">Last Name</label>
+                            <input type="text" name="new-lname" id="new-lname" required>
                         </div>
                         <div class="form-block fr-n-email">
                             <label for="new-email">Email Address</label>
@@ -32,6 +37,7 @@
                     </div>
 
                     {% if sbj == "for_awaiting_checkout" %}
+                        <!-- Through Checkout -->
                         <div class="awaiting-checkout">
                             <span class="label lowercase">Continue to Checkout as a guest</span>
                             <button type="button" class="outlined" onclick="location.href = `{{ url_for('checkout') }}`">Continue to Checkout</button>
@@ -43,7 +49,10 @@
                     <span class="attribution-credits">Credits</span>
                 </div>
             {% elif msr == "login" %}
-                <form action="" id="log-in">
+                <!-- LOG IN section -->
+                <form action="{{ url_for('login', get_subject = 's3') }}" id="log-in" method="post">
+
+                    <!-- main content -->
                     <div class="main-content">
                         <h2>Log In</h2>
                         <div class="form-block fr-log-email">
@@ -59,6 +68,7 @@
                     </div>
 
                     {% if sbj == "for_awaiting_checkout" %}
+                        <!-- Through Checkout -->
                         <div class="awaiting-checkout">
                             <span class="label lowercase">Continue to Checkout as a guest</span>
                             <button type="button" class="outlined" onclick="location.href = `{{ url_for('checkout') }}`">Continue to Checkout</button>
