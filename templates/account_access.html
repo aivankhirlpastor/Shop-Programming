@@ -52,11 +52,14 @@
                     </div>
                     <hr>
 
-                    <a>Log Out</a>
+                    <div class="buttons">
+                        <button type="button" class="outlined" onclick="location.href = `{{ url_for('cart') }}`">View My Cart</button>
+                        <button type="button" class="destructive" onclick="location.href = `{{ url_for('logout') }}`">Logout</button>
+                    </div>
                 </div>
             {% elif msr == "signup" %}
                 <!-- SIGN UP section  -->
-                <form action="{{ url_for('signup', get_subject = 's3') }}" id="log-in" method="post">
+                <form action="{{ url_for('signup', get_subject = sbj) }}" id="log-in" method="post">
 
                     <!-- main content -->
                     <div class="main-content">
@@ -99,7 +102,7 @@
                 </div>
             {% elif msr == "login" %}
                 <!-- LOG IN section -->
-                <form action="{{ url_for('login', get_subject = 's3') }}" id="log-in" method="post">
+                <form action="{{ url_for('login', get_subject = sbj) }}" id="log-in" method="post">
 
                     <!-- main content -->
                     <div class="main-content">
