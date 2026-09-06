@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
+    {% set has_account_session = session["session_key"] and session["session_key"]["accessed"] %}
+
     <header>
         <h1>The Music Shop</h1>
         <nav>
@@ -14,7 +16,7 @@
                 <li><a href="{{ url_for('index') }}">Home</a></li>
                 <li><a>About</a></li>
                 <li><a>Shop</a></li>
-                <li><a href="{{ url_for('signup_login', measure = 'login') }}">{% if session["session_key"] and session["session_key"]["accessed"] %}Name{% else %}Log In{% endif %}</a></li>
+                <li><a href="{{ url_for('signup_login', measure = 'login') }}" {% if has_account_session %} id="link-account-accessed" {% endif %}>{% if has_account_session %}{{ session["session_key"]["name"] }}{% else %}Log In{% endif %}</a></li>
             </ul>
         </nav>
         <a href="{{ url_for('cart') }}">
