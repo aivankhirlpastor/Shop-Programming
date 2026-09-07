@@ -22,7 +22,7 @@
     "Lives In Nature": {
         "author": "Zeenchenburg Z.",
         "id": "980 1566 A",
-        "release_date": "01-04-2025",
+        "release_date": "01-04-2026",
         "label": "-",
         "tracks": 6,
         "genre": "Ambience",
@@ -62,12 +62,12 @@
     "Mozart's Theme": {
         "author": "Faustine Lizon",
         "id": "910 3937 D",
-        "release_date": "22-09-2025",
+        "release_date": "20-04-2026",
         "label": "-",
         "tracks": 1,
         "genre": "Classical",
         "price": 12.99,
-        "stock": 5
+        "stock": 28
     },
     "The Lines": {
         "author": "Elizabeth R.",
@@ -122,7 +122,7 @@
     "Lo-Fi Beats Study Time": {
         "author": "Hi-Tech Companion",
         "id": "961 1013 H",
-        "release_date": "01-03-2026",
+        "release_date": "25-04-2026",
         "label": "Road Rush Company",
         "tracks": 8,
         "genre": "Lo-Fi",
