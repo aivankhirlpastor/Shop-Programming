@@ -768,7 +768,7 @@ def my_account():
     return redirect(url_for("signup_login", measure = 'login'))
 
 
-@app.route("/logout")
+@app.route("/logout", methods = ["POST"])
 def logout():
     # featuring guest cart
     session["cart"] = restore_cart
