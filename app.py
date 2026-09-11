@@ -648,6 +648,9 @@ def place_order():
     # Updating the stock will be at the later sprint planning.
     flash("Order Completed")
 
+    session.pop("cart", None) # revoke session cart
+    session.modified = True
+
     # redirect user to invoice section
     try:
         with sqlite3.connect("order_history.db") as conn:
@@ -657,9 +660,9 @@ def place_order():
             redirect_id = lid[0]
 
         return redirect(url_for("invoice_selection", inv_number = int(redirect_id)))
-
-    # in case that wasn't exist
+    
     except Exception as err:
+        # in case that wasn't exist
         print(err)
 
     return redirect(url_for("index"))
