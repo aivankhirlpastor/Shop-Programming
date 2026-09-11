@@ -6,13 +6,14 @@
     <body>
         <section class="grid grid-display account-component">
             {% if session["session_key"] and session["session_key"]["accessed"] %}
+                <!-- MY ACCOUNT PAGE ELEMENTS -->
                 {% set sv = session["session_key"] %}
 
                 <ul class="mini-list-container vrs-2">
                     <!-- cart for now (wishlist to be planned...) -->
                     <span class="label">Your Cart</span>
                     {% for _, alb in sv["cart"].items() %}
-                                                <!-- list per item -->
+                        <!-- list per item -->
                         <li class="mini-list-item">
 
                             <!-- I: Image and Quantity -->
@@ -35,7 +36,7 @@
                     {% endfor %}
                 </ul>
 
-                <div class="account-display">
+                <form class="account-display" action="{{ url_for('logout') }}">
                     <span class="label">MY ACCOUNT</span>
     
                     <h2>Hello, {{ session["session_key"]["name"] }}!</h2>
@@ -53,10 +54,10 @@
                     <hr>
 
                     <div class="buttons">
-                        <button type="button" class="outlined" onclick="location.href = `{{ url_for('cart') }}`">View My Cart</button>
-                        <button type="button" class="destructive" onclick="location.href = `{{ url_for('logout') }}`">Logout</button>
+                        <button type="button" class="outlined" formaction="{{ url_for('cart') }}">View My Cart</button>
+                        <button type="button" class="destructive">Logout</button>
                     </div>
-                </div>
+                </form>
             {% elif msr == "signup" %}
                 <!-- SIGN UP section  -->
                 <form action="{{ url_for('signup', get_subject = sbj) }}" id="log-in" method="post">
