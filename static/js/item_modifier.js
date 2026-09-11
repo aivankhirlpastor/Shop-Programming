@@ -8,6 +8,10 @@ const save = document.getElementById("save-changes");
 const getInputs = document.querySelectorAll("input[type=number]");
 const getUnitPrices = document.querySelectorAll("p.price.recalculation");
 
+// Get the invisible input elements
+const getInvisibleInputs = document.querySelectorAll("input.input-pre-passing");
+console.log(getInvisibleInputs);
+
 // array variables by their initials
 let initialQuantity = [];
 let unitPrice = [];
@@ -68,24 +72,27 @@ cancel.addEventListener("click", e => {
     for (let h = 0; h < getInputs.length; h++) {
         // local variable
         const ii = getInputs[h];
+        const pp = getInvisibleInputs[h];
         const uu = getUnitPrices[h];
 
         ii.classList.remove("modified");
         ii.value = initialQuantity[h];
+        pp.value = initialQuantity[h];
         uu.textContent = `$${Math.round((unitPrice[h] * ii.value) * 100) / 100}`
     }
 });
 
-window.addEventListener("load", e => {
-    for (let l = 0; l < getInputs.length; l++) {
+// window.addEventListener("load", e => {
+//     // Get all the value for getInputs: for keyword as array
+//     for (let l = 0; l < getInputs.length; l++) {
 
-        const il = getInputs[l];
+//         const il = getInputs[l];
 
-        if (il.value !== initialQuantity[l] ) {
-            il.value = initialQuantity[l];
-        }        
-    }
-})
+//         if (il.value !== initialQuantity[l] ) {
+//             il.value = initialQuantity[l];
+//         }        
+//     }
+// })
 
 window.addEventListener("beforeunload", e => {
     if (isUnsavedChanges) {
