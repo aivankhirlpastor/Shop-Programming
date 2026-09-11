@@ -83,7 +83,7 @@
         <div id="config-bottom-bar">
             <form action="{{ url_for('apply_changes') }}" method="post" id="target-form">
                 {% for n, i in cart.items() %}
-                    <input name="i-invn-{{ i['id'] }}" id="i-invn-{{ i['id'] }}" value="{{ i['quantity'] }}" style="display: none;">
+                    <input name="i-invn-{{ i['id'] }}" class="input-pre-passing" id="i-invn-{{ i['id'] }}" value="{{ i['quantity'] }}" style="display: none;">
                 {% endfor %}
                 <button type="submit" id="save-changes">Save Changes</button>
                 <button type="button" class="neutral outlined" id="cancel">Cancel</button>
