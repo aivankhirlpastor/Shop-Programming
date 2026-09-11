@@ -49,7 +49,8 @@ for (let z = 0; z < getInputs.length; z++) {
         // adding invisible input for purpose of sending data to Python
 
         const iid = `i-invn-${i.dataset.ctgnumber}`;
-        // const lin = document.createElement("input");
+        
+        // invisible input
         document.getElementById(iid).value = i.value;
         
     });
