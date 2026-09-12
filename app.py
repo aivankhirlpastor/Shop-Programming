@@ -553,6 +553,18 @@ def order_history():
 
     return render_template("order_history.html", orders = order_history_results)
 
+
+# order History deletion
+@app.route("/delete_invoice/<int:order_id>", methods = ["POST"])
+def delete_invoice(order_id):
+    with sqlite3.connect("order_history.db") as conn:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM orders WHERE id = ?", (order_id,))
+
+        flash(f"({order_id}) Invoice deleted.")
+
+    return redirect(url_for("order_history"))
+
 @app.route("/cart")
 def cart():
     albums = load_data_products()
