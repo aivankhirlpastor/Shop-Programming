@@ -719,12 +719,16 @@ def signup(get_subject):
                 conn.commit()
 
             signin_session(email, password)
+            flash(f"Welcome, {name}!")
 
         else:
-            raise Exception("Your password does not matched the one you are trying to confirm. Verify that the password is the same as the one you created.")
+            flash("Your password does not matched the one you are trying to confirm. Verify that the password is the same as the one you created.")
+            return redirect(url_for("signup_login", measure = 'signup', subject = get_subject))
         
     except Exception as r:
-        flash(f"Can't complete registration: {r}")
+        flash(f"Something went wrong while we handle you to sign up: {r}")
+
+        return redirect(url_for("index"))
 
     # redirect to checkout via "get_subject"
     if get_subject == "for_awaiting_checkout":
