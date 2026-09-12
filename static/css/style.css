@@ -830,6 +830,38 @@ table tr:nth-child(even):not(.monetary-cost) td {
     background-color: #ffffec;
 }
 
+/* ======== ORDER HISTORY ======== */
+
+/* table cell - top alignment in vertical */
+section.order-history table td {
+    vertical-align: top;
+}
+
+/* ul */
+section.order-history table ul {
+    margin-block: 0;
+    padding-inline: 24px;
+}
+
+/* spans */
+section.order-history table span {
+    font-size: 14px;
+    opacity: 75%;
+}
+
+/* form button */
+section.order-history table td.form-action form {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+section.order-history table td.form-action form > button {
+    font-size: 14px;
+    padding-block: 4px;
+}
+
+
 /* ======== SIGN UP / LOG IN ======== */
 section.account-component {
     --block-margin: 44px;
