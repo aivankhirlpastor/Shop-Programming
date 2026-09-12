@@ -36,7 +36,7 @@
                     {% endfor %}
                 </ul>
 
-                <form class="account-display" action="{{ url_for('logout') }}">
+                <form class="account-display" action="{{ url_for('logout') }}" method="post">
                     <span class="label">MY ACCOUNT</span>
     
                     <h2>Hello, {{ session["session_key"]["name"] }}!</h2>
@@ -54,8 +54,8 @@
                     <hr>
 
                     <div class="buttons">
-                        <button type="button" class="outlined" formaction="{{ url_for('cart') }}">View My Cart</button>
-                        <button type="button" class="destructive">Logout</button>
+                        <button type="submit" class="outlined" formaction="{{ url_for('cart') }}">View My Cart</button>
+                        <button type="submit" class="destructive">Logout</button>
                     </div>
                 </form>
             {% elif msr == "signup" %}
