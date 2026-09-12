@@ -5,7 +5,58 @@
 {% block content %}
     <body>
         <section class="order_history">
-            
+            <h2>Order History</h2>
+            <!-- table -->
+            <table>
+                <colgroup>
+                    <col span="1" style="width: 60px;">
+                    <col span="2" style="width: 150px;">
+                    <col span="1" style="width: 300px;">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Date</th>
+                        <th>Customer Name</th>
+                        <th>Items</th>
+                        <th>Total Charges</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Listed Placed Orders -->
+                    {% for order in orders %}
+                        <tr>
+                            <td>{{ order["order_id"] }}</td>
+                            <td>{{ order["date"] }}</td>
+                            <td>{{ order["customer"]["name"] }}</td>
+                            <td>
+                                <ul>
+                                    <!-- basic display such as name and quantity -->
+                                    {% for n, details in order["items"].items() %}
+                                        <li>
+                                            <b>{{ n }}</b>
+                                            <span class="quantity-count">× {{ details["quantity"] }}</span>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                            <td>
+                                <b>${{ '%.2f' % order["total_charges"] }}</b>
+                                <!-- <span>Subtotal: ${{ '%.2f' % order["subtotal"] }}</span>
+                                <span>GST: ${{ '%.2f' % order["gst"] }}</span>
+                                <span>Delivery Fee: ${{ '%.2f' % order["ship_fee"] }}</span>
+                                <span>Discount: ${{ '%.2f' % order["discount"] }}</span> -->
+                            </td>
+                            <td class="btn-actions">
+                                <button type="button" class="outlined">View Details</button>
+                                <button type="button" class="destructive">Delete</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
         </section>
     </body>
 {% endblock %}
