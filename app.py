@@ -44,7 +44,7 @@ def initialise_database():
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     date TEXT,
                     name TEXT NOT NULL,
-                    email TEXT NOT NULL,
+                    email TEXT NOT NULL UNIQUE,
                     password TEXT NOT NULL,
                     items TEXT,
                     wishlists TEXT,
