@@ -4,7 +4,7 @@
 
 {% block content %}
     <body>
-        <section class="order_history">
+        <section class="order-history">
             <h2>Order History</h2>
             <!-- table -->
             <table>
@@ -48,9 +48,11 @@
                                 <span>Delivery Fee: ${{ '%.2f' % order["ship_fee"] }}</span>
                                 <span>Discount: ${{ '%.2f' % order["discount"] }}</span> -->
                             </td>
-                            <td class="btn-actions">
-                                <button type="button" class="outlined">View Details</button>
-                                <button type="button" class="destructive">Delete</button>
+                            <td class="form-action">
+                                <form action="{{ url_for('invoice_selection', inv_number = order['order_id']) }}">
+                                    <button type="submit" class="outlined">View Details</button>
+                                    <button type="submit" class="destructive" formaction="{{ url_for('delete_invoice', order_id = order['order_id']) }}" formmethod="post" onclick="confirm('Are you sure you want to delete this invoice? This action cannot be undone.')">Delete</button>
+                                </form>
                             </td>
                         </tr>
                     {% endfor %}
