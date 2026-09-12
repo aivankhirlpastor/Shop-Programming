@@ -523,6 +523,13 @@ def invoice_selection(inv_number):
     # return for template
     return render_template("invoice.html", data = fetched_data)
 
+@app.route("/order_history")
+def order_history():
+
+    
+
+    return render_template("order_history.html")
+
 @app.route("/cart")
 def cart():
     albums = load_data_products()
