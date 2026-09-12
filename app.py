@@ -526,9 +526,32 @@ def invoice_selection(inv_number):
 @app.route("/order_history")
 def order_history():
 
-    
+    # results
 
-    return render_template("order_history.html")
+    with sqlite3.connect("order_history.db") as conn:
+        cursor = conn.cursor()
+        cursor.execute(f"SELECT * FROM orders")
+
+        # fetched data
+        o_rows = cursor.fetchall()
+        order_history_results = []
+
+        # each ordered place from list on o_rows
+        for orders in o_rows:
+            # adding it into list of order_history_results
+            order_history_results.append({
+                "order_id": orders[0],
+                "date": orders[1],
+                "customer": json.loads(orders[2]),
+                "items": json.loads(orders[3]),
+                "subtotal": orders[4],
+                "gst": orders[5],
+                "ship_fee": orders[6],
+                "discount": orders[7],
+                "total_charges": orders[8],
+            })
+
+    return render_template("order_history.html", orders = order_history_results)
 
 @app.route("/cart")
 def cart():
