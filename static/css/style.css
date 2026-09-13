@@ -586,11 +586,20 @@ section.product-info {
 
 /* product image */
 section.product-info > img.product-img-large {
-    grid-area: 1 / 1 / span 1 / span 4;
+    aspect-ratio: 1 / 1;
+
+    grid-area: 1 / 1 / span 1 / span 3;
     width: 100%;
-    height: 100%;
     object-fit: cover;
     object-position: center;
+}
+
+section.product-info > hr.border-outline {
+    /* outline border */
+    border: 1.5px solid #00000077;
+    height: 340px;
+    grid-area: 1 / 4 / span 1 / span 1;
+    margin-block: 0;
 }
 
 /* product details */
@@ -611,6 +620,7 @@ section.product-info #product-details > .box-acc:not(:last-child) {
 /* name and author, PLUS wishlist button */
 section.product-info #product-details > .box-acc.name-author {
     grid-template-columns: 3fr 1fr;
+    padding-block-start: 4px;
 }
 
 /* showcase in grid display */
