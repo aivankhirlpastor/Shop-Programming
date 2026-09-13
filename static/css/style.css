@@ -517,6 +517,52 @@ section#static-banner > div {
     width: 100%;
 }
 
+/* category hypertext anchor style */
+section.shop-by-category {
+    display: inline-flex;
+    column-gap: 16px;
+    margin-block: 8px;
+}
+
+a.btn-genres {
+    --anchor-transtion-model: 0.2s ease-in-out;
+    
+    align-items: center;
+    background-color: transparent;
+    border: 4px solid #D4AF37;
+    border-radius: 100px;
+    display: inline-flex;
+    gap: 10px;
+    padding: 16px 26px;
+    transition: border-color var(--anchor-transtion-model),
+                color var(--anchor-transtion-model),
+                background-color var(--anchor-transtion-model);
+
+    /* typography style */
+    font-size: 20px;
+    font-weight: 600;
+
+    /* text property */
+    color: #000000;
+    text-decoration: none;
+}
+
+a.btn-genres:hover {
+    background-color: #916b5011;
+    border-color: #af5e0d;
+    color: #311300;
+}
+
+/* SVG */
+a.btn-genres img.svg-icon {
+    --svg-icon-size: 25px;
+
+    /* same size [square] */
+    background-color: transparent;
+    width: var(--svg-icon-size);
+    height: var(--svg-icon-size);
+}
+
 
 /* ======== PRODUCT INFO PAGE ======== */
 
