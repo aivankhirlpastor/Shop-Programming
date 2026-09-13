@@ -6,31 +6,61 @@
     <body>
         <h2>Genre: {{ genre }}</h2>
         <section class="grid grid-display item-display">
-            <div class="left-side-ctn sort-by-genre block-align reduced-size">
-                <a class="btn-genres {% if genre == 'all' %}selected{% endif %}" href="{{ url_for('category_all') }}">
-                    <span>All</span>
-                </a>
-                <hr>
-                <a class="btn-genres {% if genre == 'ambience' %}selected{% endif %}" href="{{ url_for('category', genre = 'ambience') }}">
-                    <img class="svg-icon" alt="A leaf" src="/static/icons/leaf-svgrepo-com.svg">
-                    <span>Ambience</span>
-                </a>
-                <a class="btn-genres {% if genre == 'acoustic' %}selected{% endif %}" href="{{ url_for('category', genre = 'acoustic') }}">
-                    <img class="svg-icon" alt="A guitar" src="/static/icons/guitar-svgrepo-com.svg">
-                    <span>Acoustic</span>
-                </a>
-                <a class="btn-genres {% if genre == 'classical' %}selected{% endif %}" href="{{ url_for('category', genre = 'classical') }}">
-                    <img class="svg-icon" alt="A guitar" src="/static/icons/violin-svgrepo-com.svg">
-                    <span>Classical</span>
-                </a>
-                <a class="btn-genres {% if genre == 'lo-fi' %}selected{% endif %}" href="{{ url_for('category', genre = 'lo-fi') }}">
-                    <img class="svg-icon" alt="A guitar" src="/static/icons/music-disc-with-luster-svgrepo-com.svg">
-                    <span>Lo-Fi</span>
-                </a>
-                <a class="btn-genres {% if genre == 'upbeat' %}selected{% endif %}" href="{{ url_for('category', genre = 'upbeat') }}">
-                    <img class="svg-icon" alt="A guitar" src="/static/icons/headphones-1-svgrepo-com.svg">
-                    <span>Upbeat</span>
-                </a>
+            <div class="left-side-ctn">
+                <!-- I: Genre Buttons -->
+                <div class="sort-by-genre block-align reduced-size">
+                    <a class="btn-genres {% if genre == 'all' %}selected{% endif %}" href="{{ url_for('category_all') }}">
+                        <span>All</span>
+                    </a>
+                    <hr>
+                    <a class="btn-genres {% if genre == 'ambience' %}selected{% endif %}" href="{{ url_for('category', genre = 'ambience') }}">
+                        <img class="svg-icon" alt="A leaf" src="/static/icons/leaf-svgrepo-com.svg">
+                        <span>Ambience</span>
+                    </a>
+                    <a class="btn-genres {% if genre == 'acoustic' %}selected{% endif %}" href="{{ url_for('category', genre = 'acoustic') }}">
+                        <img class="svg-icon" alt="A guitar" src="/static/icons/guitar-svgrepo-com.svg">
+                        <span>Acoustic</span>
+                    </a>
+                    <a class="btn-genres {% if genre == 'classical' %}selected{% endif %}" href="{{ url_for('category', genre = 'classical') }}">
+                        <img class="svg-icon" alt="A guitar" src="/static/icons/violin-svgrepo-com.svg">
+                        <span>Classical</span>
+                    </a>
+                    <a class="btn-genres {% if genre == 'lo-fi' %}selected{% endif %}" href="{{ url_for('category', genre = 'lo-fi') }}">
+                        <img class="svg-icon" alt="A guitar" src="/static/icons/music-disc-with-luster-svgrepo-com.svg">
+                        <span>Lo-Fi</span>
+                    </a>
+                    <a class="btn-genres {% if genre == 'upbeat' %}selected{% endif %}" href="{{ url_for('category', genre = 'upbeat') }}">
+                        <img class="svg-icon" alt="A guitar" src="/static/icons/headphones-1-svgrepo-com.svg">
+                        <span>Upbeat</span>
+                    </a>
+                </div>
+
+                <!-- II: Filter by Price Range -->
+                <form class="filter-price-range" action="">
+                    <p><b>Filter by Price Range</b></p>
+                    <label>
+                        <input type="radio" name="price-range" id="below-15" value="Below $15">
+                        Below $15
+                    </label>
+                    <label>
+                        <input type="radio" name="price-range" id="15-30" value="$15 to $30">
+                        $15 – $30
+                    </label>
+                    <label>
+                        <input type="radio" name="price-range" id="30-50" value="$30 to $50">
+                        $30 – $50
+                    </label>
+                    <label>
+                        <input type="radio" name="price-range" id="50-100" value="$50 to $100">
+                        $50 – $100
+                    </label>
+                    <label>
+                        <input type="radio" name="price-range" id="above-100" value="Above $100">
+                        Above $100
+                    </label>
+
+                    <button type="submit">Go</button>
+                </form>
             </div>
 
             <div class="grid dsp-container">
