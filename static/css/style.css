@@ -112,7 +112,7 @@ input {
     transition: box-shadow 0.2s ease;
 }
 
-input:focus {
+input:not([type=radio]):focus {
     box-shadow: 0 2px 5px 2px #0000004f;
     outline: none;
 }
@@ -831,6 +831,25 @@ section.item-display > .left-side-ctn {
 
     position: sticky;
     top: 75px;
+}
+
+/* Btn Genres: width adjustment */
+section.item-display > .left-side-ctn .sort-by-genre {
+    width: 100%;
+}
+
+/* Form: Filter Price Range */
+section.item-display form.filter-price-range {
+    font-size: 18px;
+}
+
+section.item-display form.filter-price-range label {
+    display: block;
+    margin-block: 4px;
+}
+
+section.item-display form.filter-price-range button {
+    margin-top: 8px;
 }
 
 /* Display Container (Element that holds the item card) */
