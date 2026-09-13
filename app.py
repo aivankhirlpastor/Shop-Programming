@@ -459,7 +459,7 @@ def category(genre):
     if stored_data == {}:
         abort(404)
 
-    return render_template("item_genre.html", g = genre,
+    return render_template("item_genre.html", genre = genre,
                            imported_data = stored_data, cart = cart, key_param = key)
 
 @app.route("/invoice-<int:inv_number>")
