@@ -58,12 +58,12 @@
                 {% set tip_route = url_for('signup_login', measure = 'login', subject = 'for_awaiting_checkout') %}
             {% endif %}
 
-            <form class="panel-details" action="{{ tip_route }}">
-                <span class="label centre">Order Details</span>
-                <div id="coupon-layout">
-                    <input type="text" name="coupon" id="coupon">
-                    <button type="button">Apply</button>
-                </div>
+            <div class="panel-details">
+                <span>Order Details</span>
+                <form id="coupon-layout">
+                    <input type="text" name="coupon" id="coupon" placeholder="Enter coupon here">
+                    <button type="submit">Apply</button>
+                </form>
                 <div class="cost-precalc">
                     <div class="text-nudge">
                         <span>Subtotal</span>
@@ -73,10 +73,13 @@
                         <span>GST</span>
                         <p class="emphasise">${{ '%.2f' % gst }}</p>
                     </div>
-                    <span class="label lite">Include GST. Shipping will be calculated at checkout. Delivery fee included.</span>
                 </div>
-                <button type="submit">Go To Checkout</button>
-            </form>
+                <hr>
+                <form class="route-to-checkout" action="{{ tip_route }}">
+                    <span>Include GST. Shipping will be calculated at checkout. Delivery fee included.</span>
+                    <button type="submit">Go To Checkout</button>
+                </form>
+            </div>
         </section>
 
         <!-- a panel that appears when the change was detected -->
