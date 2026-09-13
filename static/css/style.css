@@ -37,7 +37,7 @@
 
     /* Stock Status */
     --stock-normal: #000000;
-    --stock-low: #7a0000;
+    --stock-low: #bb4813;
     --stock-none: #888888;
 }
 
@@ -104,9 +104,17 @@ img {
 /* all inputs */
 input {
     --input-border-color: #000000;
+
+    box-shadow: none;
     font-size: 16px;
 
     border: 2px solid var(--input-border-color);
+    transition: box-shadow 0.2s ease;
+}
+
+input:focus {
+    box-shadow: 0 2px 5px 2px #0000004f;
+    outline: none;
 }
 
 .classif-cont {
@@ -161,6 +169,7 @@ input.emit-stock-status {
 
 input.emit-stock-status.low {
     --input-border-color: var(--stock-low);
+    background-color: #d8700e15;
 }
 
 input.emit-stock-status.none {
