@@ -753,6 +753,27 @@ section.my-cart .panel-details > #coupon-layout input[type=text] {
     width: 100%;
 }
 
+/* monetary pre-calculation */
+section.my-cart .panel-details > .cost-precalc {
+    margin-top: 30px;
+}
+
+
+/* Form - Route to Checkout */
+section.my-cart .panel-details > .route-to-checkout {
+    padding-top: 30px;
+}
+
+/* text span "Notes" */
+section.my-cart .panel-details > .route-to-checkout span {
+    opacity: 75%;
+}
+
+/* btn checkout */
+section.my-cart .panel-details > .route-to-checkout button {
+    margin-top: 16px;
+}
+
 /* ======== ITEMS IN GRID DISPLAY (any genre) ======== */
 section.item-display {
     gap: 2vw;
