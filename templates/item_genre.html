@@ -4,26 +4,26 @@
 
 {% block content %}
     <body>
-        <h2>Genre: {{ g }}</h2>
+        <h2>Genre: {{ genre }}</h2>
         <section class="grid grid-display item-display">
             <div class="sort-by-genre block-align reduced-size">
-                <a class="btn-genres" href="{{ url_for('category', genre = 'ambience') }}">
+                <a class="btn-genres {% if genre == 'ambience' %}selected{% endif %}" href="{{ url_for('category', genre = 'ambience') }}">
                     <img class="svg-icon" alt="A leaf" src="/static/icons/leaf-svgrepo-com.svg">
                     <span>Ambience</span>
                 </a>
-                <a class="btn-genres" href="{{ url_for('category', genre = 'acoustic') }}">
+                <a class="btn-genres {% if genre == 'acoustic' %}selected{% endif %}" href="{{ url_for('category', genre = 'acoustic') }}">
                     <img class="svg-icon" alt="A guitar" src="/static/icons/guitar-svgrepo-com.svg">
                     <span>Acoustic</span>
                 </a>
-                <a class="btn-genres" href="{{ url_for('category', genre = 'classical') }}">
+                <a class="btn-genres {% if genre == 'classical' %}selected{% endif %}" href="{{ url_for('category', genre = 'classical') }}">
                     <img class="svg-icon" alt="A guitar" src="/static/icons/violin-svgrepo-com.svg">
                     <span>Classical</span>
                 </a>
-                <a class="btn-genres" href="{{ url_for('category', genre = 'lo-fi') }}">
+                <a class="btn-genres {% if genre == 'lo-fi' %}selected{% endif %}" href="{{ url_for('category', genre = 'lo-fi') }}">
                     <img class="svg-icon" alt="A guitar" src="/static/icons/music-disc-with-luster-svgrepo-com.svg">
                     <span>Lo-Fi</span>
                 </a>
-                <a class="btn-genres" href="{{ url_for('category', genre = 'upbeat') }}">
+                <a class="btn-genres {% if genre == 'upbeat' %}selected{% endif %}" href="{{ url_for('category', genre = 'upbeat') }}">
                     <img class="svg-icon" alt="A guitar" src="/static/icons/headphones-1-svgrepo-com.svg">
                     <span>Upbeat</span>
                 </a>
@@ -46,7 +46,7 @@
                         </a>
     
                         <!-- Row II: Form -->
-                        <form action="{{ url_for('add_to_cart', catalogue_id = i['id'], product_name = album_name, input_selector = 'i-quantity-' + i['id'], pole_end = '1%' + g) }}" method="post" class="add-to-cart-action">
+                        <form action="{{ url_for('add_to_cart', catalogue_id = i['id'], product_name = album_name, input_selector = 'i-quantity-' + i['id'], pole_end = '1%' + genre) }}" method="post" class="add-to-cart-action">
                             {% if i['stock'] > 0 %}
                                 <input type="number" class="emit-stock-status {% if 6 > i['stock'] and i['stock'] > 0 %}low{% elif 1 > i['stock'] %}none{% endif %}" name="i-quantity-{{ i['id'] }}" id="i-quantity-{{ i['id'] }}" min="1" max="{% if 5 > i['stock'] %}{{ i['stock'] }}{% else %}5{% endif %}" title="Stock left: {{ i['stock'] }}" value="{% if album_name in cart %}{{ cart[album_name]['quantity'] }}{% else %}1{% endif %}">
                                 <button type="submit" title="{% if album_name not in cart %}Add to Cart{% endif %}" {% if album_name in cart %}disabled{% endif %}>Add</button>
