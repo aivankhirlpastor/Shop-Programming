@@ -6,8 +6,8 @@
     <body>
         <h2>Genre: {{ genre }}</h2>
         <section class="grid grid-display item-display">
-            <div class="sort-by-genre block-align reduced-size">
-                <a class="btn-genres" href="{{ url_for('category_all') }}">
+            <div class="left-side-ctn sort-by-genre block-align reduced-size">
+                <a class="btn-genres {% if genre == 'all' %}selected{% endif %}" href="{{ url_for('category_all') }}">
                     <span>All</span>
                 </a>
                 <hr>
