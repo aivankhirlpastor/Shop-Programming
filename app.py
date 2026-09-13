@@ -105,22 +105,66 @@ def calculate_total(c):
     return cart_total + gst + shipping_fee, cart_total, gst, shipping_fee
 
 # result by their genre (function)
-def item_display_by_genre(gnr = None):
+def item_display_by_genre(gnr = None, px_range = None):
+
+    # checking their price range
+    def check_price_range(ap):
+        # if-else condition via price (px) range
+        if px_range == None:
+            return True # None to proceed
+        elif px_range == "below_15":
+            return ap < 15
+        elif px_range == "15_to_30":
+            return 15 <= ap <= 30
+        elif px_range == "30_to_50":
+            return 30 <= ap <= 50
+        elif px_range == "50_to_100":
+            return 50 <= ap <= 100
+        elif px_range == "above_100":
+            return 100 < ap
+        else:
+            return False
+
     c = session.get("cart", {})
     stored_data = {} # adding results via their genre
     data_album = load_data_products()
+
+    # with px_range only: used to validate whether genre exists
+    io = 0
 
     # Get all the products based on the genre given.
     for album_name, u in data_album.items():
         # One product's genre matches to <genre> adds to the dictionary.
 
-        # None = display all items
+        # price range
         if (str(gnr).lower() == str(u["genre"]).lower()) or gnr == None:
-            stored_data[album_name] = u
-            stored_data[album_name]["in_cart"] = True if album_name in c else False
+            io += 1 # add 1 if genre exists by checking item's genre
+
+            if check_price_range(u["price"]):
+                # None = display all items
+                stored_data[album_name] = u
+                stored_data[album_name]["in_cart"] = True if album_name in c else False
 
     # pass the result back to variable
+    if not px_range == None:
+        return stored_data, io # tuple
+
     return stored_data
+
+# Inversion (from snake case of name conventions)
+def px_range_post_inversion(r):
+    if r == "below_15":
+        return "Below $15"
+    elif r == "15_to_30":
+        return "$15 to $30"
+    if r == "30_to_50":
+        return "$30 to $50"
+    if r == "50_to_100":
+        return "$50 to $100"
+    if r == "above_100":
+        return "Above $100"
+    else:
+        return None
 
 def add_to_cart_action(mdl, product, qty):
     cart = session.get("cart", {})
@@ -395,20 +439,40 @@ def add_to_cart(catalogue_id, product_name, input_selector, pole_end):
     # A pole_end is just another way whether to redirect the user back into grid display page after the action.
     # These pattern must correspond to the pole_end as string.
     redirect_to_grid_pattern = re.compile(r'^\d{1}[%][a-z-]+', re.IGNORECASE)
-    genre_pattern = re.compile(r'[a-z-]+', re.IGNORECASE)
+    genre_pattern = re.compile(r'[a-z0-9-]+', re.IGNORECASE)
 
-    redirect_condition = redirect_to_grid_pattern.findall(pole_end)
+    redirect_condition = redirect_to_grid_pattern.findall(pole_end) # get a number
     genre_condition = genre_pattern.findall(pole_end)
 
-    # redirect users back based on where they currently at
+    # redirect users back based on where they currently at (in case to item grid display)
     if type(pole_end) == str and pole_end[0] == "1" and redirect_condition:
-        # verify if there is an existing genre
+        # for genre_condition as list*, [1] is used to take only the genre.
+        gn = str(genre_condition[1]).lower()
+        
+        # for "category" validate if has price_range included; index [2] for price_range
         try:
-            for y in albums.items():
-                if str(genre_condition[0]).lower() == str(y[1]["genre"]).lower():
-                    return redirect(url_for("category", genre = str(genre_condition[0]).lower()))
-                elif genre_condition[0] == "all":
+            # [2] + converting kebab case into snake case
+            has_px_range = f"{genre_condition[2]}".replace("-", "_")
+        except:
+            has_px_range = False
+
+        try:
+            if gn == "all":
+                if not has_px_range:
                     return redirect(url_for("category_all"))
+
+                # to the category w/ price-range filter
+                return redirect(url_for("category_price_filter", genre = "all", price_range = has_px_range))
+            
+            for y in albums.items():
+
+                # verify if there is an existing genre
+                if gn == str(y[1]["genre"]).lower():
+                    if not has_px_range:
+                        return redirect(url_for("category", genre = gn))
+
+                    # to the category w/ price-range filter
+                    return redirect(url_for("category_price_filter", genre = gn, price_range = has_px_range))
             
         except Exception as err:
             print("Something went wrong. We can't transfer you back to the current genre of page:", err)
@@ -486,6 +550,58 @@ def category(genre):
     return render_template("item_genre.html", genre = genre,
                            imported_data = result, cart = cart, key_param = key)
 
+# Item Genre: Filter Price Range
+@app.route("/category/item-<string:genre>/<price_range>")
+def category_price_filter(genre, price_range):
+    cart = session.get("cart", {})
+    key = panel_access_from_flash()
+    result, gio = item_display_by_genre(None if genre == "all" else genre, price_range) # get the result via genre and price
+    kebab_case_pxrange = f"{price_range}".replace("_", "-") # used for add to cart action to redirect back here
+
+    # also connected if the price range exists
+    text_value = px_range_post_inversion(price_range)
+
+    # lowercase
+    text_value = text_value.lower() if not text_value == None else text_value
+
+    # Abort if genre is not exist by gio = 0,
+    # accessed through function item_display_by_genre;
+    # also inexistent price range (typed by manual and in case of typos).
+    if gio <= 0 or text_value == None:
+        abort(404)
+
+    return render_template("item_genre.html", genre = genre,
+                           imported_data = result, cart = cart, key_param = key,
+                           text_value = text_value, pxrange = kebab_case_pxrange)
+
+@app.route("/filter_price/<string:genre>", methods = ["POST"])
+def filter_price(genre):
+    selected_range = request.form["price-range"]
+
+    # passing srg in string first 
+    if selected_range == "Below $15":
+        srg = "below_15"
+    elif selected_range == "$15 to $30":
+        srg = "15_to_30"
+    elif selected_range == "$30 to $50":
+        srg = "30_to_50"
+    elif selected_range == "$50 to $100":
+        srg = "50_to_100"
+    elif selected_range == "Above $100":
+        srg = "above_100"
+    else:
+        # since the selected_range does not match of these
+        flash("Invalid range selection")
+
+        if genre == "all":
+            return(redirect(url_for("category_all")))
+        else:
+            return(redirect(url_for("category", genre = genre)))
+
+
+    # destination to HTML page of filtering item in price
+    return(redirect(url_for("category_price_filter", genre = genre, price_range = srg)))
+
 # Invoice Page
 @app.route("/invoice-<int:inv_number>")
 def invoice_selection(inv_number):
@@ -550,9 +666,7 @@ def invoice_selection(inv_number):
 
 @app.route("/order_history")
 def order_history():
-
     # results
-
     with sqlite3.connect("order_history.db") as conn:
         cursor = conn.cursor()
         cursor.execute(f"SELECT * FROM orders")
@@ -577,7 +691,6 @@ def order_history():
             })
 
     return render_template("order_history.html", orders = order_history_results)
-
 
 # order History deletion
 @app.route("/delete_invoice/<int:order_id>", methods = ["POST"])
