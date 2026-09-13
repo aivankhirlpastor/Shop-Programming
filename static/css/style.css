@@ -272,6 +272,12 @@ label {
     font-weight: 600;
 }
 
+/* thematic break <hr> */
+:is(.shop-by-genre, .sort-by-genre) > hr {
+    width: 100%;
+    border: 1.5px solid #000000aa;
+}
+
 /* anchor element */
 a.btn-genres {
     --anchor-transtion-model: 0.2s ease-in-out;
