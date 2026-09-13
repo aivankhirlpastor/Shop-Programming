@@ -869,7 +869,7 @@ section.item-display .item-card {
     padding: 12px;
     background-color: #FAFAFA;
     box-shadow: 0 3px 20px 1px #00000044;
-    height: auto;
+    height: fit-content;
 }
 
 /* Image inside the item card */
