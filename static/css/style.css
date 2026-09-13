@@ -824,6 +824,15 @@ section.item-display {
     grid-template-columns: repeat(4, 1fr);
 }
 
+/* Left Side element */
+section.item-display > .left-side-ctn {
+    grid-area: 1 / 1 / span 1 / span 1;
+    height: 500px;
+
+    position: sticky;
+    top: 75px;
+}
+
 /* Display Container (Element that holds the item card) */
 section.item-display > .dsp-container {
     gap: var(--display-gaps);
