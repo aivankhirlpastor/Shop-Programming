@@ -578,26 +578,8 @@ def category_price_filter(genre, price_range):
 def filter_price(genre):
     selected_range = request.form["price-range"]
 
-    # passing srg in string first 
-    if selected_range == "Below $15":
-        srg = "below_15"
-    elif selected_range == "$15 to $30":
-        srg = "15_to_30"
-    elif selected_range == "$30 to $50":
-        srg = "30_to_50"
-    elif selected_range == "$50 to $100":
-        srg = "50_to_100"
-    elif selected_range == "Above $100":
-        srg = "above_100"
-    else:
-        # since the selected_range does not match of these
-        flash("Invalid range selection")
-
-        if genre == "all":
-            return(redirect(url_for("category_all")))
-        else:
-            return(redirect(url_for("category", genre = genre)))
-
+    # in snake case, naming convention
+    srg = f"{selected_range.replace(' ', '_').replace('$', '')}".lower()
 
     # destination to HTML page of filtering item in price
     return(redirect(url_for("category_price_filter", genre = genre, price_range = srg)))
