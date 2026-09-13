@@ -104,6 +104,24 @@ def calculate_total(c):
 
     return cart_total + gst + shipping_fee, cart_total, gst, shipping_fee
 
+# result by their genre (function)
+def item_display_by_genre(gnr = None):
+    c = session.get("cart", {})
+    stored_data = {} # adding results via their genre
+    data_album = load_data_products()
+
+    # Get all the products based on the genre given.
+    for album_name, u in data_album.items():
+        # One product's genre matches to <genre> adds to the dictionary.
+
+        # None = display all items
+        if (str(gnr).lower() == str(u["genre"]).lower()) or gnr == None:
+            stored_data[album_name] = u
+            stored_data[album_name]["in_cart"] = True if album_name in c else False
+
+    # pass the result back to variable
+    return stored_data
+
 def add_to_cart_action(mdl, product, qty):
     cart = session.get("cart", {})
 
@@ -388,7 +406,10 @@ def add_to_cart(catalogue_id, product_name, input_selector, pole_end):
         try:
             for y in albums.items():
                 if str(genre_condition[0]).lower() == str(y[1]["genre"]).lower():
-                    return redirect(url_for("category", genre = str(genre_condition[0]).lower()))                
+                    return redirect(url_for("category", genre = str(genre_condition[0]).lower()))
+                elif genre_condition[0] == "all":
+                    return redirect(url_for("category_all"))
+            
         except Exception as err:
             print("Something went wrong. We can't transfer you back to the current genre of page:", err)
     elif pole_end == "index":
@@ -441,27 +462,31 @@ def apply_changes():
 
     return redirect(url_for("cart"))
 
-@app.route("/category/item-<string:genre>")
-def category(genre):
-    data_album = load_data_products()
-    stored_data = {}
+# Item Genre: display all items
+@app.route("/category/item")
+def category_all():
     cart = session.get("cart", {})
     key = panel_access_from_flash()
+    result = item_display_by_genre() # get the result via genre
 
-    # Get all the products based on the genre given.
-    for album_name, u in data_album.items():
-        # One product's genre matches to <genre> adds to the dictionary.
-        if str(genre).lower() == str(u["genre"]).lower():
-            stored_data[album_name] = u
-            stored_data[album_name]["in_cart"] = True if album_name in cart else False
+    return render_template("item_genre.html", genre = "all",
+                           imported_data = result, cart = cart, key_param = key)
+
+# Item Genre: specific genre
+@app.route("/category/item-<string:genre>")
+def category(genre):
+    cart = session.get("cart", {})
+    key = panel_access_from_flash()
+    result = item_display_by_genre(genre) # get the result via genre
 
     # Abort if the dictionary is empty.
-    if stored_data == {}:
+    if result == {}:
         abort(404)
 
     return render_template("item_genre.html", genre = genre,
-                           imported_data = stored_data, cart = cart, key_param = key)
+                           imported_data = result, cart = cart, key_param = key)
 
+# Invoice Page
 @app.route("/invoice-<int:inv_number>")
 def invoice_selection(inv_number):
     # sqlite3 \
