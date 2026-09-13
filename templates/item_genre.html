@@ -7,6 +7,10 @@
         <h2>Genre: {{ genre }}</h2>
         <section class="grid grid-display item-display">
             <div class="sort-by-genre block-align reduced-size">
+                <a class="btn-genres" href="{{ url_for('category', genre = 'ambience') }}">
+                    <span>All</span>
+                </a>
+                <hr>
                 <a class="btn-genres {% if genre == 'ambience' %}selected{% endif %}" href="{{ url_for('category', genre = 'ambience') }}">
                     <img class="svg-icon" alt="A leaf" src="/static/icons/leaf-svgrepo-com.svg">
                     <span>Ambience</span>
