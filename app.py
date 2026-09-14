@@ -836,7 +836,8 @@ def continue_to_review():
     return render_template("checkout_review.html",
                            total = total, subtotal = subtotal, 
                            gst = gst, ship_fee = ship_fee,
-                           cart = cart, saved_billing_info = billing_info)
+                           cart = cart, saved_billing_info = billing_info,
+                           discount = discount, total_with_discount = total_with_discount)
 
 # Info Retrieval
 @app.route("/place_order", methods = ["POST"])
@@ -862,6 +863,7 @@ def place_order():
         return
 
     total, subtotal, gst, ship_fee, discount, total_with_discount = calculate_total(cart)
+    main_total = total if total == total_with_discount else total_with_discount
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     time_clock = datetime.datetime.now().strftime("%H.%M.%S")
     invoice_date = f"{date} {time_clock}"
@@ -874,7 +876,7 @@ def place_order():
             cursor.execute("""
                 INSERT INTO orders (date, customer, items, subtotal, gst, ship_fee, discount, total_charges)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """, (invoice_date, json.dumps(customer), json.dumps(cart), subtotal, gst, ship_fee, 0, total))
+            """, (invoice_date, json.dumps(customer), json.dumps(cart), subtotal, gst, ship_fee, discount, main_total))
 
             conn.commit()
 
@@ -907,6 +909,7 @@ def place_order():
     # Updating the stock will be at the later sprint planning.
     flash("Order Completed")
 
+    session.pop("coupon", None) # revoke session cart
     session.pop("cart", None) # revoke session cart
     session.modified = True
 
