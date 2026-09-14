@@ -10,8 +10,9 @@ app = Flask("__name__")
 app.secret_key = "your-secret-key"
 
 # general variables
-global restore_cart
+global restore_cart, restore_sets_used_coupons
 restore_cart = {}
+restore_sets_used_coupons = {}
 
 # functions
 def load_data_products():
@@ -53,7 +54,8 @@ def initialise_database():
                     items TEXT,
                     wishlists TEXT,
                     billing_info TEXT,
-                    applied_coupon TEXT
+                    applied_coupon TEXT,
+                    used_coupons TEXT
                     )
 """)
 
@@ -72,6 +74,7 @@ def signin_session(email, password, msr = 0):
             # initials
             retrieved_item = None # initial
             retrieved_coupon = None
+            retrieved_used_coupons = None
 
             # not matched
             if not password == uid[4]:
@@ -82,9 +85,11 @@ def signin_session(email, password, msr = 0):
                 # replacing cart from retrieval item or setting to  on registered account
                 retrieved_item = json.loads(uid[5])
                 retrieved_coupon = json.loads(uid[8])
+                retrieved_used_coupons = json.loads(uid[9])
 
                 session["cart"] = retrieved_item
                 session["coupon"] = retrieved_coupon
+                session["used_coupons"] = retrieved_used_coupons
 
             # In-Session Key in dict (account accessed)
             session_key = session.get("session_key", {})
@@ -95,6 +100,7 @@ def signin_session(email, password, msr = 0):
                 "cart": retrieved_item,
                 "accessed": True,
                 "applied_coupon": retrieved_coupon,
+                "used_coupons": retrieved_used_coupons
             }
 
             session["session_key"] = session_key # define the session key
@@ -368,43 +374,40 @@ def after_request_function(req):
     # main session_key
     session_key = session.get("session_key", {})
 
-    # updating the cart key | disimilarities between keys
     cart = session.get("cart", {})
     coupon = session.get("coupon", {})
+    sets_used_coupons = session.get("used_coupons", {})
 
     try:
-        if not cart == session_key["cart"]:
-            session_key["cart"] = cart
+        # access to name
+        if session_key:
+            # updating the cart key | disimilarities between keys
+            if not cart == session_key["cart"]:
+                session_key["cart"] = cart
+
+            # updating the coupon key | disimilarities between keys
+            if not coupon == session_key["applied_coupon"]:
+                session_key["applied_coupon"] = coupon
+
+            # updating the sets of used coupons key | disimilarities between keys
+
+            if not sets_used_coupons == session_key["used_coupons"]:
+                session_key["used_coupons"] = sets_used_coupons
 
             # update account session
             session["session_key"] = session_key
             session.modified = True
-    except Exception as r:
-        # throws error due to missing keyword 'cart' error
-        pass
 
-    # updating the coupon key | disimilarities between keys
-    try:
-        if not coupon == session_key["applied_coupon"]:
-            session_key["applied_coupon"] = coupon
-
-            # update account session
-            session["session_key"] = session_key
-            session.modified = True
-    except:
-        pass
-
-    # altering the table
-    try:
-        # if logged on
-        if session_key["name"]:
+            # altering the table
             with sqlite3.connect("accounts.db") as conn:
                 cursor = conn.cursor()
                 cursor.execute(f"""
                     UPDATE accounts
-                    SET items = ?, applied_coupon = ?
+                    SET items = ?, applied_coupon = ?, used_coupons = ?
                     WHERE name = '{session_key["name"]}' 
-                """, (json.dumps(session_key["cart"]), json.dumps(session_key["applied_coupon"]),))
+                """, (json.dumps(session_key["cart"]),
+                      json.dumps(session_key["applied_coupon"]),
+                      json.dumps(session_key["used_coupons"]),))
     except:
         pass
 
@@ -758,8 +761,10 @@ def apply_coupons():
 
     # Get coupon via session.get
     coupon = session.get("coupon", {})
+    sets_used_coupons = session.get("used_coupons", {})
 
-    if input_coupon in get_data_coupon:
+    # if coupon exists and already used
+    if input_coupon in get_data_coupon and not input_coupon in sets_used_coupons:
 
         # applying coupon into session
         coupon = {
@@ -775,6 +780,8 @@ def apply_coupons():
         flash(f"{input_coupon}: {get_data_coupon[input_coupon]["discount"]}")
         flash("Coupon applied")
 
+    elif input_coupon in sets_used_coupons:
+        flash("Oops! You've already used that coupon.")
     else:
         flash("Coupon does not exist")
 
@@ -847,6 +854,7 @@ def place_order():
 
     # get "Carts" and "Billing Info" from the session
     cart = session.get("cart", {}) # get all the items in cart
+    coupon = session.get("coupon", {})
     billing_info = session.get("billing_info", {}) # store within the session
 
     customer_name = f"{billing_info["first_name"]} {billing_info["surname"]}"
@@ -909,6 +917,21 @@ def place_order():
     # Updating the stock will be at the later sprint planning.
     flash("Order Completed")
 
+    # spike coupon removal | adding to used_coupons
+    try:
+        if coupon:
+            coupon_name = coupon["name"]
+            sets_used_coupons = session.get("used_coupons", {})
+
+            # * To Coupon name; None as a placeholder
+            # since there is nothing to refer or access their value
+            sets_used_coupons[coupon_name] = None
+
+            session["used_coupons"] = sets_used_coupons
+    except:
+        # ignore
+        print("Unable to add coupon to used coupons.")
+
     session.pop("coupon", None) # revoke session cart
     session.pop("cart", None) # revoke session cart
     session.modified = True
@@ -949,7 +972,7 @@ def signup_login(measure, subject):
 @app.route("/signup/<get_subject>", methods = ["POST"])
 def signup(get_subject):
 
-    global restore_cart
+    global restore_cart, restore_sets_used_coupons
 
     # leading whitespaces removed; capitalised words
     fname = request.form["new-fname"].strip().title()
@@ -968,7 +991,13 @@ def signup(get_subject):
         if password == confirm_password:
             # session detachment from guest account
             cart = session.get("cart", {})
+            sets_used_coupons = session.get("used_coupons", {})
+            
             restore_cart = cart
+            restore_sets_used_coupons = sets_used_coupons
+
+            session.pop("used_coupons", None) # at first account creation, all coupons are available for entry
+            session.modified = True
 
             # Connect to SQLite3: accounts
             with sqlite3.connect("accounts.db") as conn:
@@ -1006,10 +1035,13 @@ def login(get_subject):
     password = request.form["lg-password"]
 
     # getting cart
-    global restore_cart
+    global restore_cart, restore_sets_used_coupons
 
     cart = session.get("cart", {})
+    sets_used_coupons = session.get("used_coupons", {})
+
     restore_cart = cart
+    restore_sets_used_coupons = sets_used_coupons
 
     try:
         signin_session(email, password, 1)
@@ -1040,8 +1072,9 @@ def my_account():
 
 @app.route("/logout", methods = ["POST"])
 def logout():
-    # featuring guest cart
+    # featuring guest data storage
     session["cart"] = restore_cart
+    session["used_coupons"] = restore_sets_used_coupons
 
     session.pop("session_key", None) # revoke session account
     session.pop("coupon", None) # revoke session coupon as well
