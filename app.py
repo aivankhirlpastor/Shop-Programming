@@ -489,7 +489,6 @@ def add_to_cart(catalogue_id, product_name, input_selector, pole_end):
         add_to_cart_action(albums, product_name, quantity)
     except Exception as e:
         flash("We could not add that item. Please enter a number in integer only.")
-        raise Exception(e)
 
     # A pole_end is just another way whether to redirect the user back into grid display page after the action.
     # These pattern must correspond to the pole_end as string.
