@@ -68,7 +68,12 @@
 
                     <div class="text-nudge nudge-block total">
                         <span>Total</span>
-                        <p class="emphasise">${{ '%.2f' % total }}</p>
+                        {% if total == total_with_discount %}
+                            <p class="emphasise">${{ '%.2f' % total }}</p>
+                        {% else %}
+                            <p class="emphasise">${{ '%.2f' % total_with_discount}}</p>
+                        {% endif %}
+
                     </div>
                 </div>
     
@@ -124,19 +129,41 @@
                         </div>
                     {% endif %}
 
+                    <!-- Overall Displays with Discount Applied -->
                     {% if discount %}
                         <div class="text-nudge" id="discount">
                             <span>Discount</span>
-                            <p class="emphasise">${{ '%.2f' % discount }}</p>
+                            <p class="emphasise discount">
+                                <!-- determination value -->
+                                {% if discount > 1 %}
+                                    ${{ '%.2f' % discount }}
+                                {% elif 1 >= discount %}
+                                    {{ '%.0f' % (discount * 100) }}%
+                                {% endif %}
+                            </p>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="text-nudge" id="overall-total">
+                            <span>Total</span>
+                            <span class="strikethrough"><b>${{ '%.2f' % total }}</b></span>
+                            <p class="emphasise overall-cost {% if total_with_discount == 0 %}free-cost{% endif %}">
+                                {% if total_with_discount == 0 %}
+                                    Free!
+                                {% else %}
+                                    ${{ '%.2f' % total_with_discount }}
+                                {% endif %}
+                            </p>
+                        </div>
+                    {% else %}
+                        <hr>
+
+                        <div class="text-nudge" id="total">
+                            <span>Total</span>
+                            <p class="emphasise">${{ '%.2f' % total }}</p>
                         </div>
                     {% endif %}
-
-                    <hr>
-
-                    <div class="text-nudge" id="total">
-                        <span>Total</span>
-                        <p class="emphasise">${{ '%.2f' % total }}</p>
-                    </div>
                 </div>
             </div>
 
