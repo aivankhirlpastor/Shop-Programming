@@ -60,8 +60,16 @@
 
             <div class="panel-details">
                 <span>Order Details</span>
-                <form id="coupon-layout">
-                    <input type="text" name="coupon" id="coupon" placeholder="Enter coupon here">
+
+                <!-- checking for session of "coupon" -->
+                {% if session["coupon"] %}
+                    {% set cpn = session["coupon"] %}
+                {% else %}
+                    {% set cpn = None %}
+                {% endif %}
+
+                <form id="coupon-layout" action="{{ url_for('apply_coupons') }}", method="post">
+                    <input type="text" name="coupon" id="coupon" placeholder="Enter coupon here" value="{% if cpn %}{{ cpn['name'] }}{% endif %}" {% if cpn %}disabled{% endif %}>
                     <button type="submit">Apply</button>
                 </form>
                 <div class="cost-precalc">
@@ -73,6 +81,23 @@
                         <span>GST</span>
                         <p class="emphasise">${{ '%.2f' % gst }}</p>
                     </div>
+
+                    <!-- III: Discount -->
+                    {% if discount %}
+                        <hr>
+                        <div class="text-nudge">
+                            <span>Discount</span>
+                            <p class="emphasise discount">
+
+                                <!-- determination value -->
+                                {% if discount > 1 %}
+                                    ${{ '%.2f' % discount }}
+                                {% elif 1 >= discount %}
+                                    {{ discount * 100 }}%
+                                {% endif %}
+                            </p>
+                        </div>
+                    {% endif %}
                 </div>
                 <hr>
                 <form class="route-to-checkout" action="{{ tip_route }}">

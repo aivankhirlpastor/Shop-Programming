@@ -18,6 +18,10 @@ def load_data_products():
     with open("data/products.json") as product:
         return json.load(product)
 
+def load_data_coupons():
+    with open("data/coupons.json") as cpn:
+        return json.load(cpn)
+
 def initialise_database():
     # ORDER HISTORY
     with sqlite3.connect("order_history.db") as conn:
@@ -102,7 +106,25 @@ def calculate_total(c):
     quantity = sum(i["quantity"] for i in c.values())
     shipping_fee = 0
 
-    return cart_total + gst + shipping_fee, cart_total, gst, shipping_fee
+    # get discount via sessiond
+    discount_value = 0
+    tl_w_disc = cart_total
+    has_coupon_applied = session.get("coupon", {})
+
+    if not has_coupon_applied == {}:
+        discount_value = has_coupon_applied["discount"]
+
+        # determination by value
+        if discount_value > 1: # via regular whole number
+            tl_w_disc = cart_total - discount_value
+        elif discount_value <= 1: # via percentage
+            tl_w_disc = cart_total - (cart_total * discount_value)
+
+        # reached below zero (negative)
+        if tl_w_disc < 0:
+            tl_w_disc = 0
+
+    return cart_total + gst + shipping_fee, cart_total, gst, shipping_fee, discount_value, tl_w_disc
 
 # result by their genre (function)
 def item_display_by_genre(gnr = None, px_range = None):
@@ -693,17 +715,48 @@ def cart():
     cart = session.get("cart", {})
 
     # Get price calculation
-    __n, subtotal, gst, ship_fee = calculate_total(cart)
+    __n, subtotal, gst, ship_fee, discount, __n2 = calculate_total(cart)
 
     return render_template("cart.html", cart = cart, albums = albums,
-                           subtotal = subtotal, gst = gst)
+                           subtotal = subtotal, gst = gst, discount = discount)
+
+# Applying Coupons
+@app.route("/apply_coupons", methods = ["POST"])
+def apply_coupons():
+    get_data_coupon = load_data_coupons() # get the data of the coupons
+    input_coupon = request.form["coupon"] # get user's input
+
+    # Get coupon via session.get
+    coupon = session.get("coupon", {})
+
+    if input_coupon in get_data_coupon:
+
+        # applying coupon into session
+        coupon = {
+            "name": input_coupon,
+            "discount": get_data_coupon[input_coupon]["discount"]
+        }
+
+        # Update the session.
+        session["coupon"] = coupon
+        session.modified = True
+
+        # debugging
+        flash(f"{input_coupon}: {get_data_coupon[input_coupon]["discount"]}")
+        flash("Coupon applied")
+
+    else:
+        flash("Coupon does not exist")
+
+    
+    return redirect(url_for("cart"))
 
 @app.route("/checkout")
 def checkout():
     cart = session.get("cart", {})
     billing_info = session.get("billing_info", {}) # information retrieval in return
 
-    total, subtotal, gst, ship_fee = calculate_total(cart)
+    total, subtotal, gst, ship_fee, discount, total_with_discount = calculate_total(cart)
 
     if not cart:
         flash("You don't have items in your cart yet; start shopping for your favourite music album.")
@@ -719,7 +772,7 @@ def continue_to_review():
     cart = session.get("cart", {}) # get all the items in cart
     billing_info = session.get("billing_info", {}) # store within the session
 
-    total, subtotal, gst, ship_fee = calculate_total(cart)
+    total, subtotal, gst, ship_fee, discount, total_with_discount = calculate_total(cart)
 
     # organising billing info in dictionary; get input values via "request.form"
     billing_info = {
@@ -764,7 +817,7 @@ def place_order():
     if not cart and not billing_info:
         return
 
-    total, subtotal, gst, ship_fee = calculate_total(cart)
+    total, subtotal, gst, ship_fee, discount, total_with_discount = calculate_total(cart)
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     time_clock = datetime.datetime.now().strftime("%H.%M.%S")
     invoice_date = f"{date} {time_clock}"
