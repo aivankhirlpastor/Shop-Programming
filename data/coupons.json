@@ -1,5 +1,8 @@
 {
     "YEAR2026": {
         "discount": 100
+    },
+    "OFFHALVES": {
+        "discount": 0.5
     }
 }
