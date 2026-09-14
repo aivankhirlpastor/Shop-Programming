@@ -52,7 +52,8 @@ def initialise_database():
                     password TEXT NOT NULL,
                     items TEXT,
                     wishlists TEXT,
-                    billing_info TEXT
+                    billing_info TEXT,
+                    applied_coupon TEXT
                     )
 """)
 
@@ -60,33 +61,40 @@ def signin_session(email, password, msr = 0):
     # getting onto session
     with sqlite3.connect("accounts.db") as conn:
         cursor = conn.cursor()
-        cursor.execute(f"SELECT id, name, password, items FROM accounts WHERE email = '{email}'")
+        cursor.execute(f"SELECT * FROM accounts WHERE email = '{email}'")
 
         # check for an account associated with email
         post_identifier = cursor.fetchall()
 
         if post_identifier:
             uid = post_identifier[0]
+
+            # initials
             retrieved_item = None # initial
+            retrieved_coupon = None
 
             # not matched
-            if not password == uid[2]:
+            if not password == uid[4]:
                 raise Exception("Password is incorrect.")
 
             # log in method
             if msr == 1:
                 # replacing cart from retrieval item or setting to  on registered account
-                retrieved_item = json.loads(uid[3])
+                retrieved_item = json.loads(uid[5])
+                retrieved_coupon = json.loads(uid[8])
+
                 session["cart"] = retrieved_item
-                
+                session["coupon"] = retrieved_coupon
+
             # In-Session Key in dict (account accessed)
             session_key = session.get("session_key", {})
             session_key = {
                 "user_id": uid[0],
-                "name": uid[1],
+                "name": uid[2],
                 "email": email,
                 "cart": retrieved_item,
-                "accessed": True
+                "accessed": True,
+                "applied_coupon": retrieved_coupon,
             }
 
             session["session_key"] = session_key # define the session key
@@ -106,9 +114,12 @@ def calculate_total(c):
     quantity = sum(i["quantity"] for i in c.values())
     shipping_fee = 0
 
+    # calculate for total
+    main_total = cart_total + gst + shipping_fee
+
     # get discount via sessiond
     discount_value = 0
-    tl_w_disc = cart_total
+    tl_w_disc = main_total
     has_coupon_applied = session.get("coupon", {})
 
     if not has_coupon_applied == {}:
@@ -116,15 +127,15 @@ def calculate_total(c):
 
         # determination by value
         if discount_value > 1: # via regular whole number
-            tl_w_disc = cart_total - discount_value
+            tl_w_disc = main_total - discount_value
         elif discount_value <= 1: # via percentage
-            tl_w_disc = cart_total - (cart_total * discount_value)
+            tl_w_disc = main_total - (main_total * discount_value)
 
         # reached below zero (negative)
         if tl_w_disc < 0:
             tl_w_disc = 0
 
-    return cart_total + gst + shipping_fee, cart_total, gst, shipping_fee, discount_value, tl_w_disc
+    return main_total, cart_total, gst, shipping_fee, discount_value, tl_w_disc
 
 # result by their genre (function)
 def item_display_by_genre(gnr = None, px_range = None):
@@ -353,10 +364,14 @@ def index_album_modules():
 
 @app.after_request
 def after_request_function(req):
-    cart = session.get("cart", {})
+
+    # main session_key
     session_key = session.get("session_key", {})
 
     # updating the cart key | disimilarities between keys
+    cart = session.get("cart", {})
+    coupon = session.get("coupon", {})
+
     try:
         if not cart == session_key["cart"]:
             session_key["cart"] = cart
@@ -364,18 +379,33 @@ def after_request_function(req):
             # update account session
             session["session_key"] = session_key
             session.modified = True
+    except Exception as r:
+        # throws error due to missing keyword 'cart' error
+        pass
 
-            # altering the table
+    # updating the coupon key | disimilarities between keys
+    try:
+        if not coupon == session_key["applied_coupon"]:
+            session_key["applied_coupon"] = coupon
+
+            # update account session
+            session["session_key"] = session_key
+            session.modified = True
+    except:
+        pass
+
+    # altering the table
+    try:
+        # if logged on
+        if session_key["name"]:
             with sqlite3.connect("accounts.db") as conn:
                 cursor = conn.cursor()
                 cursor.execute(f"""
                     UPDATE accounts
-                    SET items = ?
+                    SET items = ?, applied_coupon = ?
                     WHERE name = '{session_key["name"]}' 
-                """, (json.dumps(session_key["cart"]),))
-
-    # throws error due to missing keyword 'cart' error
-    except Exception as r:
+                """, (json.dumps(session_key["cart"]), json.dumps(session_key["applied_coupon"]),))
+    except:
         pass
 
     # print("HEADING AFTER REQUEST", req.headers)
@@ -748,7 +778,20 @@ def apply_coupons():
     else:
         flash("Coupon does not exist")
 
-    
+    return redirect(url_for("cart"))
+
+@app.route("/remove_coupon", methods = ["POST"])
+def remove_coupon():
+    try:
+        cpn_name = session.get("coupon", {})["name"] # get the name first
+
+        session.pop("coupon", None) # coupon removal via session.pop
+        session.modified = True
+    except Exception as r:
+        print(r)
+
+    flash(f"Removed a coupon: {cpn_name}. You can still enter it unless or until you have used it.")
+
     return redirect(url_for("cart"))
 
 @app.route("/checkout")
@@ -765,7 +808,8 @@ def checkout():
     return render_template("checkout.html",
                            total = total, subtotal = subtotal,
                            gst = gst, ship_fee = ship_fee,
-                           cart = cart, saved_billing_info = billing_info)
+                           cart = cart, saved_billing_info = billing_info,
+                           discount = discount, total_with_discount = total_with_discount)
 
 @app.route("/continue_to_review", methods = ["POST"])
 def continue_to_review():
@@ -927,9 +971,9 @@ def signup(get_subject):
             with sqlite3.connect("accounts.db") as conn:
                 cursor = conn.cursor()
                 cursor.execute(""" 
-                    INSERT INTO accounts (date, name, email, password, items)
-                    VALUES (?, ?, ?, ?, ?)
-                """, (date, name, email, password, None,))
+                    INSERT INTO accounts (date, name, email, password, items, applied_coupon)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                """, (date, name, email, password, None, None,))
 
                 conn.commit()
 
@@ -942,6 +986,7 @@ def signup(get_subject):
         
     except Exception as r:
         flash(f"Something went wrong while we handle you to sign up: {r}")
+        restore_cart = None
 
         return redirect(url_for("index"))
 
@@ -996,6 +1041,7 @@ def logout():
     session["cart"] = restore_cart
 
     session.pop("session_key", None) # revoke session account
+    session.pop("coupon", None) # revoke session coupon as well
     session.modified = True
 
     return redirect(url_for("signup_login", measure = 'login'))
