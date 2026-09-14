@@ -39,6 +39,16 @@
         "price": 17.99,
         "stock": 17
     },
+    "dandellion": {
+        "author": "North C.",
+        "id": "923 6880 A",
+        "release_date": "12-05-2025",
+        "label": "MEIL Production Studios",
+        "tracks": 16,
+        "genre": "Ambience",
+        "price": 24.99,
+        "stock": 14
+    },
     "West Country's Mankind": {
         "author": "Richard Tyson",
         "id": "979 4428 D",
@@ -138,6 +148,16 @@
         "genre": "Lo-Fi",
         "price": 9.99,
         "stock": 15
+    },
+    "Snow Sunset Sky": {
+        "author": "Michael Zysken",
+        "id": "979 0031 U",
+        "release_date": "12-12-2025",
+        "label": "-",
+        "tracks": 10,
+        "genre": "Upbeat",
+        "price": 30.99,
+        "stock": 13
     },
     "Feelz": {
         "author": "Paul Rewire",
