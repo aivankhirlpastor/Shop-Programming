@@ -70,7 +70,13 @@
 
                 <form id="coupon-layout" action="{{ url_for('apply_coupons') }}", method="post">
                     <input type="text" name="coupon" id="coupon" placeholder="Enter coupon here" value="{% if cpn %}{{ cpn['name'] }}{% endif %}" {% if cpn %}disabled{% endif %}>
-                    <button type="submit">Apply</button>
+
+                    {% if cpn %}
+                        <button type="submit" formaction="{{ url_for('remove_coupon') }}">Remove</button>
+                    {% else %}
+                        <button type="submit">Apply</button>
+                    {% endif %}
+
                 </form>
                 <div class="cost-precalc">
                     <div class="text-nudge">
@@ -88,12 +94,11 @@
                         <div class="text-nudge">
                             <span>Discount</span>
                             <p class="emphasise discount">
-
                                 <!-- determination value -->
                                 {% if discount > 1 %}
                                     ${{ '%.2f' % discount }}
                                 {% elif 1 >= discount %}
-                                    {{ discount * 100 }}%
+                                    {{ '%.0f' % (discount * 100) }}%
                                 {% endif %}
                             </p>
                         </div>
