@@ -163,6 +163,11 @@ input:not([type=radio]):focus {
     color: var(--stock-low);
 }
 
+.strikethrough {
+    opacity: 60%;
+    text-decoration: line-through;
+}
+
 input.emit-stock-status {
     --input-border-color: var(--stock-normal);
 }
@@ -223,6 +228,19 @@ label {
     font-size: 16px;
 }
 
+/* price colour labels */
+.emphasise.discount {
+    color: var(--color-4);
+    font-weight: 600;
+    font-size: 18px;
+
+    text-shadow: 0 1px 2px #00000044;
+}
+
+.free-cost {
+    color: #0c9335 !important;
+}
+
 .text-nudge {
     align-items: baseline;
     /* align-items: end; */
@@ -255,6 +273,21 @@ label {
 
 .text-nudge.nudge-block :first-child {
     min-width: 125px;
+}
+
+/* for monetary cost value */
+.text-nudge#overall-total {
+    display: grid;
+    grid-template: repeat(2, 1fr) / repeat(2, 1fr);
+}
+
+.text-nudge#overall-total :not(:first-child) {
+    text-align: right;
+}
+
+.text-nudge#overall-total p.overall-cost {
+    color: #cd7007;
+    grid-area: 2 / 1 / span 1 / span 2;
 }
 
 .centre {
@@ -773,7 +806,7 @@ section.my-cart li.item-details:has(.quantity input.modified) > .price-action p.
     background-color: var(--color-2);
     padding: 16px;
     grid-area: 1 / 6 / span 1 / 9;
-    max-height: 300px;
+    max-height: 350px;
     height: fit-content;
 
     position: sticky;
