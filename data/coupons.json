@@ -4,5 +4,14 @@
     },
     "OFFHALVES": {
         "discount": 0.5
+    },
+    "SPECIALI-TEA": {
+        "discount": 0.7
+    },
+    "30NOW": {
+        "discount": 30
+    },
+    "REST4DAY": {
+        "discount": 40
     }
 }
