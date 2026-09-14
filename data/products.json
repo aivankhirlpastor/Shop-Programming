@@ -128,5 +128,35 @@
         "genre": "Lo-Fi",
         "price": 40.49,
         "stock": 7
+    },
+    "Double Stanza": {
+        "author": "Park Richard",
+        "id": "911 8747 H",
+        "release_date": "18-04-2026",
+        "label": "-",
+        "tracks": 1,
+        "genre": "Lo-Fi",
+        "price": 9.99,
+        "stock": 15
+    },
+    "Feelz": {
+        "author": "Paul Rewire",
+        "id": "908 0567 U",
+        "release_date": "29-11-2025",
+        "label": "-",
+        "tracks": 1,
+        "genre": "Upbeat",
+        "price": 13.99,
+        "stock": 5
+    },
+    "Get UP!": {
+        "author": "Aracchia A.",
+        "id": "959 3025 U",
+        "release_date": "29-11-2025",
+        "label": "MEIL Production Studios",
+        "tracks": 4,
+        "genre": "Upbeat",
+        "price": 12.99,
+        "stock": 20
     }
 }
