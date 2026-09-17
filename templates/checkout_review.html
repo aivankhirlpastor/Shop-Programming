@@ -51,7 +51,7 @@
                     {% endif %}
 
                     {% if ship_fee %}
-                        <div class="text-nudge" id="delivery-fee">
+                        <div class="text-nudge nudge-block" id="delivery-fee">
                             <span>Delivery Fee</span>
                             <p>${{ '%.2f' % ship_fee }}</p>
                         </div>
@@ -60,7 +60,14 @@
                     {% if discount %}
                         <div class="text-nudge nudge-block discount">
                             <span>Discount</span>
-                            <p>${{ '%.2f' % discount }}</p>
+                            <p>
+                                <!-- determination value -->
+                                {% if discount > 1 %}
+                                    ${{ '%.2f' % discount }}
+                                {% elif 1 >= discount %}
+                                    {{ '%.0f' % (discount * 100) }}%
+                                {% endif %}
+                            </p>
                         </div>
                     {% endif %}
 
