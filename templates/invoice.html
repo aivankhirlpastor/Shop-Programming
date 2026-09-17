@@ -76,7 +76,13 @@
                         <td></td>
                         <td></td>
                         <td>Discount</td>
-                        <td>${{ '%.2f' % data["discount"] }}</td>
+                        <td>
+                            {% if data["discount"] > 1 %}
+                                ${{ '%.2f' % data["discount"] }}
+                            {% elif 1 >= data["discount"] %}
+                                {{ '%.0f' % (data["discount"] * 100) }}%
+                            {% endif %}
+                        </td>
                     </tr>
                     <tr class="monetary-cost total">
                         <td></td>
