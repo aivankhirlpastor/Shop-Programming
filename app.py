@@ -113,17 +113,19 @@ def calculate_total(c):
     # round() and *100/100 rule to alleviate math float inaccuracy
     cart_total = sum((item["price"] * item["quantity"]) * 100 for item in c.values())
     cart_total = cart_total / 100
-
     gst = round(cart_total * 0.15, 2)
+    shipping_fee = 0 # initial
 
-    # Shipping Fee: Determined by the amount of quantity
-    quantity = sum(i["quantity"] for i in c.values())
-    shipping_fee = 0
+    # Shipping Fee: Determined by subtotal
+    if cart_total > 200:
+        shipping_fee = 5.3
+    elif 200 >= cart_total > 100:
+        shipping_fee = 2.7
 
     # calculate for total
     main_total = cart_total + gst + shipping_fee
 
-    # get discount via sessiond
+    # get discount via session
     discount_value = 0
     tl_w_disc = main_total
     has_coupon_applied = session.get("coupon", {})
@@ -817,12 +819,28 @@ def checkout():
                            cart = cart, saved_billing_info = billing_info,
                            discount = discount, total_with_discount = total_with_discount)
 
-@app.route("/continue_to_review", methods = ["POST"])
+@app.route("/continue_to_review")
 def continue_to_review():
     cart = session.get("cart", {}) # get all the items in cart
     billing_info = session.get("billing_info", {}) # store within the session
 
     total, subtotal, gst, ship_fee, discount, total_with_discount = calculate_total(cart)
+
+    if not cart or not billing_info:
+        if not billing_info:
+            flash("You are missing with important thing. Enter your billing details so we are able to track your order.")
+    
+        return redirect(url_for("checkout"))
+
+    return render_template("checkout_review.html",
+                           total = total, subtotal = subtotal, 
+                           gst = gst, ship_fee = ship_fee,
+                           cart = cart, saved_billing_info = billing_info,
+                           discount = discount, total_with_discount = total_with_discount)
+
+@app.route("/continue_to_review/get", methods = ["POST"])
+def get_details():
+    billing_info = session.get("billing_info", {}) # store within the session
 
     # organising billing info in dictionary; get input values via "request.form"
     billing_info = {
@@ -835,26 +853,29 @@ def continue_to_review():
     }
 
     session["billing_info"] = billing_info
+    session.modified = True # save Modification
 
-    # save Modification
-    session.modified = True
+    return(redirect(url_for("continue_to_review")))
 
-    return render_template("checkout_review.html",
-                           total = total, subtotal = subtotal, 
-                           gst = gst, ship_fee = ship_fee,
-                           cart = cart, saved_billing_info = billing_info,
-                           discount = discount, total_with_discount = total_with_discount)
-
-# Info Retrieval
+# Placing Order
 @app.route("/place_order", methods = ["POST"])
 def place_order():
-    # time delay
-    time.sleep(2.4)
-
     # get "Carts" and "Billing Info" from the session
     cart = session.get("cart", {}) # get all the items in cart
     coupon = session.get("coupon", {})
     billing_info = session.get("billing_info", {}) # store within the session
+
+    # check if the cart or billing info is not empty
+    if not cart or not billing_info:
+        time.sleep(0.9)
+
+        if not billing_info:
+            flash("You are missing with important thing. Enter your billing details so we are able to track your order.")
+
+        return redirect(url_for("checkout"))
+    
+    # time delay
+    time.sleep(2.4)
 
     customer_name = f"{billing_info["first_name"]} {billing_info["surname"]}"
     customer = {
@@ -864,10 +885,6 @@ def place_order():
         "town": billing_info["town"],
         "postal_code": billing_info["postal_code"],
     }
-
-    # check if the cart and billing info is not empty
-    if not cart and not billing_info:
-        return
 
     total, subtotal, gst, ship_fee, discount, total_with_discount = calculate_total(cart)
     main_total = total if total == total_with_discount else total_with_discount
