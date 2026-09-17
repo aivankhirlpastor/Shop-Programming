@@ -31,11 +31,12 @@
     {% with messages = get_flashed_messages() %}
         {% if messages %}
             <div class="toast-flash">
-            <!-- 'flash' message from Python Flask -->
+                <button type="button" id="close-flash">Close Message</button>
+
+                <!-- 'flash' message from Python Flask -->
                 {% for m in messages %}
                     <p>{{ m }}</p>
                 {% endfor %}
-            <!-- boundary "for" -->
             </div>
         {% endif %}
     {% endwith %}
@@ -121,6 +122,24 @@
                 blackOverlay.addEventListener("click", closure);
             </script>
         {% endwith %}
+    {% endif %}
+
+    <!-- script if -->
+    {% if get_flashed_messages() %}
+        <script>
+            const closeFlash = document.getElementById("close-flash");
+
+            // at click of close flash
+            closeFlash.addEventListener("click", e => {
+                // 
+                document.querySelector(".toast-flash").classList.add("closing-flash");
+
+                // remove flash container
+                setTimeout(() => {
+                    document.querySelector(".toast-flash").remove();
+                }, 300);
+            });
+        </script>
     {% endif %}
 </body>
 </html>

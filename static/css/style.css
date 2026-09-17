@@ -397,12 +397,52 @@ a.btn-genres img.svg-icon {
     background-color: #ffffffcc;
     font-weight: 500;
     margin-block: 8px;
+    opacity: 1;
     padding: 8px 16px;
     width: 250px;
+    transform: none; /* closing effect */
 
     /* GLASS EFFECT */
     box-shadow: 0 3px 3px #00000024;
     backdrop-filter: blur(5px) saturate(1280%) contrast(95%);
+
+    transition: transform 0.3s ease-out,
+                opacity 0.25s ease-out;
+}
+
+.toast-flash > button {
+    background-color: #eeeeeecc;
+    border-color: #7d766722;
+    font-weight: 400;
+    position: absolute;
+    padding: 2px 0;
+    width: 150px;
+    
+    top: -35px;
+    right: 0;
+    transform: scale(1);
+
+    filter: none;
+
+    /* special transition effect */
+    transition: transform 0.15s ease,
+                filter 0.15s ease,
+                background-color 0.15s ease;
+}
+
+.toast-flash > button:hover {
+    background-color: #cccccccc;
+}
+
+.toast-flash > button:active {
+    background-color: #ffffffcc;
+    transform: scale(0.9);
+}
+
+/* closing effect */
+.toast-flash.closing-flash > *:not(button) {
+    transform: translateX(50px);
+    opacity: 0;
 }
 
 /* panel */
