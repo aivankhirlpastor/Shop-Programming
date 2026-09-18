@@ -21,7 +21,15 @@
         </nav>
         <a href="{{ url_for('cart') }}">
             <span>My Cart</span>
-            <span class="counter">{{ session["cart"]|length }}</span>
+            <span class="counter">
+
+                {% if session["session_key"] %}
+                    {{ session["session_key"]["cart"]|length }}
+                {% else %}
+                    {{ session["cart"]|length }}
+                {% endif %}
+
+            </span>
         </a>
     </header>
 
