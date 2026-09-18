@@ -1314,12 +1314,10 @@ def place_order():
 
             # session["used_coupons"] = sets_used_coupons
     except:
-        # ignore
         print("Unable to add coupon to used coupons.")
 
-    session.pop("coupon", None) # revoke session cart
-    session.pop("cart", None) # revoke session cart
-    session.modified = True
+    # take out all items in cart, and coupon
+    remove_key("cart", "coupon")
 
     # redirect user to invoice section
     try:
