@@ -9,11 +9,6 @@ import sys
 app = Flask("__name__")
 app.secret_key = "your-secret-key"
 
-# general variables
-global restore_cart, restore_sets_used_coupons
-restore_cart = {}
-restore_sets_used_coupons = {}
-
 # functions
 def load_data_products():
     with open("data/products.json") as product:
@@ -39,7 +34,7 @@ def initialise_database():
                     discount FLOAT,
                     total_charges REAL
                     )
-""")
+        """)
 
     # ACCOUNTS
     with sqlite3.connect("accounts.db") as conn:
@@ -57,7 +52,340 @@ def initialise_database():
                     applied_coupon TEXT,
                     used_coupons TEXT
                     )
-""")
+        """)
+
+# syntax building for database
+def set_syntax_building(argument: dict|list|tuple, positional_value: list|tuple = ()):
+    def initialise_build(params: dict) -> dict:
+        if not type(params) is dict:
+            raise TypeError(f"The argument or the parameter to initialising 'set' syntax structure is not in dict; got {type(params)}")
+
+        # prompts
+        key_terms = ["cart", "wishlists", "billing_info", "applied_coupon", "coupon", "used_coupons"]
+        session_key = session.get("session_key", {})
+
+        set_clause_structure = []
+        set_clause_value = []
+
+        for tr in params.keys():
+            if tr in key_terms:
+                # variant words or terms: cart/items, coupon/applied_coupon
+                if tr == "cart":
+                    term = "items"
+                    term_key_session = "cart"
+                elif tr == "coupon":
+                    term, term_key_session = ["applied_coupon" for y in range(2)]
+                else:
+                    term, term_key_session = [tr for y in range(2)]
+
+                # set syntax building prompt
+                set_clause_structure.append(f"{term} = ?")
+                set_clause_value.append(json.dumps(params[tr]))
+
+                # unavailable session naming at that time
+                if not tr == "wishlists" or not tr == "billing_info":
+                    session_key[term_key_session] = params[tr]
+
+        # finalising prompt
+        return set_clause_structure, set_clause_value, session_key
+
+    storer = {}
+
+    # *args
+    if type(argument) is tuple or type(argument) is list:
+        # verify if both argument and positional values were the same amount of items
+        if not len(argument) == len(positional_value):
+            raise ValueError(f"The amount of value it has, as a list for positional value, must have the same value as the amount of key argument has: {len(argument)} | {len(positional_value)}")
+        
+        # adding to storer dictionary via for-loop
+        for j in range(len(argument)):
+            storer[argument[j]] = positional_value[j]
+        
+    # **kwargs
+    elif type(argument) is dict:
+        storer = argument
+
+    else:
+        raise TypeError("Main argument is an invalid type; it requires to be at dictionary, list, or tuple.")
+
+    # two returned lists of 'set' syntax: structure, value & one for session_key configuration
+    return initialise_build(storer)
+
+# changing database of a currently logged on account (saving)
+def make_change_to_database(syntax_structure: list, syntax_val: list, key_session):
+    # updating database table
+    session_key = session.get("session_key", {})
+
+    with sqlite3.connect("accounts.db") as conn:
+        try:
+            cursor = conn.cursor()
+            cursor.execute(f""" 
+                UPDATE accounts
+                SET {", ".join(syntax_structure)}
+                WHERE email = '{session_key["email"]}'
+            """, tuple(syntax_val))
+            
+            # update account session
+            session["session_key"] = key_session
+            session.modified = True
+            
+            conn.commit()
+
+            # successful saving action
+            return {
+                "is_saved": "database",
+                "status": 1
+            }
+            
+        except sqlite3.Error as er:
+            conn.rollback()
+            print(f"Something went wrong: {er}")
+            
+            # unsuccessful saving action due to exception
+            return None 
+        
+# Strict Searching in registered accounts;
+# requires the variable 'name' to be listed
+# under conditions.
+
+# use 'get_entry' function when dealing with
+# two sides
+def get_entry(kyn_a):
+    def issue_entries(name):
+        result = []
+        has_session_key = session.get("session_key", {})
+
+        try:
+            # guest account
+            if not has_session_key:
+                for tg in name:
+                    v = session.get(tg, {})
+                    result.append(v)
+
+                return result
+    
+            # session with user being logged on
+            else:
+                with sqlite3.connect("accounts.db") as conn:
+                    cursor = conn.cursor()
+                    cursor.execute(f"SELECT * FROM accounts WHERE email = '{has_session_key["email"]}'")
+
+                    post_identifier = cursor.fetchall()
+                    main_row = post_identifier[0]
+
+                    items = json.loads(main_row[5])
+                    wishlists = json.loads(main_row[6])
+                    billing_info = json.loads(main_row[7])
+                    applied_coupon = json.loads(main_row[8])
+                    used_coupons = json.loads(main_row[9])
+
+                    # unpacking name; observe if "tr" is listed at "if-else"
+                    for tr in name:
+                        rar = {}
+
+                        # observe if the 
+                        if tr == "cart":
+                            rar = items
+                        elif tr == "wishlists":
+                            rar = wishlists
+                        elif tr == "billing_info":
+                            rar = billing_info
+                        elif tr == "applied_coupon" or tr == "coupon":
+                            rar = applied_coupon
+                        elif tr == "used_coupons":
+                            rar = used_coupons
+
+                        result.append(rar)
+
+                    return result
+
+        except Exception as R:
+            result = []
+            print(R)
+
+            for err in name:
+                result.append({}) # blanks
+
+            return result
+
+    # storing names for obtaining details individually
+    # if "multiple name is given" | only one key provided
+    get_pre_passing = kyn_a if type(kyn_a) is list else [kyn_a]
+    ent = issue_entries(get_pre_passing) # get via session.get or database selection
+
+    # returning stage
+    if len(ent) == 1:
+        return ent[0] # only one result provided
+
+    # tuple
+    return ent
+
+# saving their entries via session or database |  multiple kws, required argument: (key = value)
+def save_entries(**kwargs):
+    has_session_key = session.get("session_key", {})
+
+    try:
+        # guest
+        if not has_session_key:
+            for tg, value in kwargs.items():
+                session[tg] = value
+
+            session.modified = True # finalising by saving the session
+            return {
+                "is_saved": "session",
+                "status": 1
+            }
+
+        # session with user being logged on
+        else:
+            get_syntax_structure, get_syntax_value, returned_key_session = set_syntax_building(kwargs)
+
+            # the prompt below was made first before creating set_syntax_building()
+            # -------------------------------------------------------------
+            # for tr in kwargs.keys():
+            #     if tr in key_terms:
+            #         # variant words or terms: cart/items, coupon/applied_coupon
+            #         if tr == "cart":
+            #             term = "items"
+            #             term_key = "cart"
+            #         elif tr == "coupon":
+            #             term, term_key = ["applied_coupon" for y in range(2)]
+            #         else:
+            #             term, term_key = [tr for y in range(2)]
+
+            #         # set syntax building
+            #         set_clause_structure.append(f"{term} = ?")
+            #         set_clause_value.append(json.dumps(kwargs[tr]))
+
+            #         # unavailable session naming at that time
+            #         if not tr == "wishlists" or not tr == "billing_info":
+            #             has_session_key[term_key] = kwargs[tr]
+
+
+            #     # checks if "tr" is listed below: tr == "<column_name>"
+            #     if tr == "cart":
+            #         set_clause_structure.append("items = ?")
+            #         set_clause_value.append(json.dumps(value))
+
+            #         has_session_key["cart"] = value
+
+            #     elif tr == "wishlists":
+            #         set_clause_structure.append("wishlists = ?")
+            #         set_clause_value.append(json.dumps(value))
+
+            #         # has_session_key["wishlists"] = value
+
+            #     elif tr == "billing_info":
+            #         set_clause_structure.append("billing_info = ?")
+            #         set_clause_value.append(json.dumps(value))
+
+            #         # has_session_key["billing_info"] = value
+
+            #     elif tr == "applied_coupon" or tr == "coupon":
+            #         set_clause_structure.append("applied_coupon = ?")
+            #         set_clause_value.append(json.dumps(value))
+
+            #         has_session_key["applied_coupon"] = value
+
+            #     elif tr == "used_coupons":
+            #         set_clause_structure.append("used_coupons = ?")
+            #         set_clause_value.append(json.dumps(value))
+
+            #         has_session_key["used_coupons"] = value
+
+            # updating database table
+            return make_change_to_database(get_syntax_structure, get_syntax_value, returned_key_session)
+
+    except Exception as R:
+        raise Exception(f"Something went wrong: {R}")
+
+# removing specific key on dictionary: (name of session/column = key)
+def remove_specific_key(**kwargs):
+    has_session_key = session.get("session_key", {})
+
+    try:
+        # guest
+        if not has_session_key:
+            for session_name, key in kwargs.items():
+                vs = session.get(session_name, {})
+                del vs[key]
+
+                session[session_name] = vs
+
+            session.modified = True
+            return {
+                "is_saved": "session",
+                "status": True
+            }
+
+        # session with user being logged on
+        else:
+            value_to_save = [] # stored after a "del" action
+
+            with sqlite3.connect("accounts.db") as conn:
+                cursor = conn.cursor()
+                cursor.execute(f"SELECT * FROM accounts WHERE email = '{has_session_key["email"]}'")
+
+                p = cursor.fetchall()
+                main_row = p[0]
+
+                items = json.loads(main_row[5])
+                wishlists = json.loads(main_row[6])
+                billing_info = json.loads(main_row[7])
+                applied_coupon = json.loads(main_row[8])
+                used_coupons = json.loads(main_row[9])
+
+                for column, key in kwargs.items():
+                    if column == "cart":
+                        del items[key]
+                        value_to_save.append(items)
+                    elif column == "wishlists":
+                        del wishlists[key]
+                        value_to_save.append(wishlists)
+                    elif column == "billing_info":
+                        del billing_info[key]
+                        value_to_save.append(billing_info)
+                    elif column == "applied_coupon" or column == "coupon":
+                        del applied_coupon[key]
+                        value_to_save.append(applied_coupon)
+                    elif column == "used_coupons":
+                        del used_coupons[key]
+                        value_to_save.append(used_coupons)
+
+            get_syntax_structure, get_syntax_value, returned_key_session = set_syntax_building(tuple(kwargs.keys()), value_to_save)
+            return make_change_to_database(get_syntax_structure, get_syntax_value, returned_key_session)
+            
+    except Exception as R:
+        flash(f"Something went wrong while deleting: {R}")
+        raise Exception(f"Something went wrong while deleting: {R}")
+
+        return None # unsuccessful deletion of specific key
+
+def remove_key(*args):
+    has_session_key = session.get("session_key", {})
+
+    try:
+        # guest
+        if not has_session_key:
+            for session_name in args:
+                session.pop(session_name, None)
+
+            session.modified = True
+            return {
+                "is_changed": "session",
+                "status": True
+            }
+
+        # session with user being logged on
+        else:
+            get_syntax_structure, get_syntax_value, returned_key_session = set_syntax_building(args, ({},) * len(args))
+            return make_change_to_database(get_syntax_structure, get_syntax_value, returned_key_session)
+
+    except Exception as R:
+        print(f"Something went wrong while deleting: {R}")
+        return None # unsuccessful pop deletion
+
+# -----------------------------------------------------------------------------------
 
 def signin_session(email, password, msr = 0):
     # getting onto session
@@ -87,9 +415,9 @@ def signin_session(email, password, msr = 0):
                 retrieved_coupon = json.loads(uid[8])
                 retrieved_used_coupons = json.loads(uid[9])
 
-                session["cart"] = retrieved_item
-                session["coupon"] = retrieved_coupon
-                session["used_coupons"] = retrieved_used_coupons
+                # session["cart"] = retrieved_item
+                # session["coupon"] = retrieved_coupon
+                # session["used_coupons"] = retrieved_used_coupons
 
             # In-Session Key in dict (account accessed)
             session_key = session.get("session_key", {})
@@ -128,7 +456,7 @@ def calculate_total(c):
     # get discount via session
     discount_value = 0
     tl_w_disc = main_total
-    has_coupon_applied = session.get("coupon", {})
+    has_coupon_applied = get_entry("coupon")
 
     if not has_coupon_applied == {}:
         discount_value = has_coupon_applied["discount"]
@@ -144,6 +472,7 @@ def calculate_total(c):
             tl_w_disc = 0
 
     return main_total, cart_total, gst, shipping_fee, discount_value, tl_w_disc
+
 
 # result by their genre (function)
 def item_display_by_genre(gnr = None, px_range = None):
@@ -166,7 +495,7 @@ def item_display_by_genre(gnr = None, px_range = None):
         else:
             return False
 
-    c = session.get("cart", {})
+    c = get_entry("cart")
     stored_data = {} # adding results via their genre
     data_album = load_data_products()
 
@@ -208,7 +537,8 @@ def px_range_post_inversion(r):
         return None
 
 def add_to_cart_action(mdl, product, qty):
-    cart = session.get("cart", {})
+    # cart = session.get("cart", {})
+    cart = get_entry("cart")
 
     if mdl[product]["stock"] > 0: # 3. Validate their stock
 
@@ -223,8 +553,9 @@ def add_to_cart_action(mdl, product, qty):
             }
 
             # Update the session.
-            session["cart"] = cart
-            session.modified = True
+            save_entries(cart = cart)
+            # session["cart"] = cart
+            # session.modified = True
 
             flash(f"({qty}) {product} added to cart.")
 
@@ -240,7 +571,7 @@ def add_to_cart_action(mdl, product, qty):
             flash("%.show_panel;")
             flash(key_var) # critical for side panel key access
         else:
-            flash(f"({product}) Item was already in cart.")
+            flash(f"{product} was already in your cart.")
             
     else:
         # out of stock message
@@ -357,71 +688,69 @@ def index_album_modules():
 
 # --------------------------------------
 
-# POST variable declaration
+# PRE variable declaration \ via research
 # @app.before_request
-# def before_request_function():
-#     global key
-    
-#     key = {
-#         "show": False, # replaceable by key-access function
-#         "type": 0,
-#         "by": {}
-#     }
+# def before_load_function():
 
-#     print(key)
+#     # coupon validity
+#     if session.get("coupon", {}):
+#         coupon_validity()
 
 @app.after_request
 def after_request_function(req):
 
-    # main session_key
-    session_key = session.get("session_key", {})
+    # # main session_key
+    # session_key = session.get("session_key", {})
 
-    cart = session.get("cart", {})
-    coupon = session.get("coupon", {})
-    sets_used_coupons = session.get("used_coupons", {})
+    # cart = session.get("cart", {})
+    # coupon = session.get("coupon", {})
+    # sets_used_coupons = session.get("used_coupons", {})
 
-    try:
-        # access to name
-        if session_key:
-            # updating the cart key | disimilarities between keys
-            if not cart == session_key["cart"]:
-                session_key["cart"] = cart
+    # try:
+    #     # access to name
+    #     if session_key:
+    #         # updating the cart key | disimilarities between keys
+    #         if not cart == session_key["cart"]:
+    #             session_key["cart"] = cart
 
-            # updating the coupon key | disimilarities between keys
-            if not coupon == session_key["applied_coupon"]:
-                session_key["applied_coupon"] = coupon
+    #         # updating the coupon key | disimilarities between keys
+    #         if not coupon == session_key["applied_coupon"]:
+    #             session_key["applied_coupon"] = coupon
 
-            # updating the sets of used coupons key | disimilarities between keys
+    #         # updating the sets of used coupons key | disimilarities between keys
 
-            if not sets_used_coupons == session_key["used_coupons"]:
-                session_key["used_coupons"] = sets_used_coupons
+    #         if not sets_used_coupons == session_key["used_coupons"]:
+    #             session_key["used_coupons"] = sets_used_coupons
 
-            # update account session
-            session["session_key"] = session_key
-            session.modified = True
+    #         # update account session
+    #         session["session_key"] = session_key
+    #         session.modified = True
 
-            # altering the table
-            with sqlite3.connect("accounts.db") as conn:
-                cursor = conn.cursor()
-                cursor.execute(f"""
-                    UPDATE accounts
-                    SET items = ?, applied_coupon = ?, used_coupons = ?
-                    WHERE name = '{session_key["name"]}' 
-                """, (json.dumps(session_key["cart"]),
-                      json.dumps(session_key["applied_coupon"]),
-                      json.dumps(session_key["used_coupons"]),))
-    except:
-        pass
+    #         # altering the table
+    #         with sqlite3.connect("accounts.db") as conn:
+    #             cursor = conn.cursor()
+    #             cursor.execute(f"""
+    #                 UPDATE accounts
+    #                 SET items = ?, applied_coupon = ?, used_coupons = ?
+    #                 WHERE name = '{session_key["name"]}' 
+    #             """, (json.dumps(session_key["cart"]),
+    #                   json.dumps(session_key["applied_coupon"]),
+    #                   json.dumps(session_key["used_coupons"]),))
+    # except:
+    #     pass
 
     # print("HEADING AFTER REQUEST", req.headers)
     return req
+
+# --------------------------------------
 
 # ROUTES <------------------->
 @app.route("/")
 def index():
     load_albums = load_data_products()
     ar, br, cr = index_album_modules()
-    cart = session.get("cart", {})
+    # cart = session.get("cart", {})
+    cart = get_entry("cart")
     key = panel_access_from_flash()
 
     # blank {} is for the album items
@@ -454,7 +783,7 @@ def product_information(id):
     else:
         abort(404)
 
-    cart = session.get("cart", {})
+    cart = get_entry("cart")
     key = panel_access_from_flash()
     print("135", key)
 
@@ -489,7 +818,7 @@ def add_to_cart(catalogue_id, product_name, input_selector, pole_end):
 
         # 2. Initiate an add to cart action.
         add_to_cart_action(albums, product_name, quantity)
-    except Exception as e:
+    except ValueError as e:
         flash("We could not add that item. Please enter a number in integer only.")
 
     # A pole_end is just another way whether to redirect the user back into grid display page after the action.
@@ -539,14 +868,16 @@ def add_to_cart(catalogue_id, product_name, input_selector, pole_end):
 
 @app.route("/remove_item/<ctg_number>/<string:album_name>", methods = ["POST"])
 def remove_item(ctg_number, album_name):
-    cart = session.get("cart", {})
+    cart = get_entry("cart")
 
     if album_name in cart:
-        del cart[album_name]
-        session["cart"] = cart
-        session.modified = True
+        # del cart[album_name]
+        # session["cart"] = cart
+        # session.modified = True
+        remove_status = remove_specific_key(cart = album_name)
 
-        flash(f"Removed all '{album_name}' in your cart")
+        if remove_status:
+            flash(f"Removed all '{album_name}' in your cart")
     else:
         flash(f"'{album_name}' was not found in your cart or was already removed.")
 
@@ -555,7 +886,7 @@ def remove_item(ctg_number, album_name):
 @app.route("/apply_changes", methods = ["POST"])
 def apply_changes():
     album_products = load_data_products()
-    cart = session.get("cart", {})
+    cart = get_entry("cart")
 
     for n, items in cart.items():
 
@@ -572,20 +903,21 @@ def apply_changes():
                 flash(f"({n}) That value should not be less than 1 minimum.")
                 # raise Exception("The value is out of range.")
 
-        except Exception as e:
+        except ValueError as e:
             print(e)
             flash(f"({n}) Please enter a number to adjust that quantity.")
             # raise ValueError(f"Input {items['id']} is missing its value.")
 
-    session["cart"] = cart
-    session.modified = True
+    save_entries(cart = cart)
+    # session["cart"] = cart
+    # session.modified = True
 
     return redirect(url_for("cart"))
 
 # Item Genre: display all items
 @app.route("/category/item")
 def category_all():
-    cart = session.get("cart", {})
+    cart = get_entry("cart")
     key = panel_access_from_flash()
     result = item_display_by_genre() # get the result via genre
 
@@ -595,7 +927,7 @@ def category_all():
 # Item Genre: specific genre
 @app.route("/category/item-<string:genre>")
 def category(genre):
-    cart = session.get("cart", {})
+    cart = get_entry("cart")
     key = panel_access_from_flash()
     result = item_display_by_genre(genre) # get the result via genre
 
@@ -609,7 +941,7 @@ def category(genre):
 # Item Genre: Filter Price Range
 @app.route("/category/item-<string:genre>/<price_range>")
 def category_price_filter(genre, price_range):
-    cart = session.get("cart", {})
+    cart = get_entry("cart")
     key = panel_access_from_flash()
     result, gio = item_display_by_genre(None if genre == "all" else genre, price_range) # get the result via genre and price
     kebab_case_pxrange = f"{price_range}".replace("_", "-") # used for add to cart action to redirect back here
@@ -734,10 +1066,17 @@ def order_history():
 @app.route("/delete_invoice/<int:order_id>", methods = ["POST"])
 def delete_invoice(order_id):
     with sqlite3.connect("order_history.db") as conn:
-        cursor = conn.cursor()
-        cursor.execute("DELETE FROM orders WHERE id = ?", (order_id,))
 
-        flash(f"({order_id}) Invoice deleted.")
+        try:
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM orders WHERE id = ?", (order_id,))
+
+            conn.commit()
+
+            flash(f"({order_id}) Invoice deleted.")
+        except sqlite3.Error as e:
+            conn.rollback()
+            flash(f"Invoice #{order_id} deletion has been halted to due to error.")
 
     return redirect(url_for("order_history"))
 
@@ -746,7 +1085,8 @@ def cart():
     albums = load_data_products()
 
     # Get cart via session.get
-    cart = session.get("cart", {})
+    # cart = session.get("cart", {})
+    cart = get_entry("cart")
 
     # Get price calculation
     __n, subtotal, gst, ship_fee, discount, __n2 = calculate_total(cart)
@@ -760,9 +1100,10 @@ def apply_coupons():
     get_data_coupon = load_data_coupons() # get the data of the coupons
     input_coupon = request.form["coupon"] # get user's input
 
-    # Get coupon via session.get
-    coupon = session.get("coupon", {})
-    sets_used_coupons = session.get("used_coupons", {})
+    # coupon = session.get("coupon", {})
+    # sets_used_coupons = session.get("used_coupons", {})
+    # Get coupon and used coupons via get_entry function
+    coupon, sets_used_coupons = get_entry(["coupon", "used_coupons"])
 
     # if coupon exists and already used
     if input_coupon in get_data_coupon and not input_coupon in sets_used_coupons:
@@ -774,8 +1115,9 @@ def apply_coupons():
         }
 
         # Update the session.
-        session["coupon"] = coupon
-        session.modified = True
+        # session["coupon"] = coupon
+        # session.modified = True
+        save_entries(coupon = coupon)
 
         # debugging
         flash(f"{input_coupon}: {get_data_coupon[input_coupon]["discount"]}")
@@ -790,23 +1132,19 @@ def apply_coupons():
 
 @app.route("/remove_coupon", methods = ["POST"])
 def remove_coupon():
-    try:
-        cpn_name = session.get("coupon", {})["name"] # get the name first
-
-        session.pop("coupon", None) # coupon removal via session.pop
-        session.modified = True
-    except Exception as r:
-        print(r)
-
-    flash(f"Removed a coupon: {cpn_name}. You can still enter it unless or until you have used it.")
+    # is_removed = remove_coupon_action()
+    # if is_removed:
+    #     # display flash message if successfully removed
+    #     flash(f"Removed a coupon: {is_removed["removed_cpn_name"]}. You can still enter it unless or until you have used it.")
 
     return redirect(url_for("cart"))
 
 @app.route("/checkout")
 def checkout():
-    cart = session.get("cart", {})
-    billing_info = session.get("billing_info", {}) # information retrieval in return
+    # cart = session.get("cart", {})
+    # billing_info = session.get("billing_info", {}) # information retrieval in return
 
+    cart, billing_info = get_entry(["cart", "billing_info"])
     total, subtotal, gst, ship_fee, discount, total_with_discount = calculate_total(cart)
 
     if not cart:
@@ -821,9 +1159,9 @@ def checkout():
 
 @app.route("/continue_to_review")
 def continue_to_review():
-    cart = session.get("cart", {}) # get all the items in cart
-    billing_info = session.get("billing_info", {}) # store within the session
-
+    # cart = session.get("cart", {}) # get all the items in cart
+    # billing_info = session.get("billing_info", {}) # store within the session
+    cart, billing_info = get_entry(["cart", "billing_info"])
     total, subtotal, gst, ship_fee, discount, total_with_discount = calculate_total(cart)
 
     if not cart or not billing_info:
@@ -840,7 +1178,7 @@ def continue_to_review():
 
 @app.route("/continue_to_review/get", methods = ["POST"])
 def get_details():
-    billing_info = session.get("billing_info", {}) # store within the session
+    billing_info = get_entry("billing_info") # store within the session
 
     # organising billing info in dictionary; get input values via "request.form"
     billing_info = {
@@ -852,8 +1190,9 @@ def get_details():
         "postal_code": request.form["postal-code"]
     }
 
-    session["billing_info"] = billing_info
-    session.modified = True # save Modification
+    # session["billing_info"] = billing_info
+    # session.modified = True # save Modification
+    save_entries(billing_info = billing_info)
 
     return(redirect(url_for("continue_to_review")))
 
@@ -861,9 +1200,10 @@ def get_details():
 @app.route("/place_order", methods = ["POST"])
 def place_order():
     # get "Carts" and "Billing Info" from the session
-    cart = session.get("cart", {}) # get all the items in cart
-    coupon = session.get("coupon", {})
-    billing_info = session.get("billing_info", {}) # store within the session
+    # cart = session.get("cart", {}) # get all the items in cart
+    # coupon = session.get("coupon", {})
+    # billing_info = session.get("billing_info", {}) # store within the session
+    cart, coupon, billing_info, sets_used_coupons = get_entry(["cart", "coupon", "billing_info", "used_coupons"])
 
     # check if the cart or billing info is not empty
     if not cart or not billing_info:
@@ -937,13 +1277,12 @@ def place_order():
     try:
         if coupon:
             coupon_name = coupon["name"]
-            sets_used_coupons = session.get("used_coupons", {})
-
             # * To Coupon name; None as a placeholder
             # since there is nothing to refer or access their value
             sets_used_coupons[coupon_name] = None
+            save_entries(used_coupons = sets_used_coupons)
 
-            session["used_coupons"] = sets_used_coupons
+            # session["used_coupons"] = sets_used_coupons
     except:
         # ignore
         print("Unable to add coupon to used coupons.")
@@ -987,9 +1326,6 @@ def signup_login(measure, subject):
 @app.route("/signup", defaults = {"get_subject": None}, methods = ["POST"])
 @app.route("/signup/<get_subject>", methods = ["POST"])
 def signup(get_subject):
-
-    global restore_cart, restore_sets_used_coupons
-
     # leading whitespaces removed; capitalised words
     fname = request.form["new-fname"].strip().title()
     lname = request.form["new-lname"].strip().title()
@@ -1005,15 +1341,7 @@ def signup(get_subject):
     try:
         # confirming a password
         if password == confirm_password:
-            # session detachment from guest account
             cart = session.get("cart", {})
-            sets_used_coupons = session.get("used_coupons", {})
-            
-            restore_cart = cart
-            restore_sets_used_coupons = sets_used_coupons
-
-            session.pop("used_coupons", None) # at first account creation, all coupons are available for entry
-            session.modified = True
 
             # Connect to SQLite3: accounts
             with sqlite3.connect("accounts.db") as conn:
@@ -1021,7 +1349,7 @@ def signup(get_subject):
                 cursor.execute(""" 
                     INSERT INTO accounts (date, name, email, password, items, applied_coupon)
                     VALUES (?, ?, ?, ?, ?, ?)
-                """, (date, name, email, password, None, None,))
+                """, (date, name, email, password, cart, None,))
 
                 conn.commit()
 
@@ -1034,7 +1362,6 @@ def signup(get_subject):
         
     except Exception as r:
         flash(f"Something went wrong while we handle you to sign up: {r}")
-        restore_cart = None
 
         return redirect(url_for("index"))
 
@@ -1050,14 +1377,8 @@ def login(get_subject):
     email = request.form["lg-email"]
     password = request.form["lg-password"]
 
-    # getting cart
-    global restore_cart, restore_sets_used_coupons
-
     cart = session.get("cart", {})
     sets_used_coupons = session.get("used_coupons", {})
-
-    restore_cart = cart
-    restore_sets_used_coupons = sets_used_coupons
 
     try:
         signin_session(email, password, 1)
@@ -1078,22 +1399,19 @@ def my_account():
     try:
         # verify if the user was logged on
         has_session_key = session.get("session_key", {})
+        print(has_session_key)
+        
         if has_session_key["accessed"]:
             return render_template("account_access.html", msr = None, sbj = None)
-    except:
-        pass
+    except Exception as i:
+        raise Exception(f"An error has occurred: {i}")
     
     return redirect(url_for("signup_login", measure = 'login'))
 
 
 @app.route("/logout", methods = ["POST"])
 def logout():
-    # featuring guest data storage
-    session["cart"] = restore_cart
-    session["used_coupons"] = restore_sets_used_coupons
-
     session.pop("session_key", None) # revoke session account
-    session.pop("coupon", None) # revoke session coupon as well
     session.modified = True
 
     return redirect(url_for("signup_login", measure = 'login'))
