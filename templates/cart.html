@@ -62,7 +62,9 @@
                 <span>Order Details</span>
 
                 <!-- checking for session of "coupon" -->
-                {% if session["coupon"] %}
+                {% if session["session_key"] %}
+                    {% set cpn = session["session_key"]["applied_coupon"] %}
+                {% elif session["coupon"] %}
                     {% set cpn = session["coupon"] %}
                 {% else %}
                     {% set cpn = None %}
