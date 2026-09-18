@@ -12,28 +12,31 @@
                 <ul class="mini-list-container vrs-2">
                     <!-- cart for now (wishlist to be planned...) -->
                     <span class="label">Your Cart</span>
-                    {% for _, alb in sv["cart"].items() %}
-                        <!-- list per item -->
-                        <li class="mini-list-item">
+                    {% if sv["cart"] %}
 
-                            <!-- I: Image and Quantity -->
-                            <div class="img-qty-placer">
-                                <img class="img-item">
-                                <span class="counter">{{ alb["quantity"] }}</span>
-                            </div>
+                        {% for _, alb in sv["cart"].items() %}
+                            <!-- list per item -->
+                            <li class="mini-list-item">
 
-                            <!-- II: Name, Author, and Price -->
-                            <div class="txt-const">
-                                <div class="name-author">
-                                    <span class="emphasise">{{ _ }}</span>
-                                    <p>{{ alb["author"] }}</p>
+                                <!-- I: Image and Quantity -->
+                                <div class="img-qty-placer">
+                                    <img class="img-item">
+                                    <span class="counter">{{ alb["quantity"] }}</span>
                                 </div>
-                                <!-- Price -->
-                                <b class="price">${{ '%.2f' % (alb["price"] * alb["quantity"]) }}</b>
-                            </div>
 
-                        </li>
-                    {% endfor %}
+                                <!-- II: Name, Author, and Price -->
+                                <div class="txt-const">
+                                    <div class="name-author">
+                                        <span class="emphasise">{{ _ }}</span>
+                                        <p>{{ alb["author"] }}</p>
+                                    </div>
+                                    <!-- Price -->
+                                    <b class="price">${{ '%.2f' % (alb["price"] * alb["quantity"]) }}</b>
+                                </div>
+
+                            </li>
+                        {% endfor %}
+                    {% endif %}
                 </ul>
 
                 <form class="account-display" action="{{ url_for('cart') }}">
