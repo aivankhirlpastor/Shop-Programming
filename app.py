@@ -473,6 +473,36 @@ def calculate_total(c):
 
     return main_total, cart_total, gst, shipping_fee, discount_value, tl_w_disc
 
+def remove_coupon_action():
+    try:
+        # cpn_name = session.get("coupon", {})["name"] # get the name first
+        cpn_name = get_entry("coupon")["name"] # get the name first
+        removal_status = remove_key("coupon")
+
+        if not removal_status:
+            return
+
+        # session.pop("coupon", None) # coupon removal via session.pop
+        # session.modified = True
+    except Exception as r:
+        return False
+
+    return {
+        "removed_cpn_name": cpn_name,
+    }
+
+def coupon_validity():
+    try:
+        coupon = get_entry("coupon")
+        cpn_name = coupon["name"]
+        get_data_coupon = load_data_coupons()
+
+        if cpn_name not in get_data_coupon:
+            is_removed = remove_coupon_action()
+
+            flash(f"The coupon you have, {cpn_name}, is no longer valid.")
+    except:
+        pass
 
 # result by their genre (function)
 def item_display_by_genre(gnr = None, px_range = None):
@@ -689,12 +719,12 @@ def index_album_modules():
 # --------------------------------------
 
 # PRE variable declaration \ via research
-# @app.before_request
-# def before_load_function():
+@app.before_request
+def before_load_function():
 
-#     # coupon validity
-#     if session.get("coupon", {}):
-#         coupon_validity()
+    # coupon validity
+    if session.get("coupon", {}):
+        coupon_validity()
 
 @app.after_request
 def after_request_function(req):
@@ -1132,10 +1162,10 @@ def apply_coupons():
 
 @app.route("/remove_coupon", methods = ["POST"])
 def remove_coupon():
-    # is_removed = remove_coupon_action()
-    # if is_removed:
-    #     # display flash message if successfully removed
-    #     flash(f"Removed a coupon: {is_removed["removed_cpn_name"]}. You can still enter it unless or until you have used it.")
+    is_removed = remove_coupon_action()
+    if is_removed:
+        # display flash message if successfully removed
+        flash(f"Removed a coupon: {is_removed["removed_cpn_name"]}. You can still enter it unless or until you have used it.")
 
     return redirect(url_for("cart"))
 
