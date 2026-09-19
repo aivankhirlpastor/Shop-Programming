@@ -373,7 +373,7 @@ a.btn-genres.selected:hover {
 }
 
 /* SVG */
-a.btn-genres img.svg-icon {
+img.svg-icon {
     --svg-icon-size: 1.245em;
 
     /* same size [square] */
@@ -734,8 +734,8 @@ section.product-info #product-details > .box-acc:not(:last-child) {
 
 /* name and author, PLUS wishlist button */
 section.product-info #product-details > .box-acc.name-author {
-    grid-template-columns: 3fr 1fr;
-    padding-block-start: 4px;
+    grid-template-columns: 3fr auto;
+    padding-block: 4px 8px;
 }
 
 /* showcase in grid display */
@@ -751,6 +751,62 @@ section.product-info #product-details > .box-acc.price-and-quantity {
     gap: 16px;
     width: 200px;
 }
+
+/* wishlist button */
+section.product-info #product-details button.wishlist {
+    align-items: center;
+    aspect-ratio: 1 / 1;
+    background-color: transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex; /* auto correct the offset of the icon */
+    padding: 7px;
+    margin: 0;
+
+    /* occupy area in square */
+    width: 100%;
+    height: 100%;
+
+    transition: background-color 0.2s ease;
+}
+
+/* heart icon */
+section.product-info #product-details button.wishlist svg {
+    --svg-star-icon-extent: auto;
+
+    width: var(--svg-star-icon-extent);
+    height: var(--svg-star-icon-extent);
+
+    fill: transparent;
+    stroke: #000000;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 80px;
+}
+
+section.product-info #product-details button.wishlist:hover {
+    background-color: #aaaaaa70;
+}
+
+section.product-info #product-details button.wishlist:active {
+    background-color: #b9bb6070;
+
+    transition: background-color 80ms linear;
+}
+
+section.product-info #product-details button.wishlist.item-in-wishlist svg {
+    fill: var(--color-3);
+    stroke: var(--color-4);
+}
+
+section.product-info #product-details button.wishlist.item-in-wishlist:hover {
+    background-color: #aaaaaa70;
+}
+
+section.product-info #product-details button.wishlist.item-in-wishlist:active {
+    background-color: #cd575770;
+}
+
 
 /* text for detail */
 section.product-info #product-details :is(h2, p) {
