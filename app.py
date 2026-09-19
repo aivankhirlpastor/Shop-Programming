@@ -394,10 +394,10 @@ def signin_session(email, password, msr = 0):
         cursor.execute(f"SELECT * FROM accounts WHERE email = '{email}'")
 
         # check for an account associated with email
-        post_identifier = cursor.fetchall()
+        post_identifier = cursor.fetchone()
 
         if post_identifier:
-            uid = post_identifier[0]
+            uid = post_identifier
 
             # initials
             retrieved_item = None # initial
@@ -406,7 +406,7 @@ def signin_session(email, password, msr = 0):
 
             # not matched
             if not password == uid[4]:
-                raise Exception("Password is incorrect.")
+                raise ValueError("Password is incorrect.")
 
             # log in method
             if msr == 1:
@@ -435,7 +435,7 @@ def signin_session(email, password, msr = 0):
             session.modified = True
         else:
             # if account associated with email was not found; post_identifier is empty
-            raise Exception(f"Account was not found: {email}")
+            raise NameError(f"Account was not found: {email}")
 
 def calculate_total(c):
     # round() and *100/100 rule to alleviate math float inaccuracy
@@ -1341,13 +1341,10 @@ def signup_login(measure, subject):
     if not measure == "signup" and not measure == "login":
         abort(404) # not found
 
-    try:
-        # verify if the user was logged on
-        accessed_logon = session.get("session_key", {})
-        if True in accessed_logon.values():
-            return redirect(url_for("my_account"))
-    except:
-        pass
+    # verify if the user was logged on
+    accessed_logon = session.get("session_key", {})
+    if accessed_logon.get("accessed"):
+        return redirect(url_for("my_account"))
 
     return render_template("account_access.html", msr = measure, sbj = subject)
 
@@ -1405,15 +1402,17 @@ def login(get_subject):
     email = request.form["lg-email"]
     password = request.form["lg-password"]
 
-    cart = session.get("cart", {})
-    sets_used_coupons = session.get("used_coupons", {})
-
     try:
         signin_session(email, password, 1)
-    except Exception as error:
-        flash(f"{error}")
+    except (NameError, ValueError) as err:
+        flash(f"{err}")
 
         # return to log in page
+        return redirect(url_for("signup_login", measure = 'login', subject = get_subject))
+    except Exception as error_for_debug:
+        print(error_for_debug) # display error message on terminal output
+        flash("Something went wrong. Please try again later.")
+
         return redirect(url_for("signup_login", measure = 'login', subject = get_subject))
 
     # redirect to checkout via "get_subject"
@@ -1424,18 +1423,13 @@ def login(get_subject):
 
 @app.route("/accounts/my_account")
 def my_account():
-    try:
-        # verify if the user was logged on
-        has_session_key = session.get("session_key", {})
-        print(has_session_key)
+    has_session_key = session.get("session_key", {})
         
-        if has_session_key["accessed"]:
-            return render_template("account_access.html", msr = None, sbj = None)
-    except Exception as i:
-        raise Exception(f"An error has occurred: {i}")
+    # verify if the user was logged on
+    if has_session_key.get("accessed"):
+        return render_template("account_access.html", msr = None, sbj = None)
     
     return redirect(url_for("signup_login", measure = 'login'))
-
 
 @app.route("/logout", methods = ["POST"])
 def logout():
