@@ -400,7 +400,7 @@ def signin_session(email, password, msr = 0):
             uid = post_identifier
 
             # initials
-            retrieved_item = None # initial
+            retrieved_item = json.loads(uid[5])
             retrieved_coupon = None
             retrieved_used_coupons = None
 
@@ -410,14 +410,9 @@ def signin_session(email, password, msr = 0):
 
             # log in method
             if msr == 1:
-                # replacing cart from retrieval item or setting to  on registered account
-                retrieved_item = json.loads(uid[5])
+                # retrieving the column values
                 retrieved_coupon = json.loads(uid[8])
                 retrieved_used_coupons = json.loads(uid[9])
-
-                # session["cart"] = retrieved_item
-                # session["coupon"] = retrieved_coupon
-                # session["used_coupons"] = retrieved_used_coupons
 
             # In-Session Key in dict (account accessed)
             session_key = session.get("session_key", {})
@@ -802,7 +797,6 @@ def after_request_function(req):
 def index():
     load_albums = load_data_products()
     ar, br, cr = index_album_modules()
-    # cart = session.get("cart", {})
     cart = get_entry("cart")
     key = panel_access_from_flash()
 
@@ -814,7 +808,6 @@ def index():
     }
 
     # print(segment_modules)
-    # c = cart_amount()
     return render_template("index.html", albums = load_albums,
                            segment_modules = segment_modules, cart = cart,
                            key_param = key)
@@ -1438,14 +1431,15 @@ def signup(get_subject):
         # confirming a password
         if password == confirm_password:
             cart = session.get("cart", {})
-
+            wishlists = session.get("wishlists", {})
+            
             # Connect to SQLite3: accounts
             with sqlite3.connect("accounts.db") as conn:
                 cursor = conn.cursor()
                 cursor.execute(""" 
-                    INSERT INTO accounts (date, name, email, password, items, applied_coupon)
-                    VALUES (?, ?, ?, ?, ?, ?)
-                """, (date, name, email, password, cart, None,))
+                    INSERT INTO accounts (date, name, email, password, items, wishlists, billing_info, applied_coupon, used_coupons)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (date, name, email, password, json.dumps(cart), json.dumps(wishlists), "{}", "{}", "{}"))
 
                 conn.commit()
 
