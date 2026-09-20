@@ -592,13 +592,14 @@ def add_to_cart_action(mdl, product, qty):
             # key variables by item in order to show
             key_var = {
                 product: {
+                    "id": mdl[product]["id"],
                     "author": mdl[product]["author"],
                     "price": mdl[product]["price"],
                     "quantity": qty,
                 }
             }
 
-            flash("%.show_panel;")
+            flash("%.show_panel_1;")
             flash(key_var) # critical for side panel key access
         else:
             flash(f"{product} was already in your cart.")
@@ -609,10 +610,20 @@ def add_to_cart_action(mdl, product, qty):
 
 # panel access key function
 def panel_access_from_flash():
+    def when_collection(wn, aa):
+        # 1 = Item Added to Cart
+        if wn == 1:
+            return aa["quantity"], a["price"] * a["quantity"]
+
+        # 2 = Item Added to Wishlist    
+        elif wn == 2:
+            return 1, a["price"]
+
     flash_syntax = get_flashed_messages() # as flash message
-    post_key_access = {
+    formulate_key_access = {
         "show": True,
         "type": "show_specific_items", # for most of this project
+        "when": 0,
         "by": {}
     }
 
@@ -621,10 +632,12 @@ def panel_access_from_flash():
     try:
         # regexp compilation
         show_panel_pattern = re.compile(r'%.show_panel', re.IGNORECASE)
+        when_pattern = re.compile(r'_\d+', re.IGNORECASE)
 
         # execute section if contains flash message
         for m in range(len(flash_syntax)):
-            matching_var = show_panel_pattern.search(str(flash_syntax[m]))
+            matching_var = show_panel_pattern.findall(str(flash_syntax[m]))
+            when_var = when_pattern.findall(str(flash_syntax[m]))
 
             # matching pair to proceed for returned key access
             if not matching_var:
@@ -637,17 +650,27 @@ def panel_access_from_flash():
             print(by_pair)
 
             # Check if the adjacent obj is dictionary:
-            if type(by_pair) is dict:
-                for album_name, a in by_pair.items():
-                    post_key_access["by"][album_name] = {
-                        "author": a["author"],
-                        "image": None,
-                        "name": album_name,
-                        "quantity": a["quantity"],
-                        "total_price": a["price"] * a["quantity"],
-                    }
+            if not type(by_pair) is dict:
+                continue
 
-                return post_key_access
+            # when 1, 1 = adding item to cart; when 2, 2 = adding item to wishlist
+            when_int = int(f"{when_var[0]}".replace("_", ""))
+            formulate_key_access["when"] = when_int
+
+            for album_name, a in by_pair.items():
+                qty, price = when_collection(when_int, a)
+                formulate_key_access["name"] = album_name
+                formulate_key_access["id"] = a["id"]
+
+                formulate_key_access["by"][album_name] = {
+                    "author": a["author"],
+                    "image": None,
+                    "name": album_name,
+                    "quantity": qty,
+                    "price": price
+                }
+                        
+            return formulate_key_access
 
     except Exception as e:
         print("Failed to initiate side panel order:", e)
@@ -813,18 +836,18 @@ def product_information(id):
     else:
         abort(404)
 
-    cart = get_entry("cart")
+    cart, wishlists = get_entry(["cart", "wishlists"])
     key = panel_access_from_flash()
     print("135", key)
 
-    # Used for some modification for if this product is in the cart.
+    # Used for some modification to input value if this product is in the cart.
     if album_name in cart:
         current_item = cart[album_name]
 
     # If the condition was passed, move on to prepare for the outputs.
     return render_template("product_info.html",
-                           product_name = album_name, product = pack_data,
-                           already_in_cart = (album_name in cart),
+                           product_name = album_name, in_wishlists = (album_name in wishlists),
+                           product = pack_data, already_in_cart = (album_name in cart),
                            item_in_hold = current_item if album_name in cart else False,
                            in_stock = (albums[album_name]["stock"] > 0), key_param = key)
 
@@ -838,7 +861,7 @@ def add_to_cart(catalogue_id, product_name, input_selector, pole_end):
         quantity = int(request.form[input_selector])
         
         # 1. Check whether the variable "id" matches with each of the album's ID.
-        for i, mvt in albums.items():
+        for _, mvt in albums.items():
             # If found and matched
             if catalogue_id.lower() == mvt["id"].lower():            
                 break
@@ -943,6 +966,54 @@ def apply_changes():
     # session.modified = True
 
     return redirect(url_for("cart"))
+
+# adding/removing item to wishlist
+@app.route("/toggle_wishlist/<catalogue_id>/<string:album_name>", methods = ["POST"])
+def toggle_wishlist(catalogue_id, album_name):
+    albums = load_data_products()
+    wishlists = get_entry("wishlists")
+
+    # 1. Check whether the variable "id" matches with each of the album's ID.
+    for _, mvt in albums.items():
+        # If found and matched
+        if catalogue_id.lower() == mvt["id"].lower():            
+            break
+    else:
+        # If not... (INVALID)
+        return "Item not found."
+
+    # 2. Toggle item; either add or remove
+    if album_name not in wishlists:
+        wishlists[album_name] = {
+            "author": albums[album_name]["author"],
+            "id": albums[album_name]["id"],
+            "label": albums[album_name]["label"],
+            "genre": albums[album_name]["genre"],
+            "price": albums[album_name]["price"]
+        }
+
+        save_entries(wishlists = wishlists)
+        flash(f"{album_name} added to your wishlist")
+
+        # key variables by item in order to show
+        key_var = {
+            album_name: {
+                "id": albums[album_name]["id"],
+                "author": albums[album_name]["author"],
+                "price": albums[album_name]["price"],
+            }
+        }
+
+        flash("%.show_panel_2;")
+        flash(key_var) # critical for side panel key access
+
+    else:
+        wishlist_remove_status = remove_specific_key(wishlists = album_name)
+
+        if wishlist_remove_status:
+            flash(f"{album_name} removed to your wishlist")
+
+    return redirect(url_for("product_information", id = catalogue_id))
 
 # Item Genre: display all items
 @app.route("/category/item")

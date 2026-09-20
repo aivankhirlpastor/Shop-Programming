@@ -19,8 +19,18 @@
                         <h2>{{ product_name }}</h2>
                         <p class="author">{{ product["author"] }}</p>
                     </div>
-                    <form action="" method="post">
-                        <button type="button" class="wishlist item-in-wishlist">
+                    <form action="{{ url_for('toggle_wishlist', catalogue_id = product['id'], album_name = product_name) }}" method="post">
+
+                        <!-- variable defining and accessing via wishlist -->
+                        {% if not in_wishlists %}
+                            {% set hover_title = "Add to my wishlist" %}
+                            {% set class_emphasis = "regular" %}
+                        {% else %}
+                            {% set hover_title = "Remove to my wishlist" %}
+                            {% set class_emphasis = "item-in-wishlist" %}
+                        {% endif %}
+
+                        <button type="submit" title="{{ hover_title }}" class="wishlist {{ class_emphasis }}">
                             <!-- <img class="svg-icon" alt="A leaf" src="/static/icons/wishlist.svg"> -->
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800">
                                 <path class="cls-1" d="M400.01,742.25l-146.88-150.75-145.72-150.75c-78.84-83.31-78.84-213.71,0-297.02,38.6-37.1,90.89-56.49,144.35-53.52,53.46,2.96,103.28,28.01,137.55,69.15l10.7,10.5,10.6-10.95c34.26-41.14,84.09-66.19,137.55-69.15,53.46-2.96,105.75,16.42,144.35,53.53,78.84,83.31,78.84,213.71,0,297.02l-145.72,150.75-146.78,151.2Z"/>
@@ -49,7 +59,7 @@
                     </div>
                 </div>
                 <!-- Row III: Form Price, Input Quantity, Add-To-Cart/View-My-Cart -->
-                <form class="box-acc price-and-quantity" action="{{ url_for('add_to_cart', catalogue_id=product['id'], product_name=product_name, input_selector='quantity', pole_end = '0%' ) }}" method="post">
+                <form class="box-acc price-and-quantity" action="{{ url_for('add_to_cart', catalogue_id = product['id'], product_name = product_name, input_selector = 'quantity', pole_end = '0%' ) }}" method="post">
                     <div class="classif-cont price">
                         <span>Price per each</span>
                         <p class="emphasise">${{ '%.2f' % product["price"] }}</p>

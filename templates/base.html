@@ -54,22 +54,30 @@
 
     {% if key_param and key_param["show"] == True %}
         <!-- Side Panel -->
-        <!-- <p>{{ key_param['show'] }}</p> -->
+
+        <!-- heading name -->
+        {% if key_param["when"] == 1 %}
+            {% set heading_3 = "Item Added" %}
+        {% elif key_param["when"] == 2 %}
+            {% set heading_3 = "Item Added to Wishlist" %}
+        {% endif %}
 
         {% with by_item = key_param["by"] %}
             <div id="panel-frame">
-                <h3>Item Added</h3>
+                <h3>{{ heading_3 }}</h3>
                 <hr>
                 <ul class="mini-list-container">
                     {% for _, b in by_item.items() %}
 
                         <!-- list per item -->
                         <li class="mini-list-item">
-
                             <!-- I: Image and Quantity -->
                             <div class="img-qty-placer">
                                 <img class="img-item">
-                                <span class="counter">{{ b["quantity"] }}</span>
+
+                                {% if key_param["when"] == 1 %}
+                                    <span class="counter">{{ b["quantity"] }}</span>
+                                {% endif %}
                             </div>
 
                             <!-- II: Name, Author, and Price -->
@@ -79,15 +87,22 @@
                                     <p>{{ b["author"] }}</p>
                                 </div>
                                 <!-- Price -->
-                                <b class="price">${{ '%.2f' % b["total_price"] }}</b>
+                                <b class="price">${{ '%.2f' % b["price"] }}</b>
                             </div>
-
                         </li>
                     {% endfor %}
                 </ul>
                 <div class="btn-stack-inline">
-                    <button type="button" id="btn-continued">Continue Shopping</button>
-                    <button type="button" class="outlined" onclick="location.href = `{{ url_for('cart') }}`">View My Cart</button>
+                    {% if key_param["when"] == 1 %}
+                        <button type="button" id="btn-continued">Continue Shopping</button>
+                        <button type="button" class="outlined" onclick="location.href = `{{ url_for('cart') }}`">View My Cart</button>
+                    {% elif key_param["when"] == 2 %}
+                        <!-- ~~~ part with headaches ~~~ -->
+                        <form action="{{ url_for('toggle_wishlist', catalogue_id = key_param['id'], album_name = key_param['name']) }}" method="post">
+                            <button type="button" id="btn-continued">Continue</button>
+                            <button type="submit" class="destructive">Remove from Wishlist</button>
+                        </form>
+                    {% endif %}
                 </div>
             </div>
             <div class="black-overlay"></div>
