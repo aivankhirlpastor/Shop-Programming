@@ -859,9 +859,9 @@ def add_to_cart(catalogue_id, product_name, input_selector, pole_end):
     albums = load_data_products()
 
     try:
-        # when input is not applicable, default is (<input_selector> in int * -1)
-        if int(input_selector) <= -1:
-            quantity = int(input_selector) * -1
+        # when input is not applicable, default is 1
+        if input_selector == "-1":
+            quantity = 1
         else:
             # validate whether the user have entered a number
             quantity = int(request.form[input_selector])
