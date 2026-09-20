@@ -15,6 +15,7 @@
             <ul>
                 <li><a href="{{ url_for('index') }}">Home</a></li>
                 <li><a href="{{ url_for('category_all') }}">Shop</a></li>
+                <li><a href="{{ url_for('wishlist') }}">Wishlist</a></li>
                 <li><a href="{{ url_for('order_history') }}">Order History</a></li>
                 <li><a href="{{ url_for('signup_login', measure = 'login') }}" {% if has_account_session %} id="link-account-accessed" {% endif %}>{% if has_account_session %}{{ session["session_key"]["name"] }}{% else %}Log In{% endif %}</a></li>
             </ul>
