@@ -1,6 +1,6 @@
 {
     "The Usher's Place": {
-        "author": "The STARS",
+        "artist": "The STARS",
         "id": "918 3048 A",
         "release_date": "02-03-2026",
         "label": "Universal Audio Company",
@@ -10,7 +10,7 @@
         "stock": 15
     },
     "Little Life": {
-        "author": "Michell Park",
+        "artist": "Michell Park",
         "id": "941 4101 A",
         "release_date": "24-04-2026",
         "label": "Lifestyle Community",
@@ -20,7 +20,7 @@
         "stock": 16
     },
     "Lives In Nature": {
-        "author": "Zeenchenburg Z.",
+        "artist": "Zeenchenburg Z.",
         "id": "980 1566 A",
         "release_date": "01-04-2026",
         "label": "-",
@@ -30,7 +30,7 @@
         "stock": 20
     },
     "Echoes": {
-        "author": "Luke O.",
+        "artist": "Luke O.",
         "id": "900 3170 A",
         "release_date": "27-02-2026",
         "label": "'For Me' Soundtrack",
@@ -39,8 +39,18 @@
         "price": 17.99,
         "stock": 17
     },
+    "Daydream": {
+        "artist": "Austin Santos",
+        "id": "961 0375 A",
+        "release_date": "28-04-2026",
+        "label": "-",
+        "tracks": 7,
+        "genre": "Ambience",
+        "price": 14.99,
+        "stock": 10
+    },
     "dandellion": {
-        "author": "North C.",
+        "artist": "North C.",
         "id": "923 6880 A",
         "release_date": "12-05-2025",
         "label": "MEIL Production Studios",
@@ -50,7 +60,7 @@
         "stock": 14
     },
     "West Country's Mankind": {
-        "author": "Richard Tyson",
+        "artist": "Richard Tyson",
         "id": "979 4428 D",
         "release_date": "17-04-2026",
         "label": "-",
@@ -59,8 +69,18 @@
         "price": 18.39,
         "stock": 3
     },
+    "Aerial View": {
+        "artist": "Sophia T.",
+        "id": "937 1004 D",
+        "release_date": "10-03-2026",
+        "label": "Acoustic Songs",
+        "tracks": 6,
+        "genre": "Acoustic",
+        "price": 15.99,
+        "stock": 13
+    },
     "Adreline Soundtrack": {
-        "author": "Dynamic Tussell",
+        "artist": "Dynamic Tussell",
         "id": "920 2406 D",
         "release_date": "13-07-2025",
         "label": "Universal Audio Company",
@@ -69,8 +89,18 @@
         "price": 29.99,
         "stock": 4
     },
+    "Waterwell Stream": {
+        "artist": "Dynamic Tussell",
+        "id": "920 2406 D",
+        "release_date": "13-07-2025",
+        "label": "Mantra Sound Studios",
+        "tracks": 9,
+        "genre": "Acoustic",
+        "price": 24.49,
+        "stock": 19
+    },
     "Mozart's Theme": {
-        "author": "Faustine Lizon",
+        "artist": "Faustine Lizon",
         "id": "910 3937 D",
         "release_date": "20-04-2026",
         "label": "-",
@@ -80,7 +110,7 @@
         "stock": 28
     },
     "The Lines": {
-        "author": "Elizabeth R.",
+        "artist": "Elizabeth R.",
         "id": "910 3944 C",
         "release_date": "09-01-2026",
         "label": "Aires Air Original Track",
@@ -90,7 +120,7 @@
         "stock": 11
     },
     "Fantasia Winter": {
-        "author": "Zuucschenci L.",
+        "artist": "Zuucschenci L.",
         "id": "995 0169 C",
         "release_date": "30-04-2026",
         "label": "Classic FM Tracks",
@@ -99,8 +129,18 @@
         "price": 13.49,
         "stock": 6
     },
+    "Under Cave": {
+        "artist": "Bjorn Rian",
+        "id": "924 5060 C",
+        "release_date": "24-01-2026",
+        "label": "Classic FM Tracks",
+        "tracks": 5,
+        "genre": "Classical",
+        "price": 26.99,
+        "stock": 14
+    },
     "A Time Of Night": {
-        "author": "Rose Wellington",
+        "artist": "Rose Wellington",
         "id": "999 9141 C",
         "release_date": "12-10-2025",
         "label": "-",
@@ -110,7 +150,7 @@
         "stock": 10
     },
     "Zen": {
-        "author": "Ben Laurache",
+        "artist": "Ben Laurache",
         "id": "948 1900 H",
         "release_date": "20-04-2026",
         "label": "NoteVile Motion",
@@ -120,7 +160,7 @@
         "stock": 2
     },
     "The Key To Withstand": {
-        "author": "Oblong Communion",
+        "artist": "Oblong Communion",
         "id": "960 5004 H",
         "release_date": "17-11-2024",
         "label": "The Motel",
@@ -130,7 +170,7 @@
         "stock": 9
     },
     "Lo-Fi Beats Study Time": {
-        "author": "Hi-Tech Companion",
+        "artist": "Hi-Tech Companion",
         "id": "961 1013 H",
         "release_date": "25-04-2026",
         "label": "Road Rush Company",
@@ -139,18 +179,38 @@
         "price": 40.49,
         "stock": 7
     },
-    "Double Stanza": {
-        "author": "Park Richard",
-        "id": "911 8747 H",
-        "release_date": "18-04-2026",
-        "label": "-",
+    "Rain on 4pm": {
+        "artist": "Aune Elizabeth",
+        "id": "913 7314 H",
+        "release_date": "14-02-2026",
+        "label": "Scores Soft Sound",
         "tracks": 1,
         "genre": "Lo-Fi",
-        "price": 9.99,
-        "stock": 15
+        "price": 10.99,
+        "stock": 12
+    },
+    "Soft Breeze": {
+        "artist": "Shawn W.",
+        "id": "998 0394 H",
+        "release_date": "01-01-2026",
+        "label": "MILFORD SOUND LABEL",
+        "tracks": 4,
+        "genre": "Lo-Fi",
+        "price": 18.79,
+        "stock": 19
+    },
+    "Taipei Night Market": {
+        "artist": "Luna Andrei",
+        "id": "920 5577 H",
+        "release_date": "25-04-2026",
+        "label": "A.T. Label",
+        "tracks": 7,
+        "genre": "Lo-Fi",
+        "price": 27.99,
+        "stock": 14
     },
     "Snow Sunset Sky": {
-        "author": "Michael Zysken",
+        "artist": "Michael Zysken",
         "id": "979 0031 U",
         "release_date": "12-12-2025",
         "label": "-",
@@ -160,17 +220,17 @@
         "stock": 13
     },
     "Feelz": {
-        "author": "Paul Rewire",
+        "artist": "Paul Rewire",
         "id": "908 0567 U",
-        "release_date": "29-11-2025",
-        "label": "-",
+        "release_date": "10-03-2026",
+        "label": "Morning Mellow",
         "tracks": 1,
         "genre": "Upbeat",
         "price": 13.99,
         "stock": 5
     },
     "Get UP!": {
-        "author": "Aracchia A.",
+        "artist": "Aracchia A.",
         "id": "959 3025 U",
         "release_date": "29-11-2025",
         "label": "MEIL Production Studios",
@@ -178,5 +238,15 @@
         "genre": "Upbeat",
         "price": 12.99,
         "stock": 20
+    },
+    "Fragments": {
+        "artist": "Berlin O.",
+        "id": "951 4943 U",
+        "release_date": "16-10-2025",
+        "label": "Lifestyle Community",
+        "tracks": 12,
+        "genre": "Upbeat",
+        "price": 30.49,
+        "stock": 21
     }
 }
