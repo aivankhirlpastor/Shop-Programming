@@ -850,8 +850,12 @@ def add_to_cart(catalogue_id, product_name, input_selector, pole_end):
     albums = load_data_products()
 
     try:
-        # validate whether the number have entered a number
-        quantity = int(request.form[input_selector])
+        # when input is not applicable, default is (<input_selector> in int * -1)
+        if int(input_selector) <= -1:
+            quantity = int(input_selector) * -1
+        else:
+            # validate whether the user have entered a number
+            quantity = int(request.form[input_selector])
         
         # 1. Check whether the variable "id" matches with each of the album's ID.
         for _, mvt in albums.items():
@@ -907,6 +911,8 @@ def add_to_cart(catalogue_id, product_name, input_selector, pole_end):
             
         except Exception as err:
             print("Something went wrong. We can't transfer you back to the current genre of page:", err)
+    elif pole_end == "wishlist":
+        return redirect(url_for("wishlist"))
     elif pole_end == "index":
         return redirect(url_for("index"))
 
@@ -961,8 +967,9 @@ def apply_changes():
     return redirect(url_for("cart"))
 
 # adding/removing item to wishlist
-@app.route("/toggle_wishlist/<catalogue_id>/<string:album_name>", methods = ["POST"])
-def toggle_wishlist(catalogue_id, album_name):
+@app.route("/toggle_wishlist/<catalogue_id>/<string:album_name>", defaults = {"pole_end": None}, methods = ["POST"])
+@app.route("/toggle_wishlist/<catalogue_id>/<string:album_name>/<string:pole_end>", methods = ["POST"])
+def toggle_wishlist(catalogue_id, album_name, pole_end):
     albums = load_data_products()
     wishlists = get_entry("wishlists")
 
@@ -1005,6 +1012,10 @@ def toggle_wishlist(catalogue_id, album_name):
 
         if wishlist_remove_status:
             flash(f"{album_name} removed to your wishlist")
+
+    # pole end
+    if pole_end == "wishlist":
+        return redirect(url_for("wishlist"))
 
     return redirect(url_for("product_information", id = catalogue_id))
 
@@ -1187,6 +1198,16 @@ def cart():
 
     return render_template("cart.html", cart = cart, albums = albums,
                            subtotal = subtotal, gst = gst, discount = discount)
+
+@app.route("/wishlist")
+def wishlist():
+    albums = load_data_products()
+    key = panel_access_from_flash()
+    cart, wishlists = get_entry(["cart", "wishlists"])
+
+    return render_template("wishlist.html", cart = cart,
+                           wishlists = wishlists, albums = albums,
+                           key_param = key)
 
 # Applying Coupons
 @app.route("/apply_coupons", methods = ["POST"])
