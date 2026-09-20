@@ -10,7 +10,7 @@
                 {% for album_name, item in wishlists.items() %}
                     <li class="item-details grid">
                         <div class="product-img-small"></div>
-                        <div class="name-author-label">
+                        <div class="name-artist-label">
                             <!-- Different Labels from Stock Status (High, Low, None) -->
                             {% if albums[album_name]["stock"] > 5 %}
                                 <span class="stock-status lowercase label">In Stock</span>
@@ -20,10 +20,10 @@
                                 <span class="stock-status out-of-stock lowercase label">Out of Stock</span>
                             {% endif %}
 
-                            <div class="block-name-author">
-                                <!-- Album Name and Author -->
+                            <div class="block-name-artist">
+                                <!-- Album Name and Artist -->
                                 <h3><a href="{{ url_for('product_information', id = item['id']) }}">{{ album_name }}</a></h3>
-                                <p class="author">{{ item["author"] }}</p>
+                                <p class="artist">{{ item["artist"] }}</p>
                             </div>
 
                             <span class="label">{{ item["label"] }}</span>

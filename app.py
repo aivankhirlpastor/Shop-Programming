@@ -54,6 +54,15 @@ def initialise_database():
                     )
         """)
 
+def update_stock(item: dict):
+    with open("data/products.json", "r") as product:
+        album_data = json.load(product)
+
+    for album_name, i in item.items():
+        if album_name in album_data:
+
+            album_data[album_name]["stock"]
+
 # syntax building for database
 def set_syntax_building(argument: dict|list|tuple, positional_value: list|tuple = ()):
     def initialise_build(params: dict) -> dict:
@@ -569,7 +578,7 @@ def add_to_cart_action(mdl, product, qty):
 
         if product not in cart: # Check whether the item is in cart already
             cart[product] = {
-                "author": mdl[product]["author"],
+                "artist": mdl[product]["artist"],
                 "id": mdl[product]["id"],
                 "label": mdl[product]["label"],
                 "genre": mdl[product]["genre"],
@@ -588,7 +597,7 @@ def add_to_cart_action(mdl, product, qty):
             key_var = {
                 product: {
                     "id": mdl[product]["id"],
-                    "author": mdl[product]["author"],
+                    "artist": mdl[product]["artist"],
                     "price": mdl[product]["price"],
                     "quantity": qty,
                 }
@@ -658,7 +667,7 @@ def panel_access_from_flash():
                 formulate_key_access["id"] = a["id"]
 
                 formulate_key_access["by"][album_name] = {
-                    "author": a["author"],
+                    "artist": a["artist"],
                     "image": None,
                     "name": album_name,
                     "quantity": qty,
@@ -985,7 +994,7 @@ def toggle_wishlist(catalogue_id, album_name, pole_end):
     # 2. Toggle item; either add or remove
     if album_name not in wishlists:
         wishlists[album_name] = {
-            "author": albums[album_name]["author"],
+            "artist": albums[album_name]["artist"],
             "id": albums[album_name]["id"],
             "label": albums[album_name]["label"],
             "genre": albums[album_name]["genre"],
@@ -999,7 +1008,7 @@ def toggle_wishlist(catalogue_id, album_name, pole_end):
         key_var = {
             album_name: {
                 "id": albums[album_name]["id"],
-                "author": albums[album_name]["author"],
+                "artist": albums[album_name]["artist"],
                 "price": albums[album_name]["price"],
             }
         }
@@ -1100,7 +1109,7 @@ def invoice_selection(inv_number):
                 s += 1
                 items[album_name] = {
                     "no": s,
-                    "author": m["author"],
+                    "artist": m["artist"],
                     "id": m["id"],
                     "label": m["label"],
                     "genre": m["genre"],
@@ -1314,10 +1323,6 @@ def get_details():
 # Placing Order
 @app.route("/place_order", methods = ["POST"])
 def place_order():
-    # get "Carts" and "Billing Info" from the session
-    # cart = session.get("cart", {}) # get all the items in cart
-    # coupon = session.get("coupon", {})
-    # billing_info = session.get("billing_info", {}) # store within the session
     cart, coupon, billing_info, sets_used_coupons = get_entry(["cart", "coupon", "billing_info", "used_coupons"])
 
     # check if the cart or billing info is not empty

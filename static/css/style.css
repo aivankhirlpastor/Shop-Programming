@@ -221,7 +221,7 @@ label {
     text-transform: none;
 }
 
-.author {
+.artist {
     display: block;
     margin: 0;
 }
@@ -739,8 +739,8 @@ section.product-info #product-details > .box-acc:not(:last-child) {
     border-bottom: 3px solid #000000;
 }
 
-/* name and author, PLUS wishlist button */
-section.product-info #product-details > .box-acc.name-author {
+/* name and artist, PLUS wishlist button */
+section.product-info #product-details > .box-acc.name-artist {
     grid-template-columns: 3fr auto;
     padding-block: 4px 8px;
 }
@@ -850,7 +850,7 @@ ul.item-list li.item-details > .product-img-small {
     height: 100px;
 }
 
-ul.item-list li.item-details > .name-author-label {
+ul.item-list li.item-details > .name-artist-label {
     gap: 8px;
     grid-area: 1 / 2 / span 1 / span 2;
     display: flex;
@@ -859,12 +859,12 @@ ul.item-list li.item-details > .name-author-label {
 }
 
 /* texts */
-ul.item-list li.item-details > .name-author-label h3 {
+ul.item-list li.item-details > .name-artist-label h3 {
     margin: 0;
 }
 
 /* anchor inside product title <h3> */
-ul.item-list li.item-details > .name-author-label h3 > a {
+ul.item-list li.item-details > .name-artist-label h3 > a {
     text-decoration: none;
 }
 
@@ -1044,7 +1044,7 @@ section.item-display .item-card img.img-item {
     aspect-ratio: 1 / 1;
 }
 
-/* ALBUM: title | author | price track */
+/* ALBUM: title | artist | price track */
 section.item-display .item-card .album-txt-info {
     margin-block: 8px;
 }

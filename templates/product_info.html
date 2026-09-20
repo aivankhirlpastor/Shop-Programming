@@ -13,11 +13,11 @@
 
             <!-- III: DETAILS -->
             <div id="product-details">
-                <!-- Row I: Name and Author -->
-                <div class="box-acc name-author grid">
+                <!-- Row I: Name and Artist -->
+                <div class="box-acc name-artist grid">
                     <div>
                         <h2>{{ product_name }}</h2>
-                        <p class="author">{{ product["author"] }}</p>
+                        <p class="artist">{{ product["artist"] }}</p>
                     </div>
                     <form action="{{ url_for('toggle_wishlist', catalogue_id = product['id'], album_name = product_name) }}" method="post">
 

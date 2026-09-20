@@ -24,11 +24,11 @@
                                     <span class="counter">{{ alb["quantity"] }}</span>
                                 </div>
 
-                                <!-- II: Name, Author, and Price -->
+                                <!-- II: Name, Artist, and Price -->
                                 <div class="txt-const">
-                                    <div class="name-author">
+                                    <div class="name-artist">
                                         <span class="emphasise">{{ _ }}</span>
-                                        <p>{{ alb["author"] }}</p>
+                                        <p>{{ alb["artist"] }}</p>
                                     </div>
                                     <!-- Price -->
                                     <b class="price">${{ '%.2f' % (alb["price"] * alb["quantity"]) }}</b>
