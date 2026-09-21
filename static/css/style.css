@@ -192,6 +192,7 @@ input.emit-stock-status.low {
 
 input.emit-stock-status.none {
     --input-border-color: var(--stock-none);
+    background-color: #1f1f1f15;
 }
 
 /* Config Panel */
@@ -231,6 +232,12 @@ label {
     display: block;
     margin: 0;
 }
+
+span.quantity-count {
+    font-size: 14px;
+    opacity: 75%;
+}
+
 
 .emphasise  {
     font-size: 20px;
@@ -461,6 +468,7 @@ img.svg-icon {
 /* panel */
 #panel-frame {
     background-color: #ffffffbb;
+    overflow-y: scroll;
     padding: 40px;
     position: fixed;
     width: 300px;
@@ -1211,12 +1219,6 @@ section.order-history table td {
 section.order-history table ul {
     margin-block: 0;
     padding-inline: 24px;
-}
-
-/* spans */
-section.order-history table span {
-    font-size: 14px;
-    opacity: 75%;
 }
 
 /* form button */
