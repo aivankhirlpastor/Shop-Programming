@@ -107,7 +107,7 @@
         "tracks": 1,
         "genre": "Classical",
         "price": 12.99,
-        "stock": 28
+        "stock": 25
     },
     "The Lines": {
         "artist": "Elizabeth R.",
@@ -157,7 +157,7 @@
         "tracks": 3,
         "genre": "Lo-Fi",
         "price": 25.49,
-        "stock": 2
+        "stock": 0
     },
     "The Key To Withstand": {
         "artist": "Oblong Communion",
