@@ -40,7 +40,7 @@
 
                         <div class="price-action">
                             <!-- Price -->
-                            <p class="price recalculation emphasise" data-unitprice="{{ albums[album_name]['price'] }}" id="atr-price-{{ item['id'] }}">${{ '%.2f' % (item['quantity'] * item['price']) }}</p>
+                            <p class="price recalculation emphasise" data-unitprice="{{ albums[album_name]['price'] }}" id="atr-price-{{ item['id'] }}"><sup>$</sup>{{ '%.2f' % (item['quantity'] * item['price']) }}</p>
                             <form class="delete-item" action="{{ url_for('remove_item', ctg_number = item['id'], album_name = album_name) }}" method="post">
                                 <button type="submit" class="rounded squared destructive">D</button>
                             </form>
@@ -83,11 +83,11 @@
                 <div class="cost-precalc">
                     <div class="text-nudge">
                         <span>Subtotal</span>
-                        <p class="emphasise">${{ '%.2f' % subtotal }}</p>
+                        <p class="emphasise"><sup>$</sup>{{ '%.2f' % subtotal }}</p>
                     </div>
                     <div class="text-nudge">
                         <span>GST</span>
-                        <p class="emphasise">${{ '%.2f' % gst }}</p>
+                        <p class="emphasise"><sup>$</sup>{{ '%.2f' % gst }}</p>
                     </div>
 
                     <!-- III: Discount -->
@@ -98,7 +98,7 @@
                             <p class="emphasise discount">
                                 <!-- determination value -->
                                 {% if discount > 1 %}
-                                    ${{ '%.2f' % discount }}
+                                    <sup>$</sup>{{ '%.2f' % discount }}
                                 {% elif 1 >= discount %}
                                     {{ '%.0f' % (discount * 100) }}%
                                 {% endif %}

@@ -30,7 +30,7 @@
                         </div>
                         <div class="price-action">
                             <!-- Price -->
-                            <p class="price emphasise">${{ '%.2f' % item["price"] }}</p>
+                            <p class="price emphasise"><sup>$</sup>{{ '%.2f' % item["price"] }}</p>
                         </div>
                         <form class="wishlist-grid-action">
                             {% if 0 >= albums[album_name]["stock"] %}

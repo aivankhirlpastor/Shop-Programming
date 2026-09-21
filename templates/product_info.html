@@ -62,7 +62,7 @@
                 <form class="box-acc price-and-quantity" action="{{ url_for('add_to_cart', catalogue_id = product['id'], product_name = product_name, input_selector = 'quantity', pole_end = '0%' ) }}" method="post">
                     <div class="classif-cont price">
                         <span>Price per each</span>
-                        <p class="emphasise">${{ '%.2f' % product["price"] }}</p>
+                        <p class="emphasise price"><sup>$</sup>{{ '%.2f' % product["price"] }}</p>
                     </div>
                     <div class="classif-cont quantity">
 

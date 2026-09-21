@@ -42,11 +42,7 @@
                                 </ul>
                             </td>
                             <td>
-                                <b>${{ '%.2f' % order["total_charges"] }}</b>
-                                <!-- <span>Subtotal: ${{ '%.2f' % order["subtotal"] }}</span>
-                                <span>GST: ${{ '%.2f' % order["gst"] }}</span>
-                                <span>Delivery Fee: ${{ '%.2f' % order["ship_fee"] }}</span>
-                                <span>Discount: ${{ '%.2f' % order["discount"] }}</span> -->
+                                <b><sup>$</sup>{{ '%.2f' % order["total_charges"] }}</b>
                             </td>
                             <td class="form-action">
                                 <form action="{{ url_for('invoice_selection', inv_number = order['order_id']) }}">

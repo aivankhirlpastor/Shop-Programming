@@ -94,5 +94,12 @@
                 </tbody>
             </table>
         </section>
+
+
+        {% if data.get("items_on_hold") %}
+            <section class="notice">
+                <p>Notice to Customer</p>
+            </section>
+        {% endif %}
     </body>
 {% endblock %}

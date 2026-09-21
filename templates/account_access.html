@@ -31,7 +31,7 @@
                                         <p>{{ alb["artist"] }}</p>
                                     </div>
                                     <!-- Price -->
-                                    <b class="price">${{ '%.2f' % (alb["price"] * alb["quantity"]) }}</b>
+                                    <b class="price"><sup>$</sup>{{ '%.2f' % (alb["price"] * alb["quantity"]) }}</b>
                                 </div>
 
                             </li>

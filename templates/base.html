@@ -88,7 +88,7 @@
                                     <p>{{ b["artist"] }}</p>
                                 </div>
                                 <!-- Price -->
-                                <b class="price">${{ '%.2f' % b["price"] }}</b>
+                                <b class="price"><sup>$</sup>{{ '%.2f' % b["price"] }}</b>
                             </div>
                         </li>
                     {% endfor %}

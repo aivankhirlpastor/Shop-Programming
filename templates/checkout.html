@@ -54,7 +54,7 @@
                                     <p>{{ alb["artist"] }}</p>
                                 </div>
                                 <!-- Price -->
-                                <b class="price">${{ '%.2f' % (alb["price"] * alb["quantity"]) }}</b>
+                                <b class="price"><sup>$</sup>{{ '%.2f' % (alb["price"] * alb["quantity"]) }}</b>
                             </div>
 
                         </li>
@@ -64,21 +64,21 @@
                     {% if subtotal %}
                         <div class="text-nudge" id="subtotal">
                             <span>Subtotal</span>
-                            <p class="emphasise">${{ '%.2f' % subtotal }}</p>
+                            <p class="emphasise"><sup>$</sup>{{ '%.2f' % subtotal }}</p>
                         </div>
                     {% endif %}
 
                     {% if gst %}
                         <div class="text-nudge" id="gst">
                             <span>GST</span>
-                            <p class="emphasise">${{ '%.2f' % gst }}</p>
+                            <p class="emphasise"><sup>$</sup>{{ '%.2f' % gst }}</p>
                         </div>
                     {% endif %}
 
                     {% if ship_fee %}
                         <div class="text-nudge" id="delivery-fee">
                             <span>Delivery Fee</span>
-                            <p class="emphasise">${{ '%.2f' % ship_fee }}</p>
+                            <p class="emphasise"><sup>$</sup>{{ '%.2f' % ship_fee }}</p>
                         </div>
                     {% endif %}
 
@@ -89,7 +89,7 @@
                             <p class="emphasise discount">
                                 <!-- determination value -->
                                 {% if discount > 1 %}
-                                    ${{ '%.2f' % discount }}
+                                    <sup>$</sup>{{ '%.2f' % discount }}
                                 {% elif 1 >= discount %}
                                     {{ '%.0f' % (discount * 100) }}%
                                 {% endif %}
@@ -100,12 +100,12 @@
                         
                         <div class="text-nudge" id="overall-total">
                             <span>Total</span>
-                            <span class="strikethrough"><b>${{ '%.2f' % total }}</b></span>
+                            <span class="strikethrough"><b><sup>$</sup>{{ '%.2f' % total }}</b></span>
                             <p class="emphasise overall-cost {% if total_with_discount == 0 %}free-cost{% endif %}">
                                 {% if total_with_discount == 0 %}
                                     Free!
                                 {% else %}
-                                    ${{ '%.2f' % total_with_discount }}
+                                    <sup>$</sup>{{ '%.2f' % total_with_discount }}
                                 {% endif %}
                             </p>
                         </div>
@@ -114,7 +114,7 @@
 
                         <div class="text-nudge" id="total">
                             <span>Total</span>
-                            <p class="emphasise">${{ '%.2f' % total }}</p>
+                            <p class="emphasise"><sup>$</sup>{{ '%.2f' % total }}</p>
                         </div>
                     {% endif %}
                 </div>
