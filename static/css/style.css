@@ -11,7 +11,7 @@
     /* color palettes */
     --color-1: #f1dd00;
     --color-2: #faf8c6;
-    --color-3: #F85E00;
+    --color-3: #ff6200;
     --color-4: #d80e1f;
     --color-5: #916b50;
 
@@ -1132,6 +1132,7 @@ section.invoice-page #order-billing-dt p:not(.emphasise) {
 
 table {
     border-collapse: separate;
+    border-spacing: 0;
     empty-cells: hide;
     table-layout: fixed; /* fixed cell width */
     margin-block: 20px;
@@ -1141,28 +1142,28 @@ table {
 /* table cells */
 th, td {
     margin: 0;
-    padding-block: 4px;
+    padding: 5px 12px;
 }
 
 /* table headings */
 table thead th {
+    border-bottom: 1.5px solid var(--color-3);
     text-align: left;
-    border-bottom: 2px solid #00000044;
 }
 
 /* table monetary cost row */
-table tr.monetary-cost.subtotal > td {
-    border-top: 2px solid #00000044;
+table :is(tr.monetary-cost.subtotal, tr.monetary-cost.total) > td {
+    border-top: 1.5px solid var(--color-3);
     padding-top: 8px;
 }
 
 table tr.monetary-cost.total > td {
     font-weight: 700;
-    background-color: var(--color-1);
+    color: var(--color-3);
 }
 
-table tr:nth-child(even):not(.monetary-cost) td {
-    background-color: #ffffec;
+table tr:nth-child(odd):not(.monetary-cost) td {
+    background-color: #f98c061e;
 }
 
 /* ======== ORDER HISTORY ======== */
