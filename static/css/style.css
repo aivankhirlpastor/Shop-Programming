@@ -1,11 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 :root {
     /* custom variables */
     --custom-variable: "my-property";
 
     --body-margin: 1vw;
-    --main-pad-block: 28px;
+    --main-pad-block: 100px;
     --main-pad-inline: 96px;
 
     /* color palettes */
@@ -23,7 +24,8 @@
 
     /* for header */
     --title-size: 20px;
-    --header-encapsulated-el-padding: 9px;
+    --header-border-width: 2px;
+    --header-encapsulated-el-padding: calc(10px - var(--header-border-width));
 
     /* Buttons (hue and saturation) */
     --btn-destructive: 4, 92%;
@@ -39,10 +41,13 @@
     --stock-normal: #000000;
     --stock-low: #bb4813;
     --stock-none: #888888;
+
+    /* Side Panel Frames */
+    --side-frame-transition-dur: 400ms;
 }
 
 * {
-    font-family: 'Cabin', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-family: 'PT Sans', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
 .grid {
@@ -114,6 +119,7 @@ input {
 
     box-shadow: none;
     font-size: 16px;
+    padding: 3px 5px;
 
     border: 2px solid var(--input-border-color);
     transition: box-shadow 0.2s ease;
@@ -393,7 +399,7 @@ img.svg-icon {
 /* Flash Message Styling */
 .toast-flash {
     position: fixed;
-    top: calc(70px + var(--main-pad-block));
+    top: var(--main-pad-block);
     right: calc(var(--body-margin) + var(--main-pad-inline));
     z-index: 99;
 }
@@ -471,7 +477,7 @@ img.svg-icon {
 
     /* transition animation */
     transform: translateX(380px);
-    transition: transform 0.4s ease-in-out;
+    transition: transform var(--side-frame-transition-dur) ease-in-out;
 }
 
 /* slide to the screen, where it is noticeable */
@@ -608,18 +614,41 @@ img {
     object-position: center;
 }
 
+sup {
+    vertical-align: unset;
+
+    position: relative;
+    bottom: 0.24em;
+    font-size: 0.75em;
+}
+
 /* =============== HEADER =============== */
 header {
     align-items: center;
     display: flex;
+    filter: none;
     gap: 18px;
+    opacity: 100%;
     justify-content: center;
-    /* position: fixed; */
+    position: fixed;
+    width: calc(100% - (var(--body-margin) * 2));
+    z-index: 999;
+
+    transition: filter var(--side-frame-transition-dur) ease-in-out,
+                opacity var(--side-frame-transition-dur) ease-in-out;
+}
+
+:has(#panel-frame.appear) header {
+    opacity: 50%;
+    filter: brightness(0.5);
+    pointer-events: none;
 }
 
 /* all elements that is only encapsulated by <header> */
 header > * {
     background-color: var(--color-1);
+    border: var(--header-border-width) solid #00000044;
+    box-shadow: 0px 3px 10px #00000088;
     border-radius: 1299px;
     font-size: 18px;
     padding: var(--header-encapsulated-el-padding) calc(var(--header-encapsulated-el-padding) * 3);
@@ -820,6 +849,11 @@ section.product-info #product-details :is(h2, p) {
     margin-block: 0;
 }
 
+section.product-info #product-details p.price {
+    color: var(--color-3);
+    font-size: 25px;
+}
+
 /* ======== CART PAGE ======== */
 ul.item-list {
     grid-area: 1 / 1 / span 1 / 6;
@@ -899,7 +933,7 @@ ul.item-list li.item-details > .price-action form.delete-item button {
 }
 
 /* modified appearance */
-ul.item-list li.item-details li.item-details:has(.quantity input.modified) > .price-action p.recalculation {
+ul.item-list li.item-details:has(.quantity input.modified) > .price-action p.recalculation {
     text-shadow: 0 2px 4px #00000040;
     color: #0d22c5;
 }
@@ -1163,7 +1197,7 @@ table tr.monetary-cost.total > td {
 }
 
 table tr:nth-child(odd):not(.monetary-cost) td {
-    background-color: #f98c061e;
+    background-color: #f95b061e;
 }
 
 /* ======== ORDER HISTORY ======== */
