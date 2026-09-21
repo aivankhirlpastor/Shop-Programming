@@ -77,6 +77,8 @@ def update_stock(item: dict):
 
                 fetched_stock = 0
                 reserved[album_name] = {
+                    "id": i["id"],
+                    "artist": i["artist"],
                     "name": album_name,
                     "call": "suspended",
                     "cause_of_demand": demand_cause,
@@ -651,6 +653,10 @@ def panel_access_from_flash():
         # 2 = Item Added to Wishlist    
         elif wn == 2:
             return 1, a["price"]
+        
+        # 3 = Notice on Stock Changes
+        elif wn == 3:
+            return 1, 1
 
     flash_syntax = get_flashed_messages() # as flash message
     formulate_key_access = {
@@ -686,16 +692,16 @@ def panel_access_from_flash():
             if not type(by_pair) is dict:
                 continue
 
-            # when 1, 1 = adding item to cart; when 2, 2 = adding item to wishlist
             when_int = int(f"{when_var[0]}".replace("_", ""))
             formulate_key_access["when"] = when_int
 
             for album_name, a in by_pair.items():
                 qty, price = when_collection(when_int, a)
                 formulate_key_access["name"] = album_name
-                formulate_key_access["id"] = a["id"]
+                formulate_key_access["id"] = 1 if not when_int == 3 else a["id"]
 
                 formulate_key_access["by"][album_name] = {
+                    "id": a["id"],
                     "artist": a["artist"],
                     "image": None,
                     "name": album_name,
@@ -1120,6 +1126,8 @@ def filter_price(genre):
 def invoice_selection(inv_number):
     # sqlite3 \
     try:
+        key = panel_access_from_flash()
+
         with sqlite3.connect("order_history.db") as conn:
             cursor = conn.cursor()
 
@@ -1181,7 +1189,8 @@ def invoice_selection(inv_number):
         raise Exception(f"Can't redirect you with the invoice number {inv_number}: {err}")
 
     # return for template
-    return render_template("invoice.html", data = fetched_data)
+    return render_template("invoice.html", data = fetched_data,
+                           key_param = key)
 
 @app.route("/order_history")
 def order_history():
@@ -1400,8 +1409,10 @@ def place_order():
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (invoice_date, json.dumps(customer), json.dumps(cart), subtotal, gst, ship_fee, discount, main_total, json.dumps(on_hold_items)))
 
-            conn.commit()
+            flash("%.show_panel_3;")
+            flash(on_hold_items) # critical for side panel key access
 
+            conn.commit()
         except Exception as place_order_error:
             conn.rollback() # reverts the changes
 

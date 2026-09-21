@@ -61,38 +61,72 @@
             {% set heading_3 = "Item Added" %}
         {% elif key_param["when"] == 2 %}
             {% set heading_3 = "Item Added to Wishlist" %}
+        {% elif key_param["when"] == 3 %}
+            {% set heading_3 = "Reminders on Stock Change" %}
         {% endif %}
 
         {% with by_item = key_param["by"] %}
             <div id="panel-frame">
                 <h3>{{ heading_3 }}</h3>
                 <hr>
-                <ul class="mini-list-container">
-                    {% for _, b in by_item.items() %}
 
-                        <!-- list per item -->
-                        <li class="mini-list-item">
-                            <!-- I: Image and Quantity -->
-                            <div class="img-qty-placer">
-                                <img class="img-item">
+                <!-- SELECTION BY "when" KEYS -->
 
-                                {% if key_param["when"] == 1 %}
-                                    <span class="counter">{{ b["quantity"] }}</span>
-                                {% endif %}
-                            </div>
+                {% if key_param["when"] == 1 or key_param["when"] == 2 %}
+                    <!-- mini list style -->
+                    <ul class="mini-list-container">
+                        {% for _, b in by_item.items() %}
 
-                            <!-- II: Name, Artist, and Price -->
-                            <div class="txt-const">
-                                <div class="name-artist">
-                                    <span class="emphasise">{{ b["name"] }}</span>
-                                    <p>{{ b["artist"] }}</p>
+                            <!-- list per item -->
+                            <li class="mini-list-item">
+                                <!-- I: Image and Quantity -->
+                                <div class="img-qty-placer">
+                                    <img class="img-item">
+
+                                    {% if key_param["when"] == 1 %}
+                                        <span class="counter">{{ b["quantity"] }}</span>
+                                    {% endif %}
                                 </div>
-                                <!-- Price -->
-                                <b class="price"><sup>$</sup>{{ '%.2f' % b["price"] }}</b>
-                            </div>
-                        </li>
-                    {% endfor %}
-                </ul>
+
+                                <!-- II: Name, Artist, and Price -->
+                                <div class="txt-const">
+                                    <div class="name-artist">
+                                        <span class="emphasise">{{ b["name"] }}</span>
+                                        <p>{{ b["artist"] }}</p>
+                                    </div>
+                                    <!-- Price -->
+                                    <b class="price"><sup>$</sup>{{ '%.2f' % b["price"] }}</b>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+                <!-- within invoice page -->
+                {% elif key_param["when"] == 3 %}
+                    {% set reserves = data["items_on_hold"]  %}
+
+                    <!-- text elements -->
+                    <p>Our system detected changes to product stock while you were at checkout, which could affect your order's delivery and our operational service.</p>
+                    <p>The following items that were temporarily out of stock are listed below:</p>
+                    <ul class="reserved-items">
+                        {% for n, items in reserves.items() %}
+                            <li class="item-demand" id="{{ items['id'] }}">
+                                <b>{{ n }}</b>
+                                <span class="quantity-count">× {{ items["quantity_demand"] }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+                    <h4>What does this mean?</h4>
+                    <p>Your order will be identified as partial fulfilment, where temporarily out-of-stock items are kept for restoration and sent on a later shipment; available items are shipped in the order at once. But we expect that they will be restocked and ready for shipment. We will get in touch with you about your order and help you decide within three business days.</p>
+                    
+                    <h4>Contact</h4>
+                    <p>If you have any questions or would like to request a refund, you can get in touch with us via phone or email.</p>
+
+                    <p>If you need reference to it, scroll down on your invoice page to read through.</p>
+                {% endif %}
+
+                <!-- BUTTON ACTIONS -->
                 <div class="btn-stack-inline">
                     {% if key_param["when"] == 1 %}
                         <button type="button" id="btn-continued">Continue Shopping</button>
@@ -103,6 +137,8 @@
                             <button type="button" id="btn-continued">Continue</button>
                             <button type="submit" class="destructive">Remove from Wishlist</button>
                         </form>
+                    {% elif key_param["when"] == 3 %}
+                        <button type="button" id="btn-continued">Close</button>
                     {% endif %}
                 </div>
             </div>
