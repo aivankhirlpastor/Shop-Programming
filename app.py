@@ -1129,7 +1129,12 @@ def invoice_selection(inv_number):
 
             second_row = json.loads(rows[2])
             load_items = json.loads(rows[3])
+            items_on_hold = {}
             items = {}
+            
+            # items on hold
+            if rows[9]:
+                items_on_hold = json.loads(rows[9])
 
             s = 0 # used for listing
 
@@ -1161,7 +1166,8 @@ def invoice_selection(inv_number):
                 "gst": rows[5],
                 "ship_fee": rows[6],
                 "discount": rows[7],
-                "total_charges": rows[8]
+                "total_charges": rows[8],
+                "items_on_hold": items_on_hold,
             }
 
             # raise Exception(fetched_data["customer"])
