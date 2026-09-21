@@ -55,13 +55,42 @@ def initialise_database():
         """)
 
 def update_stock(item: dict):
+    reserved = {} # on partial fulfillment or backorder
+
     with open("data/products.json", "r") as product:
-        album_data = json.load(product)
+        fetched_album_data = json.load(product)
 
     for album_name, i in item.items():
-        if album_name in album_data:
+        if album_name in fetched_album_data:
+            fetched_stock = fetched_album_data[album_name]["stock"]
+            fetched_stock -= i["quantity"] # modify the stock
 
-            album_data[album_name]["stock"]
+            # prompt when stock reached 0 or beyond
+            if fetched_stock < 0:
+                # out of stock measurement
+                if fetched_stock <= -1 * i["quantity"]:
+                    demand_cause = "out_of_stock"
+
+                # quantity demand exceeded the stock inventory
+                else:
+                    demand_cause = "exceeded"
+
+                fetched_stock = 0
+                reserved[album_name] = {
+                    "name": album_name,
+                    "call": "suspended",
+                    "cause_of_demand": demand_cause,
+                    "demand_tracking": f"limit: {fetched_album_data[album_name]["stock"]} | demand: {i["quantity"]}",
+                    "quantity_demand": i["quantity"]
+                }
+
+            # change the stock inventory
+            fetched_album_data[album_name]["stock"] = fetched_stock
+
+    with open("data/products.json", "w") as product:
+        json.dump(fetched_album_data, product, indent = 4)
+
+    return reserved
 
 # syntax building for database
 def set_syntax_building(argument: dict|list|tuple, positional_value: list|tuple = ()):
@@ -1354,19 +1383,31 @@ def place_order():
     # invoice number will be declared as soon as we get to the database variables.
 
     # Save order history to SqLite Database
-    try:
-        with sqlite3.connect("order_history.db") as conn:
+    with sqlite3.connect("order_history.db") as conn:
+        try:
+            # either partial fulfillment or backorder process
+            on_hold_items = update_stock(cart)
+
             cursor = conn.cursor()
             cursor.execute("""
-                INSERT INTO orders (date, customer, items, subtotal, gst, ship_fee, discount, total_charges)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """, (invoice_date, json.dumps(customer), json.dumps(cart), subtotal, gst, ship_fee, discount, main_total))
+                INSERT INTO orders (date, customer, items, subtotal, gst, ship_fee, discount, total_charges, items_on_hold)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (invoice_date, json.dumps(customer), json.dumps(cart), subtotal, gst, ship_fee, discount, main_total, json.dumps(on_hold_items)))
 
             conn.commit()
 
-        # write an invoice in .txt version
-        invoice_file = f"{invoice_date}.txt"
-        with open("invoice_file.txt", "w") as f:
+        except Exception as place_order_error:
+            conn.rollback() # reverts the changes
+
+            flash(f"Something went wrong: {place_order_error}")
+            print(f"Something went wrong: {place_order_error}")
+
+            return redirect(url_for("index"))
+        
+    # write an invoice in .txt version
+    with open("invoice_file.txt", "w") as f:
+        try:
+            invoice_file = f"{invoice_date}.txt"
             f.write("<-----> The Music Shop <----->\n")
 
             f.write(f"Invoice Number: {invoice_date}\n")
@@ -1378,19 +1419,18 @@ def place_order():
             for album_name, m in cart.items():
                 f.write(f"-- {album_name}: {m["quantity"]} x ${m["price"]} = ${m["quantity"] * m["price"]:.2f}\n")
 
-            f.write(f"Subtotal: ${subtotal:.2f}\n") if subtotal else None
-            f.write(f"Subtotal: ${gst:.2f}\n") if gst else None
-            f.write(f"Subtotal: ${ship_fee:.2f}\n\n") if ship_fee else None
-            f.write(f"Subtotal: ${total:.2f}\n")
+            f.write(f"\nSubtotal: ${subtotal:.2f}\n") if subtotal else None
+            f.write(f"GST: ${gst:.2f}\n") if gst else None
+            f.write(f"Delivery Fee: ${ship_fee:.2f}\n") if ship_fee else None
+            f.write(f"Discount: ${discount:.2f}\n\n") if discount else None
 
-    # Except argument and return to home page
-    except Exception as place_order_error:
-        flash("Sorry, but we can't process your order right now.")
-        flash(place_order_error)
+            f.write(f"Total: ${main_total:.2f}\n")
 
-        return redirect(url_for("index"))
+        # Except argument that prevents saving
+        except Exception as write_invoice_txt_error:
+            print("Failed to write an invoice text:", write_invoice_txt_error)
+            flash(write_invoice_txt_error)
     
-    # Updating the stock will be at the later sprint planning.
     flash("Order Completed")
 
     # spike coupon removal | adding to used_coupons
