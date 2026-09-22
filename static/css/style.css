@@ -332,6 +332,15 @@ span.quantity-count {
 }
 
 /* anchor element */
+a {
+    color: #2a65d4;
+}
+
+a:active {
+    color: #cb4705;
+}
+
+/* anchor buttons */
 a.btn-genres {
     --anchor-transtion-model: 0.2s ease-in-out;
     
