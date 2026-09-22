@@ -698,7 +698,7 @@ def panel_access_from_flash():
             for album_name, a in by_pair.items():
                 qty, price = when_collection(when_int, a)
                 formulate_key_access["name"] = album_name
-                formulate_key_access["id"] = 1 if not when_int == 3 else a["id"]
+                formulate_key_access["id"] = 1 if when_int == 3 else a["id"]
 
                 formulate_key_access["by"][album_name] = {
                     "id": a["id"],
@@ -715,43 +715,37 @@ def panel_access_from_flash():
         print("Failed to initiate side panel order:", e)
         return None
 
-def index_album_modules():
-    ach = load_data_products()
-
-    ahr = {}
-    bhr = {}
-    chr = {}
-
-    day_released = 10
-    day_prereleased = 14
-
-    # ------------------------------
+def check_date(n: str, albm: dict, refer = None):
+    # setting timeline
     day_current = 20
-    rlsd = 10
-    pre_rlsd = 14
-
     current = datetime.datetime(2026, 4, day_current)
     date_pattern = re.compile(r'(\d{2})-(\d{2})-(\d{4})')
 
-    for n, albm in ach.items():
-        album_id = albm["id"]
-        dz = albm["release_date"] # date
+    # "ID" segment pattern
+    id_prime_ptrn = re.compile(r'^\d{3}') # first segment
+    id_mid_ptrn = re.compile(r'\d{4}') # middle segment
 
-        # "ID" segment pattern
-        id_prime_ptrn = re.compile(r'^\d{3}') # first segment
-        id_mid_ptrn = re.compile(r'\d{4}') # middle segment
+    # access album's date
+    album_id = albm["id"]
+    dz = albm["release_date"] # date
 
-        # 'before' integer variable
-        pdx, pmx, pyx = date_pattern.findall(dz)[0]
+    # overall pattern declaration
+    pdx, pmx, pyx = date_pattern.findall(dz)[0]
+    yx, mx, dx = int(pyx), int(pmx), int(pdx)
+    album_release_date = datetime.datetime(yx, mx, dx)
+
+    # refer to three sections: released, featured, pre-release
+    if refer == 0:
+        rlsd, pre_rlsd = 10, 14
+        # rlsd = show until/before <release> day
+
         pre_id_prime = id_prime_ptrn.findall(album_id)
         pre_id_mid = id_mid_ptrn.findall(album_id)
 
         # Turning string into integers to be calculatable
-        dx, mx, yx = int(pdx), int(pmx), int(pyx)
         id_prime, id_mid = int(pre_id_prime[0]), int(pre_id_mid[0])
-        album_release_date = datetime.datetime(yx, mx, dx)
 
-        # testing for variable
+        # ============= FOR DEBUGGING: testing for variable
         prereleased = album_release_date - timedelta(days = pre_rlsd)
 
         if n == "Little Life":
@@ -759,24 +753,64 @@ def index_album_modules():
             diff = current - album_release_date
             print(diff.days)
             print(prereleased, "\n-------------------------------")
+        # =========================================
 
         # latest release
         if 0 <= (current - album_release_date).days <= rlsd:
-            ahr[n] = albm
+            return "released"
 
-        # featured > calculated value == remainder
+        # featured: calculated value == remainder
         elif (id_mid // day_current % 10) == (id_prime % 10):
-            bhr[n] = albm
+            return "featured"
 
         # pre-released
         elif pre_rlsd >= (album_release_date - current).days > 0:
-            chr[n] = albm
-    
-    # print(re.sub(r"-", " ", current_date)) # 
+            return "pre-released"
 
-    # latest release (show until 14 days away)
+    # refer to date only; identify either released or pre-released
+    if refer == 1:
+        if 0 <= (current - album_release_date).days:
+            return "released"
+        elif (album_release_date - current).days > 0:
+            return "pre-released"
 
-    return ahr, bhr, chr
+    # if not refer == None:
+    # else:
+    #     raise ValueError("Please indicate the refer value because we don't know what you are telling us to do.")
+
+def album_date_modules(loaded_album, rfr):
+    # for three_sections only
+    if rfr == 0:
+        ahrd, bhrd, chrd = [{} for y in range(3)]
+
+        for na_, albm_a in loaded_album.items():
+            section_cycle = check_date(na_, albm_a, rfr)
+
+            if section_cycle == "released":
+                ahrd[na_] = albm_a
+            elif section_cycle == "featured":
+                bhrd[na_] = albm_a
+            elif section_cycle == "pre-released":
+                chrd[na_] = albm_a
+
+        return ahrd, bhrd, chrd
+
+    # refer to date only
+    if rfr == 1:
+        rlrd, prrd = [{} for z in range(2)]
+
+        for nb_, albm_b in loaded_album.items():
+            date_cycle = check_date(nb_, albm_b, rfr)
+
+            if date_cycle == "released":
+                rlrd[nb_] = albm_b
+            elif date_cycle == "pre-released":
+                prrd[nb_] = albm_b
+
+        return rlrd, prrd
+
+    else:
+        raise ValueError("Inappropriate referring value.")
 
 # --------------------------------------
 
@@ -840,7 +874,7 @@ def after_request_function(req):
 @app.route("/")
 def index():
     load_albums = load_data_products()
-    ar, br, cr = index_album_modules()
+    ar, br, cr = album_date_modules(load_albums, 0)
     cart = get_entry("cart")
     key = panel_access_from_flash()
 
@@ -1055,7 +1089,7 @@ def toggle_wishlist(catalogue_id, album_name, pole_end):
         wishlist_remove_status = remove_specific_key(wishlists = album_name)
 
         if wishlist_remove_status:
-            flash(f"{album_name} removed to your wishlist")
+            flash(f"{album_name} removed from your wishlist")
 
     # pole end
     if pole_end == "wishlist":
@@ -1178,8 +1212,6 @@ def invoice_selection(inv_number):
                 "items_on_hold": items_on_hold,
             }
 
-            # raise Exception(fetched_data["customer"])
-
     # usually might suggest that the "id" is not exist
     except IndexError as index_err:
         abort(404) # not found
@@ -1245,12 +1277,16 @@ def cart():
     # Get cart via session.get
     # cart = session.get("cart", {})
     cart = get_entry("cart")
+    rr, pr = album_date_modules(albums, 1)
+
+    # product labelling via date
 
     # Get price calculation
     __n, subtotal, gst, ship_fee, discount, __n2 = calculate_total(cart)
 
     return render_template("cart.html", cart = cart, albums = albums,
-                           subtotal = subtotal, gst = gst, discount = discount)
+                           subtotal = subtotal, gst = gst, discount = discount,
+                           released = rr, pre_released = pr)
 
 @app.route("/wishlist")
 def wishlist():
