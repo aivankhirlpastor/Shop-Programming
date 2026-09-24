@@ -91,8 +91,8 @@
                                 <!-- II: Name, Artist, and Price -->
                                 <div class="txt-const">
                                     <div class="name-artist">
-                                        <span class="emphasise">{{ b["name"] }}</span>
-                                        <p>{{ b["artist"] }}</p>
+                                        <p class="emphasise">{{ b["name"] }}</p>
+                                        <span>{{ b["artist"] }}</span>
                                     </div>
                                     <!-- Price -->
                                     <b class="price"><sup>$</sup>{{ '%.2f' % b["price"] }}</b>
@@ -107,23 +107,26 @@
 
                     <!-- text elements -->
                     <p>Our system detected changes to product stock while you were at checkout, which could affect your order's delivery and our operational service.</p>
-                    <p>The following items that were temporarily out of stock are listed below:</p>
+                    <p>The following items are listed below:</p>
                     <ul class="reserved-items">
                         {% for n, items in reserves.items() %}
-                            <li class="item-demand" id="{{ items['id'] }}">
-                                <b>{{ n }}</b>
-                                <span class="quantity-count">× {{ items["quantity_demand"] }}</span>
-                            </li>
+                            <!-- list only items that were released; omitting pre-released items -->
+                            {% if not items["cause_of_demand"] == "pre_order" %}
+                                <li class="item-demand" id="{{ items['id'] }}">
+                                    <b>{{ n }}</b>
+                                    <span class="quantity-count">× {{ items["quantity_demand"] }}</span>
+                                </li>
+                            {% endif %}
                         {% endfor %}
                     </ul>
 
                     <h4>What does this mean?</h4>
-                    <p>Your order will be identified as partial fulfilment, where temporarily out-of-stock items are kept for restoration and sent on a later shipment; available items are shipped in the order at once. But we expect that they will be restocked and ready for shipment. We will get in touch with you about your order and help you decide within three business days.</p>
+                    <p>Your order could be identified as partial fulfilment, where temporarily out-of-stock items are kept for restoration and sent on a later shipment; available items are shipped in the order at once. But we expect that they will be restocked and ready for shipment. We will get in touch with you about your order and help you decide within three business days.</p>
                     
                     <h4>Contact</h4>
                     <p>If you have any questions or would like to request a refund, you can get in touch with us via phone or email.</p>
 
-                    <p>If you need reference to it, scroll down on your invoice page to read through.</p>
+                    <p>If you need reference to it, scroll down on your invoice page to read through, or click here</a>.</p>
                 {% endif %}
 
                 <!-- BUTTON ACTIONS -->
@@ -139,6 +142,7 @@
                         </form>
                     {% elif key_param["when"] == 3 %}
                         <button type="button" id="btn-continued">Close</button>
+                        <button type="button neutral" onclick="fragment_identifier_redirect('stock-change-notice')">Close</button>
                     {% endif %}
                 </div>
             </div>
@@ -153,6 +157,11 @@
                         panel.remove();
                         blackOverlay.remove();
                     }, 500);
+                }
+
+                function fragment_identifier_redirect(hash) {
+                    window.location.hash = hash;
+                    closure();
                 }
 
                 const flashChildren = document.querySelector(".toast-flash").children; // select all flash messages
