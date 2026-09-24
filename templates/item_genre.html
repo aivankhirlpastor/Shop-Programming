@@ -73,6 +73,10 @@
                             <a href="{{ url_for('product_information', id = i['id']) }}">
                                 <!-- I: Album Image -->
                                 <img class="img-item">
+
+                                {% if album_name in pr %}
+                                    <span class="tag-label">Pre-Order</span>
+                                {% endif %}
                 
                                 <!-- II: Text Information -->
                                 <div class="album-txt-info">

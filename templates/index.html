@@ -39,7 +39,7 @@
 
         {% for sg, t in segment_modules.items() %}
             <!-- <hr> -->
-            <h2>{{ sg }}</h2> <!-- Segment Heading -->
+            <h2>{{ sg.title().replace("_", " ") }}</h2> <!-- Segment Heading -->
             <section class="grid grid-display item-display">
                 <!-- expansion -->
                 {% for album_name, tt in t.items() %}
@@ -48,6 +48,10 @@
                         <a href="{{ url_for('product_information', id = tt['id']) }}">
                             <!-- I: Album Image -->
                             <img class="img-item">
+
+                            {% if album_name in segment_modules["pre-order"] %}
+                                <span class="tag-label">Pre-Order</span>
+                            {% endif %}
             
                             <!-- II: Text Information -->
                             <div class="album-txt-info">
