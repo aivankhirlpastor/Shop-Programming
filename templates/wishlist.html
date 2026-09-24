@@ -11,8 +11,11 @@
                     <li class="item-details grid">
                         <div class="product-img-small"></div>
                         <div class="name-artist-label">
+                            <!-- Date Label First -->
+                            {% if pre_released[album_name] %}
+                                <span class="stock-status lowercase label f14">Release date: <b>{{ pre_released[album_name]["release_date"] }}</b></span>
                             <!-- Different Labels from Stock Status (High, Low, None) -->
-                            {% if albums[album_name]["stock"] > 5 %}
+                            {% elif albums[album_name]["stock"] > 5 %}
                                 <span class="stock-status lowercase label">In Stock</span>
                             {% elif 6 > albums[album_name]["stock"] and albums[album_name]["stock"] > 0 %}
                                 <span class="stock-status low lowercase label"><b>({{ albums[album_name]["stock"] }})</b> Low Stock</span>

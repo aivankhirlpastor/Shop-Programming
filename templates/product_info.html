@@ -65,9 +65,12 @@
                         <p class="emphasise price"><sup>$</sup>{{ '%.2f' % product["price"] }}</p>
                     </div>
                     <div class="classif-cont quantity">
+                        <!-- Pre-Order Label -->
+                        {% if album_cycle == "pre-released" %}
+                            <label for="quantity">QUANTITY • <span class="stock-status lowercase">Pre-release order available</span></label>
 
                         <!-- Different Labels from Stock Status (High, Low, None) -->
-                        {% if product['stock'] > 5 %}
+                        {% elif product['stock'] > 5 %}
                             <label for="quantity">QUANTITY • <span class="stock-status lowercase">In Stock</span></label>
                         {% elif 6 > product['stock'] and product['stock'] > 0 %}
                             <label for="quantity">QUANTITY <b class="low">({{ product['stock'] }})</b> • <span class="stock-status lowercase">Low Stock</span></label>
@@ -78,10 +81,17 @@
                         <!-- Input Quantity: 5 > P = by its remaining stock (max); else 5 (max) -->
                         <input type="number" id="quantity" name="quantity" min="1" max="{% if 5 > product['stock'] and product['stock'] > 0 %}{{ product['stock'] }}{% else %}5{% endif %}" value="{% if already_in_cart %}{{ item_in_hold['quantity'] }}{% else %}1{% endif %}" {% if not in_stock %}disabled{% endif %}>
                     </div>
+
+                    <!-- Button Action -->
                     {% if already_in_cart %}
                         <button type="button" class="view-my-cart" onclick=" location.href = `{{ url_for('cart') }}`">View My Cart</button>
                     {% else %}
-                        <button type="submit" class="add-to-cart" {% if not in_stock %}disabled title="Out of Stock"{% endif %}>Add to Cart</button>
+                        {% if album_cycle == "pre-released" %}
+                            {% set btn_label = "Pre-Order" %}
+                        {% else %}
+                            {% set btn_label = "Add to Cart" %}
+                        {% endif %}
+                        <button type="submit" class="add-to-cart" {% if not in_stock %}disabled title="Out of Stock"{% endif %}>{{ btn_label }}</button>
                     {% endif %}
                 </form>
             </div>
