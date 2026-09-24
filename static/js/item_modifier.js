@@ -39,7 +39,9 @@ for (let z = 0; z < getInputs.length; z++) {
 
         // if condition to text changes
         if ((0 < i.value && i.value <= mx) && i.value % 1 == 0) {
-            u.textContent = `$${Math.round((unitPrice[z] * i.value) * 100) / 100}`;
+            u.innerHTML = `<sup>$</sup>${Math.round((unitPrice[z] * i.value) * 100) / 100}`;
+            // u.textContent = `$${Math.round((unitPrice[z] * i.value) * 100) / 100}`;
+            // u.innerHTML = ``
         }
 
         if (!configPanel.classList.contains("arise")) {
@@ -79,7 +81,8 @@ cancel.addEventListener("click", e => {
         ii.classList.remove("modified");
         ii.value = initialQuantity[h];
         pp.value = initialQuantity[h];
-        uu.textContent = `$${Math.round((unitPrice[h] * ii.value) * 100) / 100}`
+        // uu.textContent = `$${Math.round((unitPrice[h] * ii.value) * 100) / 100}`
+        uu.innerHTML = `<sup>$</sup>${Math.round((unitPrice[h] * ii.value) * 100) / 100}`
     }
 });
 
