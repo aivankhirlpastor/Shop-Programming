@@ -4,13 +4,13 @@
 
 {% block content %}
     <body>
-        <h2>Thank You!</h2>
-        <p>We'll remind you on your order placement within 3 business days. If you have any enquiries, contact us.</p>
-
-        <h3>Invoice Number: #{{ data["id"] }}</h3>
-        <p>Date: {{ data["date"] }}</p>
-
         <section class="invoice-page">
+            <h2>Thank You!</h2>
+            <p>We'll remind you on your order placement within 3 business days. If you have any enquiries, contact us.</p>
+    
+            <h3>Invoice Number: #{{ data["id"] }}</h3>
+            <p>Date: {{ data["date"] }}</p>
+
             <div id="order-billing-dt">
                 <span class="label">Invoice To</span>
                 <div>
@@ -94,12 +94,95 @@
                 </tbody>
             </table>
         </section>
-
-
+        
+        <!-- Items On Hold List -->
         {% if data.get("items_on_hold") %}
-            <section class="notice">
-                <p>Notice to Customer</p>
+
+            <!-- 'namespace' through research -->
+            {% set is_stock_related = namespace(found = False) %}
+            <!-- <span>{{ data.get("items_on_hold") }}</span> -->
+            <hr>
+            
+            <section class="invoice-reserved-replica grid" id="items-reserved">
+                <div class="item-text-info">
+                    <h2>Reserved Items</h2>
+                    <p>Pre-order items are listed under the reserved items</p>
+                    <!-- <p>Pre-order items are listed under the reserved items</p> -->
+                </div>
+
+                <!-- Pre-Order Display List -->
+                <div class="invoice-position" id="const-pre-release">
+                    <h3>Pre-Order</h3>
+                    <ul class="mini-list-container vrs-3">
+                        {% for sn, albm in data.get("items_on_hold").items() %}
+                            {% if albm["cause_of_demand"] == "pre_order" %}
+                                <!-- list per item -->
+                                <li class="mini-list-item">
+        
+                                    <!-- I: Image and Quantity -->
+                                    <div class="img-qty-placer">
+                                        <img class="img-item">
+                                    </div>
+        
+                                    <!-- II: Name, Artist, and Price -->
+                                    <div class="txt-const">
+                                        <div class="name-artist">
+                                            <a href="{{ url_for('product_information', id = pr[sn]['id'] ) }}">
+                                                <p class="emphasise">{{ sn }} <span class="quantity-count">× {{ albm["quantity_demand"] }}</span></p>      
+                                            </a>
+                                            <span>Release: {{ pr[sn]["release_date"] }}</span>
+                                        </div>
+                                    </div>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- On Hold Items related to Stock Change -->
+                <div class="invoice-position" id="const-related-stock">
+                    <h3>On Hold</h3>
+                    <ul class="mini-list-container vrs-3">
+                        {% for sn, albm in data.get("items_on_hold").items() %}
+                            {% if not albm["cause_of_demand"] == "pre_order" %}
+                                <!-- list per item -->
+                                {% set is_stock_related.found = True %}
+
+                                <li class="mini-list-item">
+        
+                                    <!-- I: Image and Quantity -->
+                                    <div class="img-qty-placer">
+                                        <img class="img-item">
+                                        <span class="counter">{{ albm["quantity_demand"] }}</span>
+                                    </div>
+        
+                                    <!-- II: Name, Artist, and Price -->
+                                    <div class="txt-const">
+                                        <div class="name-artist">
+                                            <p class="emphasise">{{ sn }}</p>      
+                                            <span>{{ albm["cause_of_demand"].title().replace("_", " ") }}</span>
+                                        </div>
+                                    </div>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
             </section>
+
+            <hr>
+
+            {% if is_stock_related.found %}
+                <section class="notice" id="stock-change-notice">
+
+                    <h2>Notice to Stock Change</h2>
+                    <h3>What does this mean?</h3>
+                    <p>Your order could be identified as partial fulfilment, where temporarily out-of-stock items are kept for restoration and sent on a later shipment; available items are shipped in the order at once. But we expect that they will be restocked and ready for shipment. We will get in touch with you about your order and help you decide within three business days.</p>
+                        
+                    <h3>Contact</h3>
+                    <p>If you have any questions or would like to request a refund, you can get in touch with us via phone or email.</p>
+                </section>
+            {% endif %}
         {% endif %}
     </body>
 {% endblock %}
