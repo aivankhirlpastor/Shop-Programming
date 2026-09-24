@@ -674,6 +674,8 @@ def check_date(n: str, albm: dict, refer: int):
     current = datetime.datetime(2026, 4, day_current)
     date_pattern = re.compile(r'(\d{2})-(\d{2})-(\d{4})')
 
+    # assuming the current day is 20-04-2026
+
     # "ID" segment pattern
     id_prime_ptrn = re.compile(r'^\d{3}') # first segment
     id_mid_ptrn = re.compile(r'\d{4}') # middle segment
@@ -722,6 +724,12 @@ def check_date(n: str, albm: dict, refer: int):
 
     # refer to date only; identify either released or pre-released
     if refer == 1:
+
+        # debugging
+        print(f"current: {current}\n albumd: {album_release_date}")
+        print(f"rel: 0 <= {(current - album_release_date).days}")
+        print(f"prl: {(album_release_date - current).days} > 0")
+
         if 0 <= (current - album_release_date).days:
             return "released"
         elif (album_release_date - current).days > 0:
@@ -786,9 +794,9 @@ def index():
     key = panel_access_from_flash()
 
     segment_modules = {
-        "Latest Release": ar,
-        "Featured": br,
-        "Pre-Order": cr
+        "latest_release": ar,
+        "featured": br,
+        "pre-order": cr
     }
 
     # print(segment_modules)
@@ -1010,9 +1018,11 @@ def category_all():
     cart = get_entry("cart")
     key = panel_access_from_flash()
     result = item_display_by_genre() # get the result via genre
+    rr, pr = album_date_modules(load_data_products(), 1)
 
     return render_template("item_genre.html", genre = "all",
-                           imported_data = result, cart = cart, key_param = key)
+                           imported_data = result, cart = cart, key_param = key,
+                           rr = rr, pr = pr)
 
 # Item Genre: specific genre
 @app.route("/category/item-<string:genre>")
@@ -1025,8 +1035,11 @@ def category(genre):
     if result == {}:
         abort(404)
 
+    rr, pr = album_date_modules(load_data_products(), 1)
+
     return render_template("item_genre.html", genre = genre,
-                           imported_data = result, cart = cart, key_param = key)
+                           imported_data = result, cart = cart, key_param = key,
+                           rr = rr, pr = pr)
 
 # Item Genre: Filter Price Range
 @app.route("/category/item-<string:genre>/<price_range>")
@@ -1048,9 +1061,12 @@ def category_price_filter(genre, price_range):
     if gio <= 0 or text_value == None:
         abort(404)
 
+    rr, pr = album_date_modules(load_data_products(), 1)
+
     return render_template("item_genre.html", genre = genre,
                            imported_data = result, cart = cart, key_param = key,
-                           text_value = text_value, pxrange = kebab_case_pxrange)
+                           text_value = text_value, pxrange = kebab_case_pxrange,
+                           rr = rr, pr = pr)
 
 @app.route("/filter_price/<string:genre>", methods = ["POST"])
 def filter_price(genre):
@@ -1067,6 +1083,7 @@ def filter_price(genre):
 def invoice_selection(inv_number):
     # sqlite3 \
     try:
+        rr, pr = album_date_modules(load_data_products(), 1)
         key = panel_access_from_flash()
 
         with sqlite3.connect("order_history.db") as conn:
@@ -1131,7 +1148,7 @@ def invoice_selection(inv_number):
 
     # return for template
     return render_template("invoice.html", data = fetched_data,
-                           key_param = key)
+                           key_param = key, rr = rr, pr = pr)
 
 @app.route("/order_history")
 def order_history():
