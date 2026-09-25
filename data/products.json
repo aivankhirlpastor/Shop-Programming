@@ -39,7 +39,7 @@
         "label": "'For Me' Soundtrack",
         "tracks": 5,
         "genre": "Ambience",
-        "image": "/static/echoes.jpg",
+        "image": "/static/images/echoes.jpg",
         "price": 17.99,
         "stock": 17
     },
@@ -128,7 +128,7 @@
         "tracks": 4,
         "genre": "Classical",
         "image": "/static/images/the-lines.jpg",
-        "price": 9.99,
+        "price": 11.99,
         "stock": 11
     },
     "Fantasia Winter": {
@@ -173,7 +173,7 @@
         "genre": "Lo-Fi",
         "image": "/static/images/zen.jpg",
         "price": 25.49,
-        "stock": 0
+        "stock": 9
     },
     "The Key To Withstand": {
         "artist": "Oblong Communion",
@@ -219,25 +219,25 @@
         "price": 18.79,
         "stock": 19
     },
-    "Taipei Night Market": {
-        "artist": "Luna Andrei",
-        "id": "920 5577 H",
-        "release_date": "25-04-2026",
-        "label": "A.T. Label",
-        "tracks": 7,
+    "vase": {
+        "artist": "Ivy Gutzene",
+        "id": "921 0018 H",
+        "release_date": "24-04-2026",
+        "label": "Harmony Cross Records Ltd.",
+        "tracks": 5,
         "genre": "Lo-Fi",
-        "image": "/static/images/taipei-night-market.jpg",
+        "image": "/static/images/vase.jpg",
         "price": 27.99,
-        "stock": 14
+        "stock": 19
     },
-    "Snow Sunset Sky": {
-        "artist": "Michael Zysken",
-        "id": "979 0031 U",
-        "release_date": "12-12-2025",
-        "label": "-",
-        "tracks": 10,
+    "Scarlet Sunset Sky": {
+        "artist": "Madison Myriad",
+        "id": "944 9135 U",
+        "release_date": "18-01-2026",
+        "label": "Sound Light Ltd.",
+        "tracks": 8,
         "genre": "Upbeat",
-        "image": "/static/images/snow-sunset-sky.jpg",
+        "image": "/static/images/scarlet-sunset-sky.jpg",
         "price": 30.99,
         "stock": 13
     },
@@ -260,7 +260,7 @@
         "tracks": 4,
         "genre": "Upbeat",
         "image": "/static/images/get-up.jpg",
-        "price": 12.99,
+        "price": 8.99,
         "stock": 20
     },
     "Fragments": {
