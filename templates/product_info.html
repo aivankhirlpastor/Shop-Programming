@@ -40,22 +40,26 @@
                     </form>
                 </div>
                 <!-- Row II: Model, Label, Genre -->
-                <div class="box-acc showcase grid">
+                <div class="box-acc box-classification grid">
                     <div class="classif-cont catalogue-id">
-                        <span>Catalogue ID</span>
+                        <span class="f14">Catalogue ID</span>
                         <p>M-{{ product["id"] }}</p>
                     </div>
                     <div class="classif-cont label">
-                        <span>Label</span>
+                        <span class="f14">Label</span>
                         <p>{{ product["label"] }}</p>
                     </div>
                     <div class="classif-cont genre">
-                        <span>Genre</span>
+                        <span class="f14">Genre</span>
                         <p>{{ product["genre"] }}</p>
                     </div>
                     <div class="classif-cont tracks">
-                        <span>Tracks</span>
+                        <span class="f14">Tracks</span>
                         <p>{{ product["tracks"] }}</p>
+                    </div>
+                    <div class="classif-cont release-date">
+                        <span class="f14">Release Date</span>
+                        <p>{{ product["release_date"] }}</p>
                     </div>
                 </div>
                 <!-- Row III: Form Price, Input Quantity, Add-To-Cart/View-My-Cart -->
