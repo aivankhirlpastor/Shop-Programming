@@ -149,6 +149,10 @@ input:not([type=radio]):focus {
     opacity: var(--label-opacity);
 }
 
+.classif-cont :is(span, label).f14 {
+    --label-font-size: 14px;
+}
+
 span.label.f14 {
     --label-font-size: 14px;
     --label-opacity: 80%;
@@ -156,6 +160,10 @@ span.label.f14 {
 
 .classif-cont :is(span, label) > * {
     display: inline;
+}
+
+.classif-cont p {
+    font-weight: 700;
 }
 
 /* encapsulated inside text  */
@@ -825,7 +833,7 @@ section.product-info #product-details > .box-acc.name-artist {
 }
 
 /* showcase in grid display */
-section.product-info #product-details > .box-acc.showcase {
+section.product-info #product-details > .box-acc.box-classification {
     gap: 16px;
     grid-template: 1fr 1fr / 1fr 1fr;
 }
@@ -835,7 +843,7 @@ section.product-info #product-details > .box-acc.price-and-quantity {
     display: inline-flex;
     flex-direction: column;
     gap: 16px;
-    width: 200px;
+    width: 225px;
 }
 
 /* wishlist button */
