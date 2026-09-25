@@ -6,6 +6,7 @@
         "label": "Universal Audio Company",
         "tracks": 12,
         "genre": "Ambience",
+        "image": "/static/images/the-ushers-place.jpg",
         "price": 45.99,
         "stock": 15
     },
@@ -16,6 +17,7 @@
         "label": "Lifestyle Community",
         "tracks": 14,
         "genre": "Ambience",
+        "image": "/static/images/little-life.jpg",
         "price": 36.99,
         "stock": 16
     },
@@ -26,6 +28,7 @@
         "label": "-",
         "tracks": 6,
         "genre": "Ambience",
+        "image": "/static/images/lives-in-nature.jpg",
         "price": 39.99,
         "stock": 20
     },
@@ -36,6 +39,7 @@
         "label": "'For Me' Soundtrack",
         "tracks": 5,
         "genre": "Ambience",
+        "image": "/static/echoes.jpg",
         "price": 17.99,
         "stock": 17
     },
@@ -46,6 +50,7 @@
         "label": "-",
         "tracks": 7,
         "genre": "Ambience",
+        "image": "/static/images/daydream.jpg",
         "price": 14.99,
         "stock": 10
     },
@@ -56,6 +61,7 @@
         "label": "MEIL Production Studios",
         "tracks": 16,
         "genre": "Ambience",
+        "image": "/static/images/dandellion.jpg",
         "price": 24.99,
         "stock": 14
     },
@@ -66,6 +72,7 @@
         "label": "-",
         "tracks": 4,
         "genre": "Acoustic",
+        "image": "/static/images/west-countrys-mankind.jpg",
         "price": 18.39,
         "stock": 3
     },
@@ -76,6 +83,7 @@
         "label": "Acoustic Songs",
         "tracks": 6,
         "genre": "Acoustic",
+        "image": "/static/images/aerial-view.jpg",
         "price": 15.99,
         "stock": 13
     },
@@ -86,6 +94,7 @@
         "label": "Universal Audio Company",
         "tracks": 19,
         "genre": "Acoustic",
+        "image": "/static/images/adreline-soundtrack.jpg",
         "price": 29.99,
         "stock": 4
     },
@@ -96,6 +105,7 @@
         "label": "Mantra Sound Studios",
         "tracks": 9,
         "genre": "Acoustic",
+        "image": "/static/images/waterwell-stream.jpg",
         "price": 24.49,
         "stock": 19
     },
@@ -106,6 +116,7 @@
         "label": "-",
         "tracks": 1,
         "genre": "Classical",
+        "image": "/static/images/mozarts-theme.jpg",
         "price": 12.99,
         "stock": 25
     },
@@ -116,6 +127,7 @@
         "label": "Aires Air Original Track",
         "tracks": 4,
         "genre": "Classical",
+        "image": "/static/images/the-lines.jpg",
         "price": 9.99,
         "stock": 11
     },
@@ -126,6 +138,7 @@
         "label": "Classic FM Tracks",
         "tracks": 4,
         "genre": "Classical",
+        "image": "/static/images/fantasia-winter.jpg",
         "price": 13.49,
         "stock": 6
     },
@@ -136,6 +149,7 @@
         "label": "Classic FM Tracks",
         "tracks": 5,
         "genre": "Classical",
+        "image": "/static/images/under-cave.jpg",
         "price": 26.99,
         "stock": 14
     },
@@ -146,6 +160,7 @@
         "label": "-",
         "tracks": 1,
         "genre": "Classical",
+        "image": "/static/images/a-time-of-night.jpg",
         "price": 13.99,
         "stock": 10
     },
@@ -156,6 +171,7 @@
         "label": "NoteVile Motion",
         "tracks": 3,
         "genre": "Lo-Fi",
+        "image": "/static/images/zen.jpg",
         "price": 25.49,
         "stock": 0
     },
@@ -166,6 +182,7 @@
         "label": "The Motel",
         "tracks": 3,
         "genre": "Lo-Fi",
+        "image": "/static/images/the-key-to-withstand.jpg",
         "price": 34.99,
         "stock": 9
     },
@@ -176,6 +193,7 @@
         "label": "Road Rush Company",
         "tracks": 8,
         "genre": "Lo-Fi",
+        "image": "/static/images/lo-fi-beats-study.jpg",
         "price": 40.49,
         "stock": 7
     },
@@ -186,6 +204,7 @@
         "label": "Scores Soft Sound",
         "tracks": 1,
         "genre": "Lo-Fi",
+        "image": "/static/images/rain-on-4pm.jpg",
         "price": 10.99,
         "stock": 12
     },
@@ -196,6 +215,7 @@
         "label": "MILFORD SOUND LABEL",
         "tracks": 4,
         "genre": "Lo-Fi",
+        "image": "/static/images/soft-breeze.jpg",
         "price": 18.79,
         "stock": 19
     },
@@ -206,6 +226,7 @@
         "label": "A.T. Label",
         "tracks": 7,
         "genre": "Lo-Fi",
+        "image": "/static/images/taipei-night-market.jpg",
         "price": 27.99,
         "stock": 14
     },
@@ -216,6 +237,7 @@
         "label": "-",
         "tracks": 10,
         "genre": "Upbeat",
+        "image": "/static/images/snow-sunset-sky.jpg",
         "price": 30.99,
         "stock": 13
     },
@@ -226,6 +248,7 @@
         "label": "Morning Mellow",
         "tracks": 1,
         "genre": "Upbeat",
+        "image": "/static/images/feelz.jpg",
         "price": 13.99,
         "stock": 5
     },
@@ -236,6 +259,7 @@
         "label": "MEIL Production Studios",
         "tracks": 4,
         "genre": "Upbeat",
+        "image": "/static/images/get-up.jpg",
         "price": 12.99,
         "stock": 20
     },
@@ -246,6 +270,7 @@
         "label": "Lifestyle Community",
         "tracks": 12,
         "genre": "Upbeat",
+        "image": "/static/images/fragments.jpg",
         "price": 30.49,
         "stock": 21
     }
