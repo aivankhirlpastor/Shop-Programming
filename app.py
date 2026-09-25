@@ -572,6 +572,7 @@ def add_to_cart_action(mdl, product, qty):
                 "id": mdl[product]["id"],
                 "label": mdl[product]["label"],
                 "genre": mdl[product]["genre"],
+                "image": mdl[product]["image"],
                 "price": mdl[product]["price"],
                 "quantity": qty,
                 "release_date": mdl[product]["release_date"],
@@ -584,6 +585,7 @@ def add_to_cart_action(mdl, product, qty):
                 product: {
                     "id": mdl[product]["id"],
                     "artist": mdl[product]["artist"],
+                    "image": mdl[product]["image"],
                     "price": mdl[product]["price"],
                     "quantity": qty,
                 }
@@ -601,15 +603,15 @@ def panel_access_from_flash():
     def when_collection(wn, aa):
         # 1 = Item Added to Cart
         if wn == 1:
-            return aa["quantity"], a["price"] * a["quantity"]
+            return aa["quantity"], aa["price"] * aa["quantity"], aa["image"]
 
         # 2 = Item Added to Wishlist    
         elif wn == 2:
-            return 1, a["price"]
+            return 1, aa["price"], aa["image"]
         
         # 3 = Notice on Stock Changes
         elif wn == 3:
-            return 1, 1
+            return 1, 1, None
 
     flash_syntax = get_flashed_messages() # as flash message
     formulate_key_access = {
@@ -649,14 +651,14 @@ def panel_access_from_flash():
             formulate_key_access["when"] = when_int
 
             for album_name, a in by_pair.items():
-                qty, price = when_collection(when_int, a)
+                qty, price, img = when_collection(when_int, a)
                 formulate_key_access["name"] = album_name
                 formulate_key_access["id"] = 1 if when_int == 3 else a["id"]
 
                 formulate_key_access["by"][album_name] = {
                     "id": a["id"],
                     "artist": a["artist"],
-                    "image": None,
+                    "image": img,
                     "name": album_name,
                     "quantity": qty,
                     "price": price
@@ -982,6 +984,7 @@ def toggle_wishlist(catalogue_id, album_name, pole_end):
             "id": albums[album_name]["id"],
             "label": albums[album_name]["label"],
             "genre": albums[album_name]["genre"],
+            "image": albums[album_name]["image"],
             "price": albums[album_name]["price"]
         }
 
@@ -993,6 +996,7 @@ def toggle_wishlist(catalogue_id, album_name, pole_end):
             album_name: {
                 "id": albums[album_name]["id"],
                 "artist": albums[album_name]["artist"],
+                "image": albums[album_name]["image"],
                 "price": albums[album_name]["price"],
             }
         }
@@ -1083,7 +1087,8 @@ def filter_price(genre):
 def invoice_selection(inv_number):
     # sqlite3 \
     try:
-        rr, pr = album_date_modules(load_data_products(), 1)
+        albums = load_data_products()
+        rr, pr = album_date_modules(albums, 1)
         key = panel_access_from_flash()
 
         with sqlite3.connect("order_history.db") as conn:
@@ -1147,7 +1152,7 @@ def invoice_selection(inv_number):
     print(items_on_hold)
 
     # return for template
-    return render_template("invoice.html", data = fetched_data,
+    return render_template("invoice.html", albums = albums, data = fetched_data,
                            key_param = key, rr = rr, pr = pr)
 
 @app.route("/order_history")
