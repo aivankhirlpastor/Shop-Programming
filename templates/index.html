@@ -47,7 +47,7 @@
                         <!-- Row I: Clickable Info -->
                         <a href="{{ url_for('product_information', id = tt['id']) }}">
                             <!-- I: Album Image -->
-                            <img class="img-item">
+                            <img class="img-item" src="{{ tt['image'] }}" alt="{{ album_name }}">
 
                             {% if album_name in segment_modules["pre-order"] %}
                                 <span class="tag-label">Pre-Order</span>

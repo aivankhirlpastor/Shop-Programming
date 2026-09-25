@@ -81,7 +81,7 @@
                             <li class="mini-list-item">
                                 <!-- I: Image and Quantity -->
                                 <div class="img-qty-placer">
-                                    <img class="img-item">
+                                    <img class="img-item" src="{{ b['image'] }}" alt="{{ b['name'] }}">
 
                                     {% if key_param["when"] == 1 %}
                                         <span class="counter">{{ b["quantity"] }}</span>

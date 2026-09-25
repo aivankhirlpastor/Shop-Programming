@@ -72,7 +72,7 @@
                             <!-- Row I: Clickable Info -->
                             <a href="{{ url_for('product_information', id = i['id']) }}">
                                 <!-- I: Album Image -->
-                                <img class="img-item">
+                                <img class="img-item" src="{{ i['image'] }}" alt="{{ album_name }}">
 
                                 {% if album_name in pr %}
                                     <span class="tag-label">Pre-Order</span>

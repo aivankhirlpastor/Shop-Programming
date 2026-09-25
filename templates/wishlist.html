@@ -9,7 +9,9 @@
             <ul class="item-list">
                 {% for album_name, item in wishlists.items() %}
                     <li class="item-details grid">
-                        <div class="product-img-small"></div>
+                        <div class="product-img-small">
+                            <img class="img-item" src="{{ item['image'] }}" alt="{{ album_name }}">
+                        </div>
                         <div class="name-artist-label">
                             <!-- Date Label First -->
                             {% if pre_released[album_name] %}
