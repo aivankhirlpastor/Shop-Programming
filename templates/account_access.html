@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{% if msr == "signup" %}Sign Up{% elif msr == "login" %}Log In{% endif %} - The Music Shop{% endblock %}
+{% block title %}{% if msr == "signup" %}Sign Up{% elif msr == "login" %}Log In{% else %}My Account{% endif %} - The Music Shop{% endblock %}
 
 {% block content %}
     <body>
@@ -20,7 +20,7 @@
 
                                 <!-- I: Image and Quantity -->
                                 <div class="img-qty-placer">
-                                    <img class="img-item">
+                                    <img class="img-item" src="{{ alb['image'] }}">
                                     <span class="counter">{{ alb["quantity"] }}</span>
                                 </div>
 
