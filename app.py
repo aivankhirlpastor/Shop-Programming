@@ -300,7 +300,8 @@ def save_entries(**kwargs):
             return make_change_to_database(get_syntax_structure, get_syntax_value, returned_key_session) # updating database table
 
     except Exception as R:
-        raise Exception(f"Something went wrong: {R}")
+        print(f"Something went wrong: {R}")
+        flash(f"Failed to save data: {R}")
 
 # removing specific key on dictionary: (name of session/column = key)
 def remove_specific_key(**kwargs):
@@ -359,8 +360,8 @@ def remove_specific_key(**kwargs):
             return make_change_to_database(get_syntax_structure, get_syntax_value, returned_key_session)
             
     except Exception as R:
-        flash(f"Something went wrong while deleting: {R}")
-        raise Exception(f"Something went wrong while deleting: {R}")
+        flash(f"Something went wrong while deleting a specific key: {R}")
+        print(f"Something went wrong while deleting a specific key: {R}")
 
         return None # unsuccessful deletion of specific key
 
@@ -906,8 +907,10 @@ def add_to_cart(catalogue_id, product_name, input_selector, pole_end):
             
         except Exception as err:
             print("Something went wrong. We can't transfer you back to the current genre of page:", err)
+
     elif pole_end == "wishlist":
         return redirect(url_for("wishlist"))
+
     elif pole_end == "index":
         return redirect(url_for("index"))
 
@@ -1145,8 +1148,8 @@ def invoice_selection(inv_number):
     except IndexError as index_err:
         abort(404) # not found
 
-    except Exception as err:
-        raise Exception(f"Can't redirect you with the invoice number {inv_number}: {err}")
+    # except Exception as err:
+    #     raise Exception(f"Can't redirect you with the invoice number {inv_number}: {err}")
 
     # for debug tracking
     print(items_on_hold)
@@ -1208,6 +1211,14 @@ def cart():
     cart = get_entry("cart")
     rr, pr = album_date_modules(albums, 1)
 
+    # # error prevention to missing music album and mismatched catalogue id:
+    # for alb, item in cart.items():
+    #     if not albums.get(alb) or not item["id"] == albums[alb]["id"]:
+    #         remove_status = remove_specific_key(cart = alb)
+
+    #         if remove_status:
+    #             print("removal True")
+
     # product labelling via date
 
     # Get price calculation
@@ -1223,6 +1234,14 @@ def wishlist():
     key = panel_access_from_flash()
     cart, wishlists = get_entry(["cart", "wishlists"])
     rr, pr = album_date_modules(albums, 1)
+
+    # # error prevention to missing music album and mismatched catalogue id:
+    # for alb, item in wishlists.items():
+    #     if not albums.get(alb) or not item["id"] == albums[alb]["id"]:
+    #         remove_status = remove_specific_key(wishlists = alb)
+
+    #         if remove_status:
+    #             print("removal True")
 
     return render_template("wishlist.html", cart = cart,
                            wishlists = wishlists, albums = albums,
@@ -1428,7 +1447,6 @@ def place_order():
         return redirect(url_for("invoice_selection", inv_number = int(redirect_id)))
     
     except Exception as err:
-        # in case that wasn't exist
         print(err)
 
     return redirect(url_for("index"))
@@ -1510,7 +1528,7 @@ def login(get_subject):
     
     except Exception as error_for_debug:
         print(error_for_debug) # display error message on terminal output
-        flash("Something went wrong. Please try again later.")
+        flash("Oops! Something went wrong. Please try again later.")
 
         return redirect(url_for("signup_login", measure = 'login', subject = get_subject))
 
