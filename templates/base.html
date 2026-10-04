@@ -51,7 +51,39 @@
     {% endwith %}
     
     <main class="grid-layout">{% block content %}{% endblock %}</main>
-    <footer>@ 2026 The Music Shop.</footer>
+    <footer>
+        <section class="cc-title-info">
+            <h2>The Music Shop</h2>
+            <span class="label">©2026 The Music Shop</span>
+        </section>
+        <section class="footer-links">
+            <h3>Organisation</h3>
+            <ul class="organisation">
+                <li><a>Service</a></li>
+                <li><a>Blogs</a></li>
+                <li><a>Attribution</a></li>
+                <li><a>Contact Us</a></li>
+            </ul>
+        </section>
+        <section class="footer-links">
+            <h3>Account</h3>
+            <ul class="account">
+                <li><a href="{{ url_for('signup_login', measure = 'login') }}">My Account</a></li>
+                <li><a href="{{ url_for('cart') }}">Shopping Cart</a></li>
+            </ul>
+        </section>
+        <section class="footer-links">
+            <h3>Shop</h3>
+            <ul class="shop">
+                <li><a href="{{ url_for('category_all') }}">All</a></li>
+                <li><a href="{{ url_for('category', genre = 'ambience') }}">Ambient</a></li>
+                <li><a href="{{ url_for('category', genre = 'acoustic') }}">Acoustic</a></li>
+                <li><a href="{{ url_for('category', genre = 'classical') }}">Classical</a></li>
+                <li><a href="{{ url_for('category', genre = 'lo-fi') }}">Lo-Fi</a></li>
+                <li><a href="{{ url_for('category', genre = 'upbeat') }}">Upbeat</a></li>
+            </ul>
+        </section>
+    </footer>
 
     {% if key_param and key_param["show"] == True %}
         <!-- Side Panel -->
