@@ -251,6 +251,9 @@ span.quantity-count {
     opacity: 75%;
 }
 
+.zero-margin {
+    margin: 0;
+}
 
 .emphasise  {
     font-size: 20px;
@@ -566,6 +569,7 @@ img.svg-icon {
 
 .tag-label {
     background-color: var(--color-4);
+    box-shadow: 4px 4px 10px #00000055;
     color: #FFFFFF;
     font-size: 115%;
     font-weight: 700;
@@ -658,7 +662,7 @@ ul.mini-list-container .img-qty-placer .counter {
 
 /* BODY */
 body {
-    margin: var(--body-margin);
+    margin: 0 var(--body-margin);
 }
 
 /* MAIN */
@@ -686,8 +690,9 @@ header {
     display: flex;
     filter: none;
     gap: 18px;
-    opacity: 100%;
     justify-content: center;
+    opacity: 100%;
+    margin-top: 1rem;
     position: fixed;
     width: calc(100% - (var(--body-margin) * 2));
     z-index: 999;
@@ -1153,6 +1158,10 @@ section.item-display .item-card .album-txt-info {
     margin-block: 8px;
 }
 
+section.item-display .item-card .album-txt-info .album-title {
+    height: 74px;
+}
+
 /* remove the default style for anchor links in card*/
 section.item-display .item-card > a {
     color: #000000;
@@ -1427,4 +1436,48 @@ section.account-component .buttons {
 /* FOOTER */
 footer {
     background-color: var(--color-1);
+    border-radius: 12px 12px 0 0;
+    display: flex;
+    justify-content: space-between;
+    height: auto;
+    padding: 30px 100px;
+}
+
+/* footer links */
+footer section.footer-links {
+    border-left: 2px solid #00000088;
+    padding-left: 30px;
+    width: 150px;
+}
+
+footer :is(h2, h3) {
+    letter-spacing: 1.5px;
+}
+
+footer section.footer-links ul {
+    list-style: none;
+    padding: 0;
+}
+
+footer section.footer-links ul li {
+    margin-block: 6px;
+}
+
+/* anchor link */
+footer section.footer-links ul li > a {
+    color: #000000;
+    cursor: pointer;
+    opacity: 80%;
+    text-decoration: none;
+}
+
+footer section.footer-links ul li > a:hover {
+    color: #772804;
+    opacity: 100%;
+    text-decoration: underline;
+}
+
+footer section.footer-links ul li > a:active {
+    text-shadow: 0 2px 6px #00000044;
+    color: #390202;
 }
