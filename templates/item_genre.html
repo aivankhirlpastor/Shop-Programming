@@ -80,8 +80,10 @@
                 
                                 <!-- II: Text Information -->
                                 <div class="album-txt-info">
-                                    <div class="album-title emphasise">{{ album_name }}</div>
-                                    <span class="artist">{{ i['artist'] }}</span>
+                                    <div class="album-title">
+                                        <p class="emphasise zero-margin">{{ album_name }}</p>
+                                        <span class="artist">{{ i['artist'] }}</span>
+                                    </div>
                                     <p class="price-track emphasise"><sup>$</sup>{{ "%.2f" % i['price'] }}<span class="label">/EA</span></p>
                                 </div>
                             </a>
