@@ -1029,6 +1029,20 @@ ul.item-list li.item-details:has(.quantity input.modified) > .price-action p.rec
     color: #0d22c5;
 }
 
+/* empty cart/wishlist message */
+.empty-stack {
+    border: 2px solid #00000055;
+    border-left: none;
+    border-right: none;
+    grid-area: 1 / 1 / span 1 / 9;
+    justify-items: center;
+    padding-block: 20px;
+}
+
+.empty-stack > a {
+    display: block;
+}
+
 /* PANEL DETAILS */
 .panel-details {
     background-color: var(--color-2);
