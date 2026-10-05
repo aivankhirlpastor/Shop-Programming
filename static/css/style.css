@@ -1241,6 +1241,12 @@ section.checkout .info-reiteration > div.details-container {
     border: 2px solid #00000044;
 }
 
+/* item lists */
+section.checkout ul.mini-list-container {
+    height: 350px;
+    overflow-y: auto;
+}
+
 /* block form */
 .form-block {
     display: flex;
