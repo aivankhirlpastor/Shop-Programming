@@ -1308,10 +1308,10 @@ def continue_to_review():
     cart, billing_info = get_entry(["cart", "billing_info"])
     total, subtotal, gst, ship_fee, discount, total_with_discount = calculate_total(cart)
 
-    if not cart or not billing_info:
-        if not billing_info:
+    if (not cart or not billing_info) or (None in billing_info.values()):
+        if not billing_info or None in billing_info.values():
             flash("You are missing with important thing. Enter your billing details so we are able to track your order.")
-    
+
         return redirect(url_for("checkout"))
 
     return render_template("checkout_review.html",
@@ -1467,12 +1467,27 @@ def signup_login(measure, subject):
 @app.route("/signup", defaults = {"get_subject": None}, methods = ["POST"])
 @app.route("/signup/<get_subject>", methods = ["POST"])
 def signup(get_subject):
+    def save_billing_info(bld):
+        try:
+            save_entries(billing_info = bld)
+        except Exception as billing_err:
+            print("Failed to save billing details to newly created account:", billing_err)
+
     # leading whitespaces removed; capitalised words
     fname = request.form["new-fname"].strip().title()
     lname = request.form["new-lname"].strip().title()
     email = request.form["new-email"]
     password = request.form["new-password"]
     confirm_password = request.form["new-confirm-password"]
+
+    billing_info = {
+        "first_name": fname,
+        "surname": lname,
+        "email": email,
+        "physical_address": None,
+        "town": None,
+        "postal_code": None
+    }
 
     # full name
     name = f"{fname} {lname}"
@@ -1496,6 +1511,7 @@ def signup(get_subject):
                 conn.commit()
 
             signin_session(email, password)
+            save_billing_info(billing_info)
             flash(f"Welcome, {name}!")
 
         else:
