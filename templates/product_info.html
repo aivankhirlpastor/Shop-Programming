@@ -69,21 +69,34 @@
                         <p class="emphasise price"><sup>$</sup>{{ '%.2f' % product["price"] }}</p>
                     </div>
                     <div class="classif-cont quantity">
+                        {% set label_stock_emphasis = "" %}
                         <!-- Pre-Order Label -->
                         {% if album_cycle == "pre-released" %}
-                            <label for="quantity">QUANTITY • <span class="stock-status lowercase">Pre-release order available</span></label>
+                            {% set label_text = "Pre-release order available" %}
 
                         <!-- Different Labels from Stock Status (High, Low, None) -->
                         {% elif product['stock'] > 5 %}
-                            <label for="quantity">QUANTITY • <span class="stock-status lowercase">In Stock</span></label>
+                            {% set label_text = "In stock" %}    
+
                         {% elif 6 > product['stock'] and product['stock'] > 0 %}
-                            <label for="quantity">QUANTITY <b class="low">({{ product['stock'] }})</b> • <span class="stock-status lowercase">Low Stock</span></label>
+                            {% set label_stock_emphasis = "low" %}
+                            {% set label_text = "Low Stock" %}
+
                         {% else %}
-                            <label for="quantity">QUANTITY • <span class="stock-status out-of-stock lowercase">Out of Stock</span></label>
+                            {% set label_stock_emphasis = "out-of-stock" %}
+                            {% set label_text = "Out of Stock" %}
+
                         {% endif %}
+                        <label for="quantity">QUANTITY • {% if label_stock_emphasis == "low" %}<b class="low">({{ product["stock"] }})</b>{% endif %} <span class="stock-status lowercase {{ label_stock_emphasis }}">{{ label_text }}</span></label>
 
                         <!-- Input Quantity: 5 > P = by its remaining stock (max); else 5 (max) -->
-                        <input type="number" id="quantity" name="quantity" min="1" max="{% if 5 > product['stock'] and product['stock'] > 0 %}{{ product['stock'] }}{% else %}5{% endif %}" value="{% if already_in_cart %}{{ item_in_hold['quantity'] }}{% else %}1{% endif %}" {% if not in_stock %}disabled{% endif %}>
+                        {% if 5 > product["stock"] and product["stock"] > 0 %}
+                            {% set max_value = product["stock"] %}
+                        {% else %}
+                            {% set max_value = 5 %}
+                        {% endif %}
+
+                        <input type="number" id="quantity" name="quantity" min="1" max="{{ max_value }}" value="{% if already_in_cart %}{{ item_in_hold['quantity'] }}{% else %}1{% endif %}" {% if not in_stock %}disabled{% endif %}>
                     </div>
 
                     <!-- Button Action -->
