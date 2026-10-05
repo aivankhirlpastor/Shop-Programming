@@ -136,13 +136,15 @@
 
                 <!-- within invoice page -->
                 {% elif key_param["when"] == 3 %}
-                    {% set reserves = data["items_on_hold"]  %}
+                    {% if data %}
+                        {% set reserves = data["items_on_hold"] %}
+                    {% endif %}
 
                     <!-- text elements -->
                     <p>Our system detected changes to product stock while you were at checkout, which could affect your order's delivery and our operational service.</p>
                     <p>The following items are listed below:</p>
                     <ul class="reserved-items">
-                        {% for n, items in reserves.items() %}
+                        {% for n, items in (reserves | default({})).items() %}
                             <!-- list only items that were released; omitting pre-released items -->
                             {% if not items["cause_of_demand"] == "pre_order" %}
                                 <li class="item-demand" id="{{ items['id'] }}">
