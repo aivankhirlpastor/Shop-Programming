@@ -63,7 +63,7 @@
         "genre": "Ambience",
         "image": "/static/images/dandellion.jpg",
         "price": 24.99,
-        "stock": 14
+        "stock": 13
     },
     "West Country's Mankind": {
         "artist": "Richard Tyson",
@@ -96,7 +96,7 @@
         "genre": "Acoustic",
         "image": "/static/images/adreline-soundtrack.jpg",
         "price": 29.99,
-        "stock": 4
+        "stock": 0
     },
     "Waterwell Stream": {
         "artist": "Dynamic Tussell",
@@ -107,7 +107,7 @@
         "genre": "Acoustic",
         "image": "/static/images/waterwell-stream.jpg",
         "price": 24.49,
-        "stock": 19
+        "stock": 18
     },
     "Mozart's Theme": {
         "artist": "Faustine Lizon",
