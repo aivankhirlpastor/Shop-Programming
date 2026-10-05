@@ -1373,18 +1373,24 @@ def place_order():
     with sqlite3.connect("order_history.db") as conn:
         try:
             # either partial fulfillment or backorder process
+            stock_related_cause = {}
             on_hold_items = update_stock(cart)
+
+            for n in on_hold_items.keys():
+                if not on_hold_items[n]["cause_of_demand"] == "pre_order":
+                    stock_related_cause[n] = on_hold_items[n]
+
+            if stock_related_cause:
+                flash("%.show_panel_3;")
+                flash(on_hold_items) # critical for side panel key access
 
             cursor = conn.cursor()
             cursor.execute("""
                 INSERT INTO orders (date, customer, items, subtotal, gst, ship_fee, discount, total_charges, items_on_hold)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (invoice_date, json.dumps(customer), json.dumps(cart), subtotal, gst, ship_fee, discount, main_total, json.dumps(on_hold_items)))
-
-            flash("%.show_panel_3;")
-            flash(on_hold_items) # critical for side panel key access
-
             conn.commit()
+
         except Exception as place_order_error:
             conn.rollback() # reverts the changes
 
