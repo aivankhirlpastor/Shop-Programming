@@ -70,6 +70,7 @@
             <ul class="account">
                 <li><a href="{{ url_for('signup_login', measure = 'login') }}">My Account</a></li>
                 <li><a href="{{ url_for('cart') }}">Shopping Cart</a></li>
+                <li><a href="{{ url_for('wishlist') }}">Wishlist</a></li>
             </ul>
         </section>
         <section class="footer-links">
@@ -196,23 +197,8 @@
                     closure();
                 }
 
-                const flashChildren = document.querySelector(".toast-flash").children; // select all flash messages
                 const panel = document.getElementById("panel-frame");
                 const blackOverlay = document.querySelector(".black-overlay")
-
-                // removing Flash Message with raw prompts
-                for (let m = flashChildren.length - 1; m >= 0; m--) {
-                    // matching prompt pattern
-                    if (flashChildren[m].textContent.match(/%.show_panel/i)) {
-                        // remove the adjacent flash message first
-                        if (flashChildren[m + 1]) {
-                            flashChildren[m + 1].remove();
-                        }
-
-                        // then remove the message where it is tested via match pattern
-                        flashChildren[m].remove();
-                    }
-                }
 
                 // prevents automatic appear
                 setTimeout(() => {
@@ -228,6 +214,7 @@
     <!-- script if -->
     {% if get_flashed_messages() %}
         <script>
+            const flashChildren = document.querySelector(".toast-flash").children; // select all flash messages
             const closeFlash = document.getElementById("close-flash");
 
             // at click of close flash
@@ -240,6 +227,21 @@
                     document.querySelector(".toast-flash").remove();
                 }, 300);
             });
+
+            // removing Flash Message containing raw prompts in text
+            for (let m = flashChildren.length - 1; m >= 0; m--) {
+                // matching prompt pattern
+                if (flashChildren[m].textContent.match(/%.show_panel/i)) {
+                    // remove the adjacent flash message first
+                    if (flashChildren[m + 1]) {
+                        flashChildren[m + 1].remove();
+                    }
+
+                    // then remove the message where it is tested via match pattern
+                    flashChildren[m].remove();
+                }
+            }
+
         </script>
     {% endif %}
 </body>
