@@ -68,13 +68,13 @@
                 {% if imported_data %}
                     <!-- If imported_data have it -->
                     {% for album_name, i in imported_data.items() %}
-                        <div class="item-card" id="card-{{ i['id'] }}">
+                        <div class="item-card" id="card-model-{{ i['id'] }}">
                             <!-- Row I: Clickable Info -->
                             <a href="{{ url_for('product_information', id = i['id']) }}">
                                 <!-- I: Album Image -->
                                 <img class="img-item" src="{{ i['image'] }}" alt="{{ album_name }}">
 
-                                {% if album_name in pr %}
+                                {% if pr is mapping and album_name in pr %}
                                     <span class="tag-label">Pre-Order</span>
                                 {% endif %}
                 
