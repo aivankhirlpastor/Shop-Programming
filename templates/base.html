@@ -99,19 +99,18 @@
         {% endif %}
 
         {% with by_item = key_param["by"] %}
-            <div id="panel-frame">
+            <div id="panel-frame" data-when="{{ key_param['when'] }}">
                 <h3>{{ heading_3 }}</h3>
                 <hr>
 
-                <!-- SELECTION BY "when" KEYS -->
-
+                {# <!-- SELECTION BY "when" KEYS --> #}
                 {% if key_param["when"] == 1 or key_param["when"] == 2 %}
                     <!-- mini list style -->
                     <ul class="mini-list-container">
                         {% for _, b in by_item.items() %}
 
-                            <!-- list per item -->
-                            <li class="mini-list-item">
+                            {# list per item #}
+                            <li class="mini-list-item" data-base-ctlg="{{ b['id'] }}">
                                 <!-- I: Image and Quantity -->
                                 <div class="img-qty-placer">
                                     <img class="img-item" src="{{ b['image'] }}" alt="{{ b['name'] }}">
@@ -199,8 +198,23 @@
                     closure();
                 }
 
+                function fragment_item_redirect() {
+                    // look for the element with mini-list-item
+
+                    if (document.getElementById("panel-frame").getAttribute("data-when") === "1") {
+                        const listItem = document.querySelectorAll(".mini-list-item");
+                        const assignedCTLG = listItem[0].getAttribute("data-base-ctlg");
+                        const cardModel = document.getElementById(`card-model-${assignedCTLG}`);
+
+                        if (cardModel) {
+                            window.scrollBy(0, cardModel.getBoundingClientRect().top - 70);    
+                        }
+                    }
+                }
+
                 const panel = document.getElementById("panel-frame");
-                const blackOverlay = document.querySelector(".black-overlay")
+                const blackOverlay = document.querySelector(".black-overlay");
+                fragment_item_redirect();
 
                 // prevents automatic appear
                 setTimeout(() => {
