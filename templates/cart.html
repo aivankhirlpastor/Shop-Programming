@@ -7,30 +7,66 @@
         <h2>My Cart</h2>
         <section class="grid grid-display my-cart">
             
+            {% set are_some_unavailable = namespace(found = False) %}
+
             {% if cart.items() %}
                 <!-- I: ITEM LISTS -->
                 <ul class="item-list">
                     {% for album_name, item in cart.items() %}
-                        <li class="item-details grid">
+                    
+                        {# verifying for availability #}
+                        {% if not item.get("is_unavailable") == True %}
+                            {% set unit_price = albums[album_name]["price"] %}
+                            {% set stock = albums[album_name]["stock"] %}
+
+                            {% if not stock > 0 %}
+                                {% set item_emphasis = "out-of-stock" %}
+                                {% set are_some_unavailable.found = True %}
+                                {% set defunct = True %}
+                            {% endif %}
+
+                        {% else %}
+                            {% set item_emphasis = "unavailable" %}
+                            {% set are_some_unavailable.found = True %}
+                            {% set defunct = True %}
+
+                        {% endif %}
+
+                        {# item running out of stock #}
+
+                        <li class="item-details grid {{ item_emphasis | default() }}">
                             <div class="product-img-small">
                                 <img class="img-item" src="{{ item['image'] }}" alt="{{ album_name }}">
                             </div>
                             <div class="name-artist-label">
-                                <!-- Date Label First -->
                                 {% if pre_released[album_name] %}
+                                    <!-- Date Label First -->
                                     <span class="stock-status lowercase label f14">Release date: <b>{{ pre_released[album_name]["release_date"] }}</b></span>
+
                                 <!-- Different Labels from Stock Status (High, Low, None) -->
-                                {% elif albums[album_name]['stock'] > 5 %}
-                                    <span class="stock-status lowercase label f14">In Stock</span>
-                                {% elif 6 > albums[album_name]['stock'] and albums[album_name]['stock'] > 0 %}
-                                    <span class="stock-status low lowercase label f14"><b>({{ albums[album_name]['stock'] }})</b> Low Stock</span>
+                                {% elif not defunct or item_emphasis == "out-of-stock" %}
+
+                                    {% if albums[album_name]['stock'] > 5 %}
+                                        <span class="stock-status lowercase label f14">In Stock</span>
+                                    {% elif 6 > albums[album_name]['stock'] and albums[album_name]['stock'] > 0 %}
+                                        <span class="stock-status low lowercase label f14"><b>({{ albums[album_name]['stock'] }})</b> Low Stock</span>
+                                    {% else %}
+                                        <span class="stock-status out-of-stock lowercase label f14">Out of Stock</span>
+                                    {% endif %}
+
                                 {% else %}
-                                    <span class="stock-status out-of-stock lowercase label f14">Out of Stock</span>
+                                    <span class="stock-status out-of-stock lowercase label f14">—</span>
                                 {% endif %}
 
                                 <div class="block-name-artist">
                                     <!-- Album Name and Artist -->
-                                    <h3><a href="{{ url_for('product_information', id = item['id']) }}">{{ album_name }}</a></h3>
+                                    <h3>
+                                        {% if not defunct or item_emphasis == "out-of-stock" %}
+                                            <a href="{{ url_for('product_information', id = item['id']) }}">{{ album_name }}</a>
+                                        {% else %}
+                                            {{ album_name }}
+                                        {% endif %}
+                                    </h3>
                                     <p class="artist">{{ item['artist'] }}</p>
                                 </div>
 
@@ -39,13 +75,19 @@
 
                             <div class="quantity">
                                 <!-- Editable Quantity Input -->
+                                {% if stock %}
+                                    {% set quantity_max = stock if 5 > stock and 5 > 0 else 5 %}
+                                {% endif %}
+
                                 <label for="e-{{ item['id'] }}">QUANTITY</label>
-                                <input type="number" name="e-{{ item['id'] }}" id="e-{{ item['id'] }}" data-ctgnumber="{{ item['id'] }}" min="1" max="{% if 5 > albums[album_name]['stock'] and albums[album_name]['stock'] > 0 %}{{ albums[album_name]['stock'] }}{% else %}5{% endif %}" value="{{ item['quantity'] }}">
+                                <input type="number" name="e-{{ item['id'] }}" id="e-{{ item['id'] }}" data-ctgnumber="{{ item['id'] }}" min="1" max="{{ quantity_max | default(5) }}" value="{{ item['quantity'] }}" {% if item_emphasis %}disabled{% endif %}>
                             </div>
 
                             <div class="price-action">
                                 <!-- Price -->
-                                <p class="price recalculation emphasise" data-unitprice="{{ albums[album_name]['price'] }}" id="atr-price-{{ item['id'] }}"><sup>$</sup>{{ '%.2f' % (item['quantity'] * item['price']) }}</p>
+                                <p class="price recalculation emphasise" data-unitprice="{{ unit_price | default(item['price']) }}" id="atr-price-{{ item['id'] }}">
+                                    <sup>$</sup>{{ '%.2f' % (item['quantity'] * item['price']) }}
+                                </p>
                                 <form class="delete-item" action="{{ url_for('remove_item', ctg_number = item['id'], album_name = album_name) }}" method="post">
                                     <button type="submit" class="rounded squared destructive">D</button>
                                 </form>
@@ -53,15 +95,15 @@
                         </li>
                     {% endfor %}
                 </ul>
-                <!-- II: ORDER DETAILS -->
-    
+                
                 <!-- TIP ROUTES (CHECKOUT/PRE-CHECKOUT or Sign Up Request) -->
                 {% if session["session_key"] and session["session_key"]["accessed"] %}
                     {% set tip_route = url_for('checkout') %}
                 {% else %}
                     {% set tip_route = url_for('signup_login', measure = 'login', subject = 'for_awaiting_checkout') %}
                 {% endif %}
-    
+                
+                <!-- II: ORDER DETAILS -->
                 <div class="panel-details">
                     <span class="legend-top">Order Details</span>
     
@@ -111,10 +153,31 @@
                         {% endif %}
                     </div>
                     <hr>
-                    <form class="route-to-checkout" action="{{ tip_route }}">
-                        <span>Include GST. Shipping will be calculated at checkout. Delivery fee included.</span>
-                        <button type="submit">Go To Checkout</button>
-                    </form>
+
+                    {% if are_some_unavailable.found %}
+                        <!-- Message about some item being unavailable -->
+                        
+                        <form class="unavailable-reminder">
+                            <p>Some item has been found to be unavailable, in which is listed below:</p>
+    
+                            <ul class="unavailable-list">
+                                {% for listed, un in cart.items() %}
+                                    {% if un.get("is_unavailable") == True or not albums[listed]["stock"] > 0 %}
+                                        <li>{{ listed }}</li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                            <p>To complete your purchase, remove an item on your cart that cannot be shipped.</p>
+                        </form>
+
+                    {% else %}
+                        <!-- Form Route to Checkout Page -->
+                        <form class="route-to-checkout" action="{{ tip_route }}">
+                            <span>Include GST. Shipping will be calculated at checkout. Delivery fee included.</span>
+                            <button type="submit">Go To Checkout</button>
+                        </form>
+                    {% endif %}
+
                 </div>
             {% else %}
                 <!-- EMPTY CART MESSAGE -->
