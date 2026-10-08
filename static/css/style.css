@@ -44,6 +44,9 @@
 
     /* Side Panel Frames */
     --side-frame-transition-dur: 400ms;
+
+    /* Unavailability */
+    --unavailability-general-opacity: 60%;
 }
 
 * {
@@ -139,7 +142,7 @@ input:not([type=radio]):focus {
     /* text label */
     --label-font-size: 16px;
     --label-lsp: 1.25px;
-    --label-opacity: 65%;
+    --label-opacity: 75%;
     
     display: block;
     font-size: var(--label-font-size);
@@ -971,8 +974,6 @@ ul.item-list li.item-details > .product-img-small img {
     background-color: #ffffff;
     width: var(--list-img-ctn-extent);
     outline: 1px solid #00000077;
-
-    
 }
 
 ul.item-list li.item-details > .name-artist-label {
@@ -1017,16 +1018,68 @@ ul.item-list li.item-details > .price-action p.emphasise {
 }
 
 ul.item-list li.item-details > .price-action form.delete-item button {
+    --delete-btn-extent: 28px;
+
     aspect-ratio: 1 / 1;
     padding: 0;
-    height: 28px;
-    width: 28px;
+    position: relative;
+    height: var(--delete-btn-extent);
+    width: var(--delete-btn-extent);
 }
 
 /* modified appearance */
 ul.item-list li.item-details:has(.quantity input.modified) > .price-action p.recalculation {
     text-shadow: 0 2px 4px #00000040;
     color: #0d22c5;
+}
+
+/* unavailable */
+ul.item-list li.item-details:is(.out-of-stock, .unavailable) {
+    background-color: #22222222;
+}
+
+/* excluding the form action */
+ul.item-list li.item-details:is(.out-of-stock, .unavailable) > *:not(.price-action) {
+    opacity: var(--unavailability-general-opacity);
+}
+
+ul.item-list li.item-details:is(.out-of-stock, .unavailable) .price-action > *:not(form) {
+    opacity: var(--unavailability-general-opacity);
+}
+
+ul.item-list li.item-details:is(.out-of-stock, .unavailable) form.delete-item button::before,
+ul.item-list li.item-details:is(.out-of-stock, .unavailable) form.delete-item button::after {
+    --pulse-delay: 1s;
+    --pulse-outline-colour: var(--color-3);
+
+    content: "";
+    animation: delete-action 6s var(--pulse-delay) ease-out infinite;
+    border-radius: 50%;
+    outline: 3px solid var(--pulse-outline-colour);
+    position: absolute;
+    transform: scale(0);
+    width: var(--delete-btn-extent);
+    height: var(--delete-btn-extent);
+
+    left: 0;
+    top: 0;
+    z-index: -1;    
+}
+
+ul.item-list li.item-details:is(.out-of-stock, .unavailable) form.delete-item button::after {
+    --pulse-delay: 4s;
+}
+
+@keyframes delete-action {
+    from {
+        transform: scale(0.75);
+        opacity: 100%;
+    }
+
+    to {
+        transform: scale(2);
+        opacity: 0%;
+    }
 }
 
 /* empty cart/wishlist message */
@@ -1048,7 +1101,7 @@ ul.item-list li.item-details:has(.quantity input.modified) > .price-action p.rec
     background-color: var(--color-2);
     padding: 16px;
     grid-area: 1 / 6 / span 1 / 9;
-    max-height: 350px;
+    max-height: 500px;
     height: fit-content;
 
     position: sticky;
@@ -1243,7 +1296,8 @@ section.checkout .info-reiteration > div.details-container {
 
 /* item lists */
 section.checkout ul.mini-list-container {
-    height: 350px;
+    height: fit-content;
+    max-height: 350px;
     overflow-y: auto;
 }
 
