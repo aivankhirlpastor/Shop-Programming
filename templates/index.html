@@ -43,52 +43,58 @@
             <section class="grid grid-display item-display">
                 <!-- expansion -->
                 {% for album_name, tt in t.items() %}
-                    <div class="item-card" id="card-model">
-                        <!-- Row I: Clickable Info -->
-                        <a href="{{ url_for('product_information', id = tt['id']) }}">
-                            <!-- I: Album Image -->
-                            <img class="img-item" src="{{ tt['image'] }}" alt="{{ album_name }}">
 
-                            {% if album_name in segment_modules["pre-order"] %}
-                                <span class="tag-label">Pre-Order</span>
-                            {% endif %}
-            
-                            <!-- II: Text Information -->
-                            <div class="album-txt-info">
-                                <div class="album-title">
-                                    <p class="emphasise zero-margin">{{ album_name }}</p>
-                                    <span class="artist">{{ tt["artist"] }}</span>
+                    {% if album_name == "error" and tt %}
+                        <p class="module-error-msg">Something went wrong. Please try again later.</p>
+                    {% else %}
+                        <div class="item-card" id="card-model-{{ tt['id'] }}">
+                            <!-- Row I: Clickable Info -->
+                            <a href="{{ url_for('product_information', id = tt['id']) }}">
+                                <!-- I: Album Image -->
+                                <img class="img-item" src="{{ tt['image'] }}" alt="{{ album_name }}">
+
+                                {% if album_name in segment_modules["pre-order"] %}
+                                    <span class="tag-label">Pre-Order</span>
+                                {% endif %}
+                
+                                <!-- II: Text Information -->
+                                <div class="album-txt-info">
+                                    <div class="album-title">
+                                        <p class="emphasise zero-margin">{{ album_name }}</p>
+                                        <span class="artist">{{ tt["artist"] }}</span>
+                                    </div>
+                                    <p class="price-track emphasise"><sup>$</sup>{{ "%.2f" % tt["price"] }}<span class="label">/EA</span></p>
                                 </div>
-                                <p class="price-track emphasise"><sup>$</sup>{{ "%.2f" % tt["price"] }}<span class="label">/EA</span></p>
-                            </div>
-                        </a>
-                        <!-- Row II: Form -->
-                        {% with stock = tt["stock"] %}
-                            <form action="{{ url_for('add_to_cart', catalogue_id = tt['id'], product_name = album_name, input_selector = 'i-quantity-' + tt['id'], pole_end = 'index') }}" method="post" class="add-to-cart-action">
-                                {% set input_value = cart[album_name]['quantity'] if album_name in cart else 1 %}
+                            </a>
+                            <!-- Row II: Form -->
+                            {% with stock = tt["stock"] %}
+                                <form action="{{ url_for('add_to_cart', catalogue_id = tt['id'], product_name = album_name, input_selector = 'i-quantity-' + tt['id'], pole_end = 'index') }}" method="post" class="add-to-cart-action">
+                                    {% set input_value = cart[album_name]['quantity'] if album_name in cart else 1 %}
 
-                                {% if stock > 0 %}
-                                    {% if 6 > stock and stock > 0 %}
-                                        {% set stock_emp = "low" %}
+                                    {% if stock > 0 %}
+                                        {% if 6 > stock and stock > 0 %}
+                                            {% set stock_emp = "low" %}
+                                        {% else %}
+                                            {% set stock_emp = "in-stock" %}
+                                        {% endif %}
+
+                                        {% set tle = "Add to Cart" if album_name in cart else "" %}
+                                        {% set max_range = stock if 5 > stock else 5 %}
+                                        {% set disable_button = True if album_name in cart else False %}
+                                        
                                     {% else %}
-                                        {% set stock_emp = "in-stock" %}
+                                        {% set tle = "Out of Stock" %}
+                                        {% set disable_input = True %}
+                                        {% set out_text = "OOS" %}
                                     {% endif %}
 
-                                    {% set tle = "Add to Cart" if album_name in cart else "" %}
-                                    {% set max_range = stock if 5 > stock else 5 %}
-                                    {% set disable_button = True if album_name in cart else False %}
-                                    
-                                {% else %}
-                                    {% set tle = "Out of Stock" %}
-                                    {% set disable_input = True %}
-                                    {% set out_text = "OOS" %}
-                                {% endif %}
+                                    <input type="number" class="emit-stock-status {{ stock_emp | default('none') }}" name="i-quantity-{{ tt['id'] }}" id="i-quantity-{{ tt['id'] }}" title="Stock Left: {{ stock }}" min="1" max="{{ max_range | default(5) }}" value="{{ input_value }}" {% if disable_input %}disabled{% endif %}>
+                                    <button type="submit" title="{{ tle }}" {% if disable_button or disable_input %}disabled{% endif %}>{{ out_text | default("Add") }}</button>
+                                </form>
+                            {% endwith %}
+                        </div>
+                    {% endif %}
 
-                                <input type="number" class="emit-stock-status {{ stock_emp | default('none') }}" name="i-quantity-{{ tt['id'] }}" id="i-quantity-{{ tt['id'] }}" title="Stock Left: {{ stock }}" min="1" max="{{ max_range | default(5) }}" value="{{ input_value }}" {% if disable_input %}disabled{% endif %}>
-                                <button type="submit" title="{{ tle }}" {% if disable_button or disable_input %}disabled{% endif %}>{{ out_text | default("Add") }}</button>
-                            </form>
-                        {% endwith %}
-                    </div>
                 {% endfor %}
 
             </section>
