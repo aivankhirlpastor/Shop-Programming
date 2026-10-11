@@ -90,11 +90,11 @@ button.neutral {
     --btn-theme-bg: hsl(var(--btn-neutral), calc(var(--btn-lightness) * 1.2));
 }
 
-button:hover {
+button:hover:not(:disabled) {
     --btn-lightness: 32%;
 }
 
-button:active {
+button:active:not(:disabled) {
     --btn-lightness: 40%;
 }
 
@@ -1082,7 +1082,7 @@ ul.item-list li.item-details:is(.out-of-stock, .unavailable) form.delete-item bu
     }
 }
 
-/* empty cart/wishlist message */
+/* empty list message */
 .empty-stack {
     border: 2px solid #00000055;
     border-left: none;
@@ -1270,6 +1270,12 @@ section.item-display form.add-to-cart-action {
     gap: 8px;
     grid-template-columns: 1.2fr 0.8fr;
     width: 100%;
+}
+
+/* error message */
+section.item-display p.module-error-msg {
+    grid-area: 1 / 1 / span 1 / span 4;
+    text-align: center;
 }
 
 /* ======== CHECKOUT ======== */
