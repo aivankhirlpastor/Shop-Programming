@@ -16,7 +16,6 @@
                     
                         {# verifying for availability #}
                         {% if not item.get("is_unavailable") == True %}
-                            {% set unit_price = albums[album_name]["price"] %}
                             {% set stock = albums[album_name]["stock"] %}
 
                             {% if not stock > 0 %}
@@ -55,7 +54,7 @@
                                     {% endif %}
 
                                 {% else %}
-                                    <span class="stock-status out-of-stock lowercase label f14">—</span>
+                                    <span class="stock-status lowercase label f14">—</span>
                                 {% endif %}
 
                                 <div class="block-name-artist">
@@ -85,10 +84,10 @@
 
                             <div class="price-action">
                                 <!-- Price -->
-                                <p class="price recalculation emphasise" data-unitprice="{{ unit_price | default(item['price']) }}" id="atr-price-{{ item['id'] }}">
+                                <p class="price recalculation emphasise" data-unitprice="{{ item['price'] }}" id="atr-price-{{ item['id'] }}">
                                     <sup>$</sup>{{ '%.2f' % (item['quantity'] * item['price']) }}
                                 </p>
-                                <form class="delete-item" action="{{ url_for('remove_item', ctg_number = item['id'], album_name = album_name) }}" method="post">
+                                <form class="delete-item" action="{{ url_for('remove_item', album_name = album_name) }}" method="post">
                                     <button type="submit" class="rounded squared destructive">D</button>
                                 </form>
                             </div>
