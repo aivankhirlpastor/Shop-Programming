@@ -8,7 +8,7 @@
         "genre": "Ambience",
         "image": "/static/images/the-ushers-place.jpg",
         "price": 45.99,
-        "stock": 15
+        "stock": 14
     },
     "Little Life": {
         "artist": "Michell Park",
@@ -107,7 +107,7 @@
         "genre": "Acoustic",
         "image": "/static/images/waterwell-stream.jpg",
         "price": 24.49,
-        "stock": 18
+        "stock": 17
     },
     "Mozart's Theme": {
         "artist": "Faustine Lizon",
@@ -118,7 +118,7 @@
         "genre": "Classical",
         "image": "/static/images/mozarts-theme.jpg",
         "price": 12.99,
-        "stock": 25
+        "stock": 21
     },
     "The Lines": {
         "artist": "Elizabeth R.",
@@ -217,7 +217,7 @@
         "genre": "Lo-Fi",
         "image": "/static/images/soft-breeze.jpg",
         "price": 18.79,
-        "stock": 19
+        "stock": 18
     },
     "vase": {
         "artist": "Ivy Gutzene",
@@ -239,7 +239,7 @@
         "genre": "Upbeat",
         "image": "/static/images/scarlet-sunset-sky.jpg",
         "price": 30.99,
-        "stock": 13
+        "stock": 10
     },
     "Feelz": {
         "artist": "Paul Rewire",
@@ -272,6 +272,6 @@
         "genre": "Upbeat",
         "image": "/static/images/fragments.jpg",
         "price": 30.49,
-        "stock": 21
+        "stock": 20
     }
 }
