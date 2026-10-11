@@ -1151,6 +1151,26 @@ section.my-cart .panel-details > .route-to-checkout button {
     margin-top: 16px;
 }
 
+/* form sign in cover */
+.panel-details .sign-up-cor {
+    background-color: var(--color-1);
+    border: 5px solid var(--color-2);
+    margin-top: 55px;
+    outline: 20px solid #FFFFFF;
+    padding: 20px 30px;
+    text-align: center;
+}
+
+.panel-details .sign-up-cor p {
+    margin: 0;
+}
+
+.panel-details .sign-up-cor button {
+    border: 3px solid #00000055;
+    margin-top: 14px;
+    padding-inline: 70px;
+}
+
 /* ======== WISHLIST ======== */
 section.my-wishlist ul.item-list {
     grid-area: 1 / 1 / span 1 / 9;
