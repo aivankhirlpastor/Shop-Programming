@@ -112,7 +112,8 @@ def update_stock(item: dict):
 
     return reserved
 
-# verify if the product in cart/wishlist is exists; used for error prevention to missing music album and mismatched catalogue id
+# verify if the product in cart/wishlist is exists;
+# used for error prevention to missing music album and mismatched catalogue id
 def verify_existing_product(loaded_albums: dict, val: dict, target: str, allow_change = True):
     new_value = {}
     strike = 0
@@ -127,8 +128,6 @@ def verify_existing_product(loaded_albums: dict, val: dict, target: str, allow_c
                     new_value[n] = v # change the name
                     break
             else:
-                # if neither name or id is found, the name currently in cart/wishlist is removed
-                # flash(f"The album '{album_name}' at your {target} is no longer exists and thus removed at {target}. It might be caused by name changes or transitory, possibly permanent, removal.")
                 new_value[album_name] = v
                 new_value[album_name]["is_unavailable"] = True
 
@@ -146,7 +145,6 @@ def verify_existing_product(loaded_albums: dict, val: dict, target: str, allow_c
     
             # e.g. 'dict object' has no attribute 'The Key To Withstand' (over 'The Key To Withtand')
 
-    # replaces old value to modified changes
     if strike > 0 and allow_change:
         if target == "cart":
             save_entries(cart = new_value)
@@ -172,7 +170,6 @@ def set_syntax_building(argument: dict|list|tuple, positional_value: list|tuple 
         if not type(params) is dict:
             raise TypeError(f"The argument or the parameter to initialising 'set' syntax structure is not in dict; got {type(params)}")
 
-        # prompts
         key_terms = ["cart", "wishlists", "billing_info", "applied_coupon", "coupon", "used_coupons"]
         session_key = session.get("session_key", {})
 
@@ -183,19 +180,12 @@ def set_syntax_building(argument: dict|list|tuple, positional_value: list|tuple 
             if tr in key_terms:
                 # variant words or terms: cart/items, coupon/applied_coupon
                 term, term_key_session = discriminate(tr)
-                # if tr == "cart":
-                #     term = "items"
-                #     term_key_session = "cart"
-                # elif tr == "coupon":
-                #     term, term_key_session = ["applied_coupon" for y in range(2)]
-                # else:
-                #     term, term_key_session = [tr for y in range(2)]
 
                 # set syntax building prompt
                 set_clause_structure.append(f"{term} = ?")
                 set_clause_value.append(json.dumps(params[tr]))
 
-                # unavailable session naming at that time
+                # non-existent session keywords
                 if not tr == "wishlists" or not tr == "billing_info":
                     session_key[term_key_session] = params[tr]
 
@@ -239,7 +229,6 @@ def make_change_to_database(syntax_structure: list, syntax_val: list, key_sessio
                 WHERE email = '{session_key["email"]}'
             """, tuple(syntax_val))
             
-            # update account session
             session["session_key"] = key_session
             session.modified = True
             
@@ -253,17 +242,16 @@ def make_change_to_database(syntax_structure: list, syntax_val: list, key_sessio
             
         except sqlite3.Error as make_changes_error:
             conn.rollback()
-            print(f"\33[1m\33[91mSAVE DATABASE ERROR: \33[0m\33[93m{make_changes_error}\33[0m")
+            logger("SAVE DATABASE ERROR", make_changes_error)
             
             # unsuccessful saving action due to exception
             return None 
         
-# Strict Searching in registered accounts;
+# Strict Searching in registered accounts:
 # requires the variable 'name' to be listed
-# under existing columns.
+# under existing columns from database accounts.
 
-# use 'get_entry' function when dealing with
-# two sides
+# use 'get_entry' function when dealing with two sides
 def get_entry(*args):
     result = []
     has_session_key = session.get("session_key", {})
@@ -291,7 +279,6 @@ def get_entry(*args):
                     "used_coupons": json.loads(main_row[9]),
                 }
 
-                # unpacking name; observe if "tr" is listed at keys of "ttr" (dict)
                 for tr in args:
                     try:
                         term, _ = discriminate(tr)
@@ -303,8 +290,7 @@ def get_entry(*args):
 
                         result.append(rar)
 
-                    except Exception as get_key_error:
-                        print(f"Failed to get {tr}: {get_key_error}")
+                    except:
                         result.append({})
                                     
     except Exception as get_whole_error:
@@ -312,11 +298,7 @@ def get_entry(*args):
 
         result = [{} for _ in args]
 
-    # only one given argument, preventing the prompt from being returned as list
-    if len(args) == 1:
-        return result[0]
-
-    return result
+    return result[0] if len(args) == 1 else result # fetched keywords
 
 # saving their entries via session or database |  multiple kws, required argument: (key = value)
 def save_entries(**kwargs):
@@ -336,8 +318,8 @@ def save_entries(**kwargs):
 
         # session with user being logged on
         else:
-            get_syntax_structure, get_syntax_value, returned_key_session = set_syntax_building(kwargs)
-            return make_change_to_database(get_syntax_structure, get_syntax_value, returned_key_session) # updating database table
+            syntaxes, stx_value, sess_key = set_syntax_building(kwargs)
+            return make_change_to_database(syntaxes, stx_value, sess_key) # updating database table
 
     except Exception as save_error:
         logger("SAVE ERROR", save_error)
@@ -396,8 +378,8 @@ def remove_specific_key(**kwargs):
                         del used_coupons[key]
                         value_to_save.append(used_coupons)
 
-            get_syntax_structure, get_syntax_value, returned_key_session = set_syntax_building(tuple(kwargs.keys()), value_to_save)
-            return make_change_to_database(get_syntax_structure, get_syntax_value, returned_key_session)
+            syntaxes, stx_value, sess_key = set_syntax_building(tuple(kwargs.keys()), value_to_save)
+            return make_change_to_database(syntaxes, stx_value, sess_key)
             
     except Exception as remove_key_error:
         logger("REMOVE SPECIFIC KEY(S) ERROR", remove_key_error)
@@ -422,8 +404,8 @@ def remove_key(*args):
 
         # session with user being logged on
         else:
-            get_syntax_structure, get_syntax_value, returned_key_session = set_syntax_building(args, ({},) * len(args))
-            return make_change_to_database(get_syntax_structure, get_syntax_value, returned_key_session)
+            syntaxes, stx_value, sess_key = set_syntax_building(args, ({},) * len(args))
+            return make_change_to_database(syntaxes, stx_value, sess_key)
 
     except Exception as delete_error:
         logger("DELETE ERROR", delete_error)
@@ -451,7 +433,7 @@ def signin_session(email, password, msr = 0):
 
             # if not matched
             if not password == uid[4]:
-                raise Exception("Password is incorrect")
+                raise ValueError("Password is incorrect")
 
             # log in method
             if msr == 1:
@@ -474,8 +456,8 @@ def signin_session(email, password, msr = 0):
             session["session_key"] = session_key # define the session key
             session.modified = True
         else:
-            # if account associated with email was not found; post_identifier is empty
-            raise NameError(f"Account was not found: {email}")
+            # empty post_identifier
+            raise NameError(f"{email} is not found. Try double checking your email.")
 
 def calculate_total(c):
     # round() and *100/100 rule to alleviate math float inaccuracy
@@ -571,9 +553,6 @@ def item_display_by_genre(gnr = None, px_range = None):
 
     # Get all the products based on the genre given.
     for album_name, u in data_album.items():
-        # One product's genre matches to <genre> adds to the dictionary.
-
-        # price range
         if (str(gnr).lower() == str(u["genre"]).lower()) or gnr == None:
             io += 1 # add 1 if genre exists by checking item's genre
 
@@ -582,9 +561,9 @@ def item_display_by_genre(gnr = None, px_range = None):
                 stored_data[album_name] = u
                 stored_data[album_name]["in_cart"] = True if album_name in c else False
 
-    # pass the result back to variable
+    # pass the result back in tuple
     if not px_range == None:
-        return stored_data, io # tuple
+        return stored_data, io
 
     return stored_data
 
@@ -660,7 +639,7 @@ def panel_access_from_flash():
     flash_syntax = get_flashed_messages() # as flash message
     formulate_key_access = {
         "show": True,
-        "type": "show_specific_items", # for most of this project
+        "type": "show_specific_items",
         "when": 0,
         "by": {}
     }
@@ -670,52 +649,43 @@ def panel_access_from_flash():
         show_panel_pattern = re.compile(r'%.show_panel', re.IGNORECASE)
         when_pattern = re.compile(r'_\d+', re.IGNORECASE)
 
-        # execute section if contains flash message
+        # execute for block if contains flash message
         for m in range(len(flash_syntax)):
-            matching_var = show_panel_pattern.findall(str(flash_syntax[m]))
-            when_var = when_pattern.findall(str(flash_syntax[m]))
+            if show_panel_pattern.findall(str(flash_syntax[m])): # look for the pattern '%.show_panel'
+                when_var = when_pattern.findall(str(flash_syntax[m]))
+                by_pair = flash_syntax[m + 1] # adjacent message just below '%.show_panel'
 
-            # matching pair to proceed for returned key access
-            if not matching_var:
+                # dictionary only
+                if type(by_pair) is dict:
+                    when_int = int(f"{when_var[0]}".replace("_", ""))
+                    formulate_key_access["when"] = when_int
+
+                    for album_name, a in by_pair.items():
+                        qty, price, img = when_collection(when_int, a)
+                        formulate_key_access["name"] = album_name
+                        formulate_key_access["id"] = 1 if when_int == 3 else a["id"]
+
+                        formulate_key_access["by"][album_name] = {
+                            "id": a["id"],
+                            "artist": a["artist"],
+                            "image": img,
+                            "name": album_name,
+                            "quantity": qty,
+                            "price": price
+                        }
+                                
+                    return formulate_key_access
+            else:
                 continue
-
-            # get the dictionary after "%.show_panel" message 
-            by_pair = flash_syntax[m + 1]
-
-            print(True, "matched")
-            print(by_pair)
-
-            # Check if the adjacent obj is dictionary:
-            if not type(by_pair) is dict:
-                continue
-
-            when_int = int(f"{when_var[0]}".replace("_", ""))
-            formulate_key_access["when"] = when_int
-
-            for album_name, a in by_pair.items():
-                qty, price, img = when_collection(when_int, a)
-                formulate_key_access["name"] = album_name
-                formulate_key_access["id"] = 1 if when_int == 3 else a["id"]
-
-                formulate_key_access["by"][album_name] = {
-                    "id": a["id"],
-                    "artist": a["artist"],
-                    "image": img,
-                    "name": album_name,
-                    "quantity": qty,
-                    "price": price
-                }
-                        
-            return formulate_key_access
 
     except Exception as side_panel_error:
         logger("INITIATE SIDEPANEL ERROR:", side_panel_error)
         return None
 
 def check_date(n: str, albm: dict, refer: int):
-    # setting timeline
-    day_current = 20
-    current = datetime.datetime(2026, 4, day_current)
+    # timeline
+    DAY_CURRENT = 20
+    current = datetime.datetime(2026, 4, DAY_CURRENT)
     date_pattern = re.compile(r'(\d{2})-(\d{2})-(\d{4})')
 
     # assuming the current day is 20-04-2026
@@ -724,61 +694,50 @@ def check_date(n: str, albm: dict, refer: int):
     id_prime_ptrn = re.compile(r'^\d{3}') # first segment
     id_mid_ptrn = re.compile(r'\d{4}') # middle segment
 
-    # access album's date
-    album_id = albm["id"]
-    dz = albm["release_date"] # date
+    try:
+        # access album's date
+        album_id = albm["id"]
+        dz = albm["release_date"] # date
 
-    # overall pattern declaration
-    pdx, pmx, pyx = date_pattern.findall(dz)[0]
-    yx, mx, dx = int(pyx), int(pmx), int(pdx)
-    album_release_date = datetime.datetime(yx, mx, dx)
+        # overall pattern declaration
+        pdx, pmx, pyx = date_pattern.findall(dz)[0]
+        yx, mx, dx = int(pyx), int(pmx), int(pdx)
+        album_release_date = datetime.datetime(yx, mx, dx)
 
-    # refer to three sections: released, featured, pre-release
-    if refer == 0:
-        rlsd, pre_rlsd = 10, 14
-        # rlsd = show until/before <release> day
+        # refer to three sections: released, featured, pre-release
+        if refer == 0:
+            RLSD, PRE_RLSD = 10, 14
+            # -rlsd = show item until/before <release> day(s) from/of release
 
-        pre_id_prime = id_prime_ptrn.findall(album_id)
-        pre_id_mid = id_mid_ptrn.findall(album_id)
+            pre_id_prime = id_prime_ptrn.findall(album_id)
+            pre_id_mid = id_mid_ptrn.findall(album_id)
 
-        # Turning string into integers to be calculatable
-        id_prime, id_mid = int(pre_id_prime[0]), int(pre_id_mid[0])
+            # Turning string into integers to be calculatable
+            id_prime, id_mid = int(pre_id_prime[0]), int(pre_id_mid[0])
 
-        # ============= FOR DEBUGGING: testing for variable
-        # prereleased = album_release_date - timedelta(days = pre_rlsd)
+            # latest release
+            if 0 <= (current - album_release_date).days <= RLSD:
+                return "released"
 
-        # if n == "Little Life":
-        #     print(prereleased.timestamp())
-        #     diff = current - album_release_date
-        #     print(diff.days)
-        #     print(prereleased, "\n-------------------------------")
-        # =========================================
+            # featured: calculated value == remainder
+            elif (id_mid // DAY_CURRENT % 10) == (id_prime % 10):
+                return "featured"
 
-        # latest release
-        if 0 <= (current - album_release_date).days <= rlsd:
-            return "released"
+            # pre-released
+            elif PRE_RLSD >= (album_release_date - current).days > 0:
+                return "pre-released"
 
-        # featured: calculated value == remainder
-        elif (id_mid // day_current % 10) == (id_prime % 10):
-            return "featured"
-
-        # pre-released
-        elif pre_rlsd >= (album_release_date - current).days > 0:
-            return "pre-released"
-
-    # refer to date only; identify either released or pre-released
-    if refer == 1:
-        if 0 <= (current - album_release_date).days:
-            return "released"
-        elif (album_release_date - current).days > 0:
-            return "pre-released"
-
-    # if not refer == None:
-    # else:
-    #     raise ValueError("Please indicate the refer value because we don't know what you are telling us to do.")
+        # refer to date only; identify either released or pre-released
+        if refer == 1:
+            if 0 <= (current - album_release_date).days:
+                return "released"
+            elif (album_release_date - current).days > 0:
+                return "pre-released"
+    except:
+        return
 
 def album_date_modules(loaded_album, rfr):
-    # for three_sections only
+    # refer to three_sections only
     if rfr == 0:
         ahrd, bhrd, chrd = [{} for _ in range(3)]
 
@@ -812,7 +771,7 @@ def album_date_modules(loaded_album, rfr):
         logger("INVALID REFFERING VALUE", f"({rfr}) No valid reffering value to execute date modules.")
         raise ValueError(f"Inappropriate referring value.\n\n(received {rfr}) Expected: \n0 = three phrase selector\n1 = two phrase selector")
 
-# display error message on terminal output in colour variants
+# display error message on terminal output in coloured variants
 def logger(types: str = "ERROR", cause = None, sector = "error"):
     if sector == "error":
         print(f"\33[1m\33[91m{types}{f": \33[0m\33[35m{cause}\33[0m" if cause else ""}")
@@ -844,6 +803,7 @@ def index():
 
     try:
         ar, br, cr = album_date_modules(load_albums, 0)
+
     except Exception as date_module_error:
         logger("DATE MODULE ERROR", date_module_error)
         ar, br, cr = [{"error": date_module_error} for _ in range(3)]
@@ -854,21 +814,18 @@ def index():
         "pre-order": cr
     }
 
-    # print(segment_modules)
     return render_template("index.html", albums = load_albums,
-                           segment_modules = segment_modules, cart = cart,
-                           key_param = key)
+                           segment_modules = segment_modules,
+                           cart = cart, key_param = key)
 
 @app.route("/category/item/<id>")
 def product_information(id):
     albums = load_data_products()
     pack_data = None
 
-    # Check whether the variable "id" matches with each of the album's ID.
+    # Check whether the variable "id" exists.
     for name, mv in albums.items():
-        # print(int(m) == int(mv["model"]))
         if id.lower() == mv["id"].lower():
-            # Product
             album_name = name
             album_cycle = check_date(name, mv, 1)
             pack_data = mv
@@ -880,20 +837,20 @@ def product_information(id):
     cart, wishlists = get_entry("cart", "wishlists")
     cart = verify_existing_product(albums, cart, "cart")
     wishlists = verify_existing_product(albums, wishlists, "wishlists")
-
     key = panel_access_from_flash()
-    print("135", key)
 
-    # Used for some modification to input value if this product is in the cart.
+    # Used for some modification to 'input' value if the requested catalogue ID is in the cart.
     if album_name in cart:
         current_item = cart[album_name]
 
     # If the condition was passed, move on to prepare for the outputs.
     return render_template("product_info.html",
-                           product_name = album_name, in_wishlists = (album_name in wishlists),
-                           product = pack_data, already_in_cart = (album_name in cart), album_cycle = album_cycle,
-                           item_in_hold = current_item if album_name in cart else False,
-                           in_stock = (albums[album_name]["stock"] > 0), key_param = key)
+                           product = pack_data, product_name = album_name,
+                           in_wishlists = (album_name in wishlists),
+                           already_in_cart = (album_name in cart),
+                           item_in_hold = (current_item if album_name in cart else False),
+                           in_stock = (albums[album_name]["stock"] > 0),
+                           album_cycle = album_cycle, key_param = key)
 
 # Add to Cart Route
 @app.route("/add_to_cart/<catalogue_id>/<string:product_name>/<string:input_selector>/<pole_end>", methods = ["POST"])
@@ -904,19 +861,17 @@ def add_to_cart(catalogue_id, product_name, input_selector, pole_end):
         # when input is not applicable, default is 1 /*/ validate whether the user have entered a number
         quantity = 1 if input_selector == "-1" else int(request.form[input_selector])
 
-        # 1. Check whether the catalogue id exists.
-        for _, mvt in albums.items():
-            if catalogue_id == mvt["id"]:
-                # 2. Initiate an add to cart action.
-                add_to_cart_action(albums, product_name, quantity)
-                break
+        if 0 < quantity <= 5:
+            # 1. Check whether the requested catalogue ID exists.
+            for _, mvt in albums.items():
+                if catalogue_id == mvt["id"]:
+                    # 2. Initiate an add to cart action.
+                    add_to_cart_action(albums, product_name, quantity)
+                    break
+            else:
+                flash(f"Item '{catalogue_id}' could not be found. Double check that the catalogue ID exists.")
         else:
-            flash(f"Item '{catalogue_id}' could not be found. Double check that the catalogue ID exists.")
-
-        # 1. Verify if the album name is valid AND the variable "id" matches with each of the album's ID.
-        # if albums[product_name]["id"] == catalogue_id:
-        # else:
-        #     raise KeyError("Item not found.")
+            flash(f"Please enter a quantity between 1 to 5.")
 
     except ValueError:
         flash("We could not add that item. Please enter a number in integer only.")
@@ -938,7 +893,7 @@ def add_to_cart(catalogue_id, product_name, input_selector, pole_end):
         # for genre_condition as list*, [1] is used to take only the genre.
         gn = str(genre_condition[1]).lower()
         
-        # for "category" validate if has price_range included; index [2] for price_range
+        # from category page, validate if price_range is included; index [2] for price_range
         try:
             has_px_range = f"{genre_condition[2]}".replace("-", "_") # converting kebab case into snake case
         except:
@@ -946,24 +901,21 @@ def add_to_cart(catalogue_id, product_name, input_selector, pole_end):
 
         try:
             if gn == "all":
-                if not has_px_range:
-                    return redirect(url_for("category_all"))
+                if has_px_range:
+                    return redirect(url_for("category_price_filter", genre = "all", price_range = has_px_range))
 
-                # to the category w/ price-range filter
-                return redirect(url_for("category_price_filter", genre = "all", price_range = has_px_range))
+                return redirect(url_for("category_all"))
             
             for y in albums.items():
-
                 # verify if there is an existing genre
                 if gn == str(y[1]["genre"]).lower():
-                    if not has_px_range:
-                        return redirect(url_for("category", genre = gn))
-
-                    # to the category w/ price-range filter
-                    return redirect(url_for("category_price_filter", genre = gn, price_range = has_px_range))
+                    if has_px_range:
+                        return redirect(url_for("category_price_filter", genre = gn, price_range = has_px_range))
+                    
+                    return redirect(url_for("category", genre = gn))
             
-        except Exception as err:
-            print("Something went wrong. We can't transfer you back to the current genre of page:", err)
+        except Exception as failed_pole_genre_execution:
+            logger(False, f"POLE EXECUTION FAILED: {failed_pole_genre_execution}")
 
     elif pole_end == "wishlist":
         return redirect(url_for("wishlist"))
@@ -1009,7 +961,7 @@ def apply_changes():
                 flash(f"({n}) That value should not be less than 1 minimum.")
 
         except ValueError as e:
-            logger("NON-INTEGER VALUE", f"({n}) Non-integer detected", "warning")
+            logger("NON-INTEGER VALUE", f"({n}) Non-integer detected", "closed_log")
             flash(f"({n}) Please enter a number to adjust that quantity.")
 
     save_entries(cart = cart)
@@ -1023,15 +975,12 @@ def toggle_wishlist(catalogue_id, album_name, pole_end, force_removal):
     albums = load_data_products()
     wishlists = get_entry("wishlists")
 
-    # 1. Check whether the variable "id" matches with each of the album's ID.
+    # 1. Check whether the requested catalogue ID exists.
     for _, mvt in albums.items():
-        # If found and matched
         if catalogue_id.lower() == mvt["id"].lower():            
             break
     else:
-        # If not...
         flash(f"Item '{catalogue_id}' could not be found. Double check that the catalogue ID exists.")
-    
         return redirect(url_for("product_information", id = catalogue_id)) 
 
     try:
@@ -1083,8 +1032,8 @@ def category_all():
     _, pr = album_date_modules(get_albums, 1)
 
     return render_template("item_genre.html", genre = "all",
-                           imported_data = result, cart = cart, key_param = key,
-                           pr = pr)
+                           imported_data = result, cart = cart,
+                           key_param = key, pr = pr)
 
 # Item Genre: specific genre
 @app.route("/category/item-<string:genre>")
@@ -1101,8 +1050,8 @@ def category(genre):
     _, pr = album_date_modules(get_albums, 1)
 
     return render_template("item_genre.html", genre = genre,
-                           imported_data = result, cart = cart, key_param = key,
-                           pr = pr)
+                           imported_data = result, cart = cart,
+                           key_param = key, pr = pr)
 
 # Item Genre: Filter Price Range
 @app.route("/category/item-<string:genre>/<price_range>")
@@ -1126,9 +1075,9 @@ def category_price_filter(genre, price_range):
     _, pr = album_date_modules(get_albums, 1)
 
     return render_template("item_genre.html", genre = genre,
-                           imported_data = result, cart = cart, key_param = key,
                            text_value = text_value, pxrange = kebab_case_pxrange,
-                           pr = pr)
+                           imported_data = result, cart = cart,
+                           key_param = key, pr = pr)
 
 @app.route("/filter_price/<string:genre>", methods = ["POST"])
 def filter_price(genre):
@@ -1137,7 +1086,7 @@ def filter_price(genre):
     # in snake case, naming convention
     srg = f"{selected_range.replace(' ', '_').replace('$', '')}".lower()
 
-    # destination to HTML page of filtering item in price
+    # redirect with filtering item in price
     return(redirect(url_for("category_price_filter", genre = genre, price_range = srg)))
 
 # Invoice Page
@@ -1162,7 +1111,7 @@ def invoice_selection(inv_number):
             s = 0 # used for listing
 
             albums = load_data_products()
-            rr, pr = album_date_modules(albums, 1)
+            _, pr = album_date_modules(albums, 1)
             key = panel_access_from_flash()
 
             # at index registration
@@ -1200,15 +1149,9 @@ def invoice_selection(inv_number):
     except IndexError:
         abort(404) # not found
 
-    # except Exception as err:
-    #     raise Exception(f"Can't redirect you with the invoice number {inv_number}: {err}")
-
-    # for debug tracking
-    print(items_on_hold)
-
-    # return for template
-    return render_template("invoice.html", albums = albums, data = fetched_data,
-                           key_param = key, rr = rr, pr = pr)
+    return render_template("invoice.html", albums = albums,
+                           data = fetched_data, key_param = key,
+                           pr = pr)
 
 @app.route("/order_history")
 def order_history():
@@ -1307,25 +1250,21 @@ def apply_coupons():
     input_coupon = request.form["coupon"] # get user's input
 
     try:
-        # Get coupon and used coupons via get_entry function
-        coupon, sets_used_coupons = get_entry("coupon", "used_coupons")
+        sets_used_coupons = get_entry("used_coupons")
 
-        # if coupon exists and already used
+        # if coupon exists
         if input_coupon in get_data_coupon and not input_coupon in sets_used_coupons:
 
-            # applying coupon into session
-            coupon = {
-                "name": input_coupon,
-                "discount": get_data_coupon[input_coupon]["discount"]
-            }
+            if input_coupon in sets_used_coupons: # not already used
+                save_entries(coupon = {
+                    "name": input_coupon,
+                    "discount": get_data_coupon[input_coupon]["discount"]
+                }) # applying coupon into session
 
-            save_entries(coupon = coupon)
+                flash("Coupon applied")
 
-            # flash(f"{input_coupon}: {get_data_coupon[input_coupon]["discount"]}")
-            flash("Coupon applied")
-
-        elif input_coupon in sets_used_coupons:
-            flash("Oops! You've already used that coupon.")
+            else:
+                flash("Oops! You've already used that coupon.")
 
         else:
             flash("Coupon does not exist")
@@ -1356,14 +1295,16 @@ def checkout():
     return render_template("checkout.html",
                            total = total, subtotal = subtotal,
                            gst = gst, ship_fee = ship_fee,
-                           cart = cart, saved_billing_info = billing_info,
-                           discount = discount, total_with_discount = total_with_discount)
+                           cart = cart, discount = discount,
+                           total_with_discount = total_with_discount,
+                           saved_billing_info = billing_info)
 
 @app.route("/continue_to_review")
 def continue_to_review():
     cart, billing_info = get_entry("cart", "billing_info")
     total, subtotal, gst, ship_fee, discount, total_with_discount = calculate_total(cart)
 
+    # validation (in billing info, check if some detail(s) are missing, omitting postal code)
     if (not cart or not billing_info) or (None in billing_info.values()):
         if not billing_info or None in billing_info.values():
             flash("You are missing with important thing. Enter your billing details so we can track your order.")
@@ -1373,8 +1314,9 @@ def continue_to_review():
     return render_template("checkout_review.html",
                            total = total, subtotal = subtotal, 
                            gst = gst, ship_fee = ship_fee,
-                           cart = cart, saved_billing_info = billing_info,
-                           discount = discount, total_with_discount = total_with_discount)
+                           cart = cart, discount = discount,
+                           total_with_discount = total_with_discount,
+                           saved_billing_info = billing_info)
 
 @app.route("/continue_to_review/get", methods = ["POST"])
 def get_details():
@@ -1401,13 +1343,12 @@ def place_order():
     if (not cart or not billing_info) or (None in billing_info.values()):
         time.sleep(0.9)
 
-        if not billing_info or None in billing_info.values():
+        if not billing_info or None in billing_info.values(): # missing details
             flash("You are missing with important thing. Enter your billing details so we can track your order.")
 
         return redirect(url_for("checkout"))
     
-    # time delay
-    time.sleep(2.4)
+    time.sleep(2.4) # time delay
 
     customer_name = f"{billing_info["first_name"]} {billing_info["surname"]}"
     customer = {
@@ -1423,6 +1364,7 @@ def place_order():
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     time_clock = datetime.datetime.now().strftime("%H.%M.%S")
     invoice_date = f"{date} {time_clock}"
+    invoice_filename = f"INV_{customer_name.replace("", "_")}{date}.txt"
 
     # Save order history to SQLite Database
     with sqlite3.connect("order_history.db") as conn:
@@ -1443,7 +1385,10 @@ def place_order():
             cursor.execute("""
                 INSERT INTO orders (date, customer, items, subtotal, gst, ship_fee, discount, total_charges, items_on_hold)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (invoice_date, json.dumps(customer), json.dumps(cart), subtotal, gst, ship_fee, discount, main_total, json.dumps(on_hold_items)))
+            """, (invoice_date, json.dumps(customer),
+                  json.dumps(cart), subtotal, gst,
+                  ship_fee, discount, main_total,
+                  json.dumps(on_hold_items)))
             conn.commit()
 
         except Exception as place_order_error:
@@ -1455,9 +1400,9 @@ def place_order():
             return redirect(url_for("index"))
         
     # write an invoice in .txt version
-    with open("invoice_file.txt", "w") as f:
+    with open(invoice_filename, "w") as f:
         try:
-            invoice_file = f"{invoice_date}.txt"
+            invoice_file = f"{invoice_filename}"
             f.write("<-----> The Music Shop <----->\n")
 
             f.write(f"Invoice Number: {invoice_date}\n")
@@ -1476,7 +1421,6 @@ def place_order():
 
             f.write(f"Total: ${main_total:.2f}\n")
 
-        # Except argument that prevents saving
         except Exception as write_invoice_txt_error:
             logger("WRITE INVOICE ERROR", write_invoice_txt_error)
             flash("Failed to write an invoice text:", write_invoice_txt_error)
@@ -1488,7 +1432,7 @@ def place_order():
         if coupon:
             coupon_name = coupon["name"]
 
-            # * To Coupon name; None as a placeholder
+            # None as a placeholder
             # since there is nothing to refer or access their value
             sets_used_coupons[coupon_name] = None
             save_entries(used_coupons = sets_used_coupons)
@@ -1557,7 +1501,7 @@ def signup(get_subject):
 
     # Complete Registration to Database
     try:
-        # confirming a password
+        # verify a password
         if password == confirm_password:
             cart = session.get("cart", {})
             wishlists = session.get("wishlists", {})
@@ -1568,7 +1512,9 @@ def signup(get_subject):
                 cursor.execute(""" 
                     INSERT INTO accounts (date, name, email, password, items, wishlists, billing_info, applied_coupon, used_coupons)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """, (date, name, email, password, json.dumps(cart), json.dumps(wishlists), "{}", "{}", "{}"))
+                """, (date, name, email,
+                      password, json.dumps(cart),
+                      json.dumps(wishlists), "{}", "{}", "{}"))
 
                 conn.commit()
 
@@ -1634,15 +1580,7 @@ def logout():
 
     return redirect(url_for("signup_login", measure = 'login'))
 
-# ==== dynamic route instance ==== #
-# @app.route("/category/<string:genre>")
-# def category(genre):
-#     return genre
-
-# [comes the last]
-# if __name__ == 'main': checks if file is being run directly - only runs code if opened directly.
 if __name__ == "__main__":
-
     initialise_database()
 
     app.run(debug = True)
