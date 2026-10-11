@@ -118,6 +118,14 @@
                         </div>
                     {% endif %}
                 </div>
+
+                {# TIP ROUTES (CHECKOUT/PRE-CHECKOUT or Sign Up Request) #}
+                {% if not session["session_key"] or not session["session_key"]["accessed"] %}
+                    <form class="sign-up-cor" action="{{ url_for('signup_login', measure = 'signup', subject = 'for_awaiting_checkout') }}">
+                        <p>Sign Up for free to easily track your items!</p>
+                        <button type="submit">SIGN UP</button>
+                    </form>
+                {% endif %}
             </div>
         </section>
 
