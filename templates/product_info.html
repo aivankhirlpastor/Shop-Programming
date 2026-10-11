@@ -17,6 +17,11 @@
                 <div class="box-acc name-artist grid">
                     <div>
                         <h2>{{ product_name }}</h2>
+
+                        {% if album_cycle == "pre-released" %}
+                            <span class="tag-label">Pre-Order</span>
+                        {% endif %}
+
                         <p class="artist">{{ product["artist"] }}</p>
                     </div>
                     <form action="{{ url_for('toggle_wishlist', catalogue_id = product['id'], album_name = product_name) }}" method="post">
