@@ -25,9 +25,11 @@
                         {% if not in_wishlists %}
                             {% set hover_title = "Add to my wishlist" %}
                             {% set class_emphasis = "regular" %}
+
                         {% else %}
                             {% set hover_title = "Remove to my wishlist" %}
                             {% set class_emphasis = "item-in-wishlist" %}
+
                         {% endif %}
 
                         <button type="submit" title="{{ hover_title }}" class="wishlist {{ class_emphasis }}">
@@ -96,7 +98,9 @@
                             {% set max_value = 5 %}
                         {% endif %}
 
-                        <input type="number" id="quantity" name="quantity" min="1" max="{{ max_value }}" value="{% if already_in_cart %}{{ item_in_hold['quantity'] }}{% else %}1{% endif %}" {% if not in_stock %}disabled{% endif %}>
+                        {% set input_value = item_in_hold["quantity"] if already_in_cart else 1 %}
+
+                        <input type="number" id="quantity" name="quantity" min="1" max="{{ max_value }}" value="{{ input_value }}" {% if not in_stock or already_in_cart %}disabled{% endif %}>
                     </div>
 
                     <!-- Button Action -->
