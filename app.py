@@ -70,7 +70,7 @@ def update_stock(item: dict):
                 fetched_stock = fetched_album_data[album_name]["stock"]
                 fetched_stock -= i["quantity"] # modify the stock
             else:
-                # pre-release items reserved
+                # pre-release items
                 reserved[album_name] = {
                     "id": i["id"],
                     "artist": i["artist"],
@@ -460,9 +460,8 @@ def signin_session(email, password, msr = 0):
             raise NameError(f"{email} is not found. Try double checking your email.")
 
 def calculate_total(c):
-    # round() and *100/100 rule to alleviate math float inaccuracy
-    cart_total = sum((item["price"] * item["quantity"]) * 100 for item in c.values())
-    cart_total = cart_total / 100
+    # round() rule to alleviate math float inaccuracy
+    cart_total = round(sum((item["price"] * item["quantity"]) for item in c.values()), 2)
     gst = round(cart_total * 0.15, 2)
     shipping_fee = 0 # initial
 
@@ -554,10 +553,10 @@ def item_display_by_genre(gnr = None, px_range = None):
     # Get all the products based on the genre given.
     for album_name, u in data_album.items():
         if (str(gnr).lower() == str(u["genre"]).lower()) or gnr == None:
-            io += 1 # add 1 if genre exists by checking item's genre
+            io += 1
 
+            # filtering items based on price range
             if check_price_range(u["price"]):
-                # None = display all items
                 stored_data[album_name] = u
                 stored_data[album_name]["in_cart"] = True if album_name in c else False
 
@@ -586,8 +585,7 @@ def add_to_cart_action(mdl, product, qty):
     cart = get_entry("cart")
     unit_product = mdl[product]
 
-    if unit_product["stock"] > 0: # 3. Validate their stock
-
+    if unit_product["stock"] > 0: # validate their stock
         if product not in cart: # Check whether the item is in cart already
             cart[product] = {
                 "artist": unit_product["artist"],
@@ -680,7 +678,10 @@ def panel_access_from_flash():
 
     except Exception as side_panel_error:
         logger("INITIATE SIDEPANEL ERROR:", side_panel_error)
-        return None
+        return {
+            "show": False,
+            "type": "show_specific_items"
+            }
 
 def check_date(n: str, albm: dict, refer: int):
     # timeline
@@ -843,7 +844,7 @@ def product_information(id):
     if album_name in cart:
         current_item = cart[album_name]
 
-    # If the condition was passed, move on to prepare for the outputs.
+    # If those conditions are passed, move on to prepare for the outputs.
     return render_template("product_info.html",
                            product = pack_data, product_name = album_name,
                            in_wishlists = (album_name in wishlists),
@@ -870,6 +871,7 @@ def add_to_cart(catalogue_id, product_name, input_selector, pole_end):
                     break
             else:
                 flash(f"Item '{catalogue_id}' could not be found. Double check that the catalogue ID exists.")
+
         else:
             flash(f"Please enter a quantity between 1 to 5.")
 
@@ -915,7 +917,7 @@ def add_to_cart(catalogue_id, product_name, input_selector, pole_end):
                     return redirect(url_for("category", genre = gn))
             
         except Exception as failed_pole_genre_execution:
-            logger(False, f"POLE EXECUTION FAILED: {failed_pole_genre_execution}")
+            logger(False, f"POLE EXECUTION FAILED: {failed_pole_genre_execution}", "closed_log")
 
     elif pole_end == "wishlist":
         return redirect(url_for("wishlist"))
@@ -960,7 +962,7 @@ def apply_changes():
             elif 0 >= qty:
                 flash(f"({n}) That value should not be less than 1 minimum.")
 
-        except ValueError as e:
+        except ValueError:
             logger("NON-INTEGER VALUE", f"({n}) Non-integer detected", "closed_log")
             flash(f"({n}) Please enter a number to adjust that quantity.")
 
@@ -1040,8 +1042,7 @@ def category_all():
 def category(genre):
     result = item_display_by_genre(genre) # get the result via genre
 
-    # Abort if the dictionary is empty.
-    if result == {}:
+    if result == {}: # empty and specific genre is not found
         abort(404)
 
     get_albums = load_data_products()
@@ -1063,8 +1064,7 @@ def category_price_filter(genre, price_range):
     text_value = px_range_post_inversion(price_range)
     text_value = text_value.lower() if not text_value == None else text_value
 
-    # Abort if genre is not exist by gio = 0,
-    # accessed through function item_display_by_genre;
+    # Abort if genre is not found by gio = 0,
     # also inexistent price range (typed by manual and in case of typos).
     if gio <= 0 or text_value == None:
         abort(404)
