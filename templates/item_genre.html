@@ -88,18 +88,15 @@
                                 </div>
                             </a>
         
-                            <!-- Row II: Form -->
-
+                            {# form action: in filtering text price of px_argument #}
                             {% if pxrange %}
-                                <!-- form action: in filtering text price of px_argument -->
                                 {% set px_argument = "_" + pxrange %}
                             {% else %}
                                 {% set px_argument = "" %}
                             {% endif %}
-
-                            <p>{{ px_argument }}</p>
-
+                            
                             {% with stock = i["stock"] %}
+                                <!-- Row II: Form -->
                                 <form action="{{ url_for('add_to_cart', catalogue_id = i['id'], product_name = album_name, input_selector = 'i-quantity-' + i['id'], pole_end = '1%' + genre + px_argument) }}" method="post" class="add-to-cart-action">
                                     {% set input_value = cart[album_name]['quantity'] if album_name in cart else 1 %}
 
@@ -118,6 +115,7 @@
                                         {% set tle = "Out of Stock" %}
                                         {% set disable_input = True %}
                                         {% set out_text = "OOS" %}
+                                        
                                     {% endif %}
 
                                     <input type="number" class="emit-stock-status {{ stock_emp | default('none') }}" name="i-quantity-{{ i['id'] }}" id="i-quantity-{{ i['id'] }}" title="Stock Left: {{ stock }}" min="1" max="{{ max_range | default(5) }}" value="{{ input_value }}" {% if disable_input %}disabled{% endif %}>
