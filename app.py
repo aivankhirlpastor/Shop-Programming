@@ -1364,7 +1364,7 @@ def place_order():
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     time_clock = datetime.datetime.now().strftime("%H.%M.%S")
     invoice_date = f"{date} {time_clock}"
-    invoice_filename = f"INV_{customer_name.replace("", "_")}{date}.txt"
+    invoice_filename = f"INV_{customer_name.replace(" ", "_")}{date}.txt"
 
     # Save order history to SQLite Database
     with sqlite3.connect("order_history.db") as conn:
