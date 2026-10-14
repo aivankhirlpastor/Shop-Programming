@@ -1,5 +1,6 @@
 /* @import url('https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&display=swap'); */
-@import url('https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&family=Cascadia+Code:ital,wght@0,200..700;1,200..700&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 :root {
     /* custom variables */
@@ -11,7 +12,7 @@
 
     /* color palettes */
     --color-1: #f1dd00;
-    --color-2: #faf8c6;
+    --color-2: #f9f7ba;
     --color-3: #ff6200;
     --color-4: #d80e1f;
     --color-5: #916b50;
@@ -404,7 +405,6 @@ a.anchor-btn-flair.selected {
     font-size: 18px;
 }
 
-
 /* reduced size version - anchor element */
 :is(.shop-by-genre, .sort-by-genre).reduced-size a.anchor-btn-flair {
     /* effect via different style */
@@ -438,7 +438,6 @@ img.svg-icon {
     width: var(--svg-icon-size);
     height: var(--svg-icon-size);
 }
-
 
 /* Flash Message Styling */
 .toast-flash {
@@ -652,10 +651,10 @@ ul.mini-list-container.vrs-2 li.mini-list-item {
 }
 
 ul.mini-list-container.vrs-2 .txt-const {
-    width: 200px;
+    width: 30em;
 }
 
-/* ----- Version II ----- */
+/* ----- Version III ----- */
 ul.mini-list-container.vrs-3 li.mini-list-item {
     --list-item-maxh: 55px;
     --list-item-space: 8px;
@@ -852,6 +851,19 @@ section.product-info #product-details > .box-acc:not(:last-child) {
 section.product-info #product-details > .box-acc.name-artist {
     grid-template-columns: 3fr auto;
     padding-block: 4px 8px;
+    position: relative;
+}
+
+section.product-info #product-details > .box-acc.name-artist h2 {
+    display: inline;
+}
+
+section.product-info #product-details > .box-acc.name-artist .tag-label {
+    display: inline;
+    font-size: 16px;
+    margin-left: 8px;
+    padding: 3px 9px;
+    position: relative;
 }
 
 /* showcase in grid display */
@@ -999,9 +1011,69 @@ ul.item-list li.item-details > :is(.quantity, .price-action) {
     text-align: center;
 }
 
-ul.item-list li.item-details > .quantity input.modified {
+ul.item-list li.item-details > .quantity {
+    justify-items: center;
+}
+
+ul.item-list li.item-details > .quantity .quantity-counter {
+    --qty-input-height: 28px;
+    --qty-input-width: 35px;
+
+    align-items: center;
+    border: 2px solid #00000066;
+    border-radius: 40px;
+    display: flex;
+    font-size: 18px;
+    margin-top: 2px;
+    overflow-x: hidden;
+    width: fit-content;
+}
+
+/* btn counter */
+ul.item-list li.item-details > .quantity .quantity-counter button.quantity-btn {
+    background-color: transparent;
+    font-family: "Cascadia Code"; /* monospaced based-glyphs */
+    font-size: inherit;
+    padding: 0;
+    width: var(--qty-input-height);
+    height: var(--qty-input-height);
+}
+
+ul.item-list li.item-details > .quantity .quantity-counter button.quantity-btn:hover {
+    background-color: #00000022;
+}
+ul.item-list li.item-details > .quantity .quantity-counter button.quantity-btn:active {
+    background-color: #00000044;
+}
+
+/* focus */
+ul.item-list li.item-details > .quantity .quantity-counter button.quantity-btn:focus-visible {
+    outline: none;
+    background-color: #005fcc66;
+}
+
+/* input number properties */
+ul.item-list li.item-details > .quantity input {
+    background-color: inherit;
+    border: none;
+    box-shadow: none;
+    font-size: inherit;
+    font-weight: 700;
+    padding: 0 2px;
+    text-align: center;
+    width: var(--qty-input-width);
+    height: var(--qty-input-height);
+}
+
+ul.item-list li.item-details > .quantity .quantity-counter:has(input.modified) {
     background-color: #22c4ff2e;
     border-color: #041593;
+}
+
+/* removing the arrows */
+ul.item-list li.item-details > .quantity input[type="number"]::-webkit-inner-spin-button,
+ul.item-list li.item-details > .quantity input[type="number"]::-webkit-outer-spin-button {
+    appearance: none;
 }
 
 /* price */
@@ -1020,11 +1092,19 @@ ul.item-list li.item-details > .price-action p.emphasise {
 ul.item-list li.item-details > .price-action form.delete-item button {
     --delete-btn-extent: 28px;
 
+    align-items: center;
     aspect-ratio: 1 / 1;
+    display: flex;
+    justify-content: center;
     padding: 0;
     position: relative;
     height: var(--delete-btn-extent);
     width: var(--delete-btn-extent);
+}
+
+ul.item-list li.item-details > .price-action form.delete-item button > img.svg-icon {
+    width: 23px;
+    height: 23px;
 }
 
 /* modified appearance */
@@ -1341,6 +1421,15 @@ section.checkout ul.mini-list-container {
     margin-block: 5px;
 }
 
+.form-block:has(input:required) label::after {
+    content: "*";
+    color: var(--color-4);
+    font-family: "Cascadia Code";
+    font-size: 90%;
+    font-weight: 600;
+    margin-left: 4px;
+}
+
 .form-block input {
     width: auto;
 }
@@ -1529,14 +1618,23 @@ section.account-component .img-block {
 }
 
 section.account-component .img-block .attribution-credits {
-    background-color: #00000055;
-    color: #ffffff;
+    background-color: #FFFFFF;
+    color: #000000;
     position: absolute;
-    padding: 12px 30px;
+    padding: 6px 10px;
 
     /* offsets */
-    right: 0px;
-    bottom: 0px;
+    right: 16px;
+    bottom: 16px;
+}
+
+section.account-component .img-block img {
+    object-fit: cover;
+    object-position: center;
+    width: 100%;
+    height: 100%;
+
+    box-shadow: 16px 16px 0 #00000066;
 }
 
 /* within SESSION KEY */
@@ -1590,7 +1688,7 @@ footer section.footer-links ul li {
     margin-block: 6px;
 }
 
-/* anchor link */
+/* anchor links */
 footer section.footer-links ul li > a {
     color: #000000;
     cursor: pointer;
