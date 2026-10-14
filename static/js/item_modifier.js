@@ -15,13 +15,71 @@ console.log(getInvisibleInputs);
 // array variables by their initials
 let initialQuantity = [];
 let unitPrice = [];
-
 var isUnsavedChanges = false;
+
+// functions
+function revertChange(inp, iip, unp, index) {
+    inp.classList.remove("modified");
+    inp.value = initialQuantity[index];
+    iip.value = initialQuantity[index];
+    unp.innerHTML = `<sup>$</sup>${Math.round((unitPrice[index] * inp.value) * 100) / 100}`;
+}
 
 for (let z = 0; z < getInputs.length; z++) {
     // local variable
     const i = getInputs[z];
     const u = getUnitPrices[z];
+
+    let addBtn = document.getElementById(`add-${i.dataset.ctgnumber}`);
+    let removeBtn = document.getElementById(`reduce-${i.dataset.ctgnumber}`);
+
+    let min = parseInt(i.min);
+    let max = parseInt(i.max);
+
+    // quantity modifiers
+    addBtn.addEventListener("click", () => {
+        // below maximum
+        console.log(`${i.min} <= ${i.value} < ${i.max}`);
+        console.log(parseInt(i.min) <= parseInt(i.value) && parseInt(i.value) < parseInt(i.max));
+        if (min <= parseInt(i.value) && parseInt(i.value) < max) {
+            i.value++;
+            i.dispatchEvent(new Event("input", { bubbles: true }));
+
+        } else if (parseInt(i.value) < max) {
+            // replicating the vanilla HTML input change
+            i.value = min;
+            i.dispatchEvent(new Event("input", { bubbles: true }));
+
+        }
+    });
+
+    // accessibility
+    addBtn.addEventListener("keydown", key => {
+        if (key.key === "ArrowLeft" || key.key === "ArrowRight") {
+            removeBtn.focus();
+        }
+    })
+
+    removeBtn.addEventListener("click", () => {
+        // above minimum
+        if (max >= parseInt(i.value) && parseInt(i.value) > min) {
+            i.value--;
+            i.dispatchEvent(new Event("input", { bubbles: true }));
+
+        } else if (parseInt(i.value) > max) {
+            // replicating the vanilla HTML input change
+            i.value = max;
+            i.dispatchEvent(new Event("input", { bubbles: true }));
+            
+        }
+    });
+
+    // accessibility
+    removeBtn.addEventListener("keydown", key => {
+        if (key.key === "ArrowLeft" || key.key === "ArrowRight") {
+            addBtn.focus();
+        }
+    })
 
     // Check whether "u" is not undefined
     if (u !== undefined) {
@@ -32,29 +90,42 @@ for (let z = 0; z < getInputs.length; z++) {
     i.addEventListener("input", e => {
         let mx = parseInt(i.max); // max value
 
-        isUnsavedChanges = true;
-        i.classList.add("modified");
+        console.log(i.value, initialQuantity[z])
 
-        console.log(i.value % 1, i.value % 1 == 0);
+        if (parseInt(i.value) !== initialQuantity[z]) {
+            isUnsavedChanges = true;
+            i.classList.add("modified");
+    
+            console.log(i.value % 1, i.value % 1 == 0);
+    
+            // if condition to text changes
+            if ((0 < i.value && i.value <= mx) && i.value % 1 == 0) {
+                u.innerHTML = `<sup>$</sup>${Math.round((unitPrice[z] * i.value) * 100) / 100}`;
+            }
+    
+            if (!configPanel.classList.contains("arise")) {
+                configPanel.classList.add("arise");
+            }
 
-        // if condition to text changes
-        if ((0 < i.value && i.value <= mx) && i.value % 1 == 0) {
-            u.innerHTML = `<sup>$</sup>${Math.round((unitPrice[z] * i.value) * 100) / 100}`;
-            // u.textContent = `$${Math.round((unitPrice[z] * i.value) * 100) / 100}`;
-            // u.innerHTML = ``
-        }
+            // changing the value of invisible input for the purpose of sending data to Python Flask
+            const iid = `i-invn-${i.dataset.ctgnumber}`;
+            document.getElementById(iid).value = i.value;
 
-        if (!configPanel.classList.contains("arise")) {
-            configPanel.classList.add("arise");
-        }
+        } else {
+            revertChange(i, getInvisibleInputs[z], u, z);
 
-        // adding invisible input for purpose of sending data to Python
+            // Automatic cancellation process
+            let strike = 0;
+            for (let rmn = 0; rmn < getInputs.length; rmn++) {
+                // search for elements with "modified" class
+                strike += !getInputs[rmn].classList.contains("modified") ? 1 : 0;
+            }
 
-        const iid = `i-invn-${i.dataset.ctgnumber}`;
-        
-        // invisible input
-        document.getElementById(iid).value = i.value;
-        
+            if (strike === getInputs.length) {
+                configPanel.classList.remove("arise");
+                isUnsavedChanges = false;
+            }
+        } 
     });
 
     initialQuantity.push(Number(i.value));
@@ -68,8 +139,7 @@ save.addEventListener("click", e => {
 cancel.addEventListener("click", e => {
     // Cancellation Progress
     configPanel.classList.remove("arise");
-
-    isUnsavedChanges = false // revert back to false
+    isUnsavedChanges = false;
 
     // forces all input to revert back to initial
     for (let h = 0; h < getInputs.length; h++) {
@@ -78,11 +148,7 @@ cancel.addEventListener("click", e => {
         const pp = getInvisibleInputs[h];
         const uu = getUnitPrices[h];
 
-        ii.classList.remove("modified");
-        ii.value = initialQuantity[h];
-        pp.value = initialQuantity[h];
-        // uu.textContent = `$${Math.round((unitPrice[h] * ii.value) * 100) / 100}`
-        uu.innerHTML = `<sup>$</sup>${Math.round((unitPrice[h] * ii.value) * 100) / 100}`
+        revertChange(ii, pp, uu, h);
     }
 });
 
