@@ -31,7 +31,7 @@
 
                         {% endif %}
 
-                        {# item running out of stock #}
+                        {# item running out of stock in greyed-out element #}
 
                         <li class="item-details grid {{ item_emphasis | default() }}">
                             <div class="product-img-small">
@@ -79,7 +79,13 @@
                                 {% endif %}
 
                                 <label for="e-{{ item['id'] }}">QUANTITY</label>
-                                <input type="number" name="e-{{ item['id'] }}" id="e-{{ item['id'] }}" data-ctgnumber="{{ item['id'] }}" min="1" max="{{ quantity_max | default(5) }}" value="{{ item['quantity'] }}" {% if item_emphasis %}disabled{% endif %}>
+
+                                <div class="quantity-counter">
+                                    <button type="button" class="quantity-btn" id="reduce-{{ item['id'] }}">-</button>
+                                    <input type="number" name="e-{{ item['id'] }}" id="e-{{ item['id'] }}" data-ctgnumber="{{ item['id'] }}" min="1" max="{{ quantity_max | default(5) }}" value="{{ item['quantity'] }}" {% if item_emphasis %}disabled{% endif %}>
+                                    <button type="button" class="quantity-btn" id="add-{{ item['id'] }}">+</button>
+                                </div>
+
                             </div>
 
                             <div class="price-action">
@@ -88,7 +94,9 @@
                                     <sup>$</sup>{{ '%.2f' % (item['quantity'] * item['price']) }}
                                 </p>
                                 <form class="delete-item" action="{{ url_for('remove_item', album_name = album_name) }}" method="post">
-                                    <button type="submit" class="rounded squared destructive">D</button>
+                                    <button type="submit" class="rounded squared destructive" title="Remove '{{ album_name }}'">
+                                        <img src="/static/icons/delete.svg" class="svg-icon">
+                                    </button>
                                 </form>
                             </div>
                         </li>
