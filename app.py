@@ -66,7 +66,7 @@ def update_stock(item: dict):
             album_module_cycle = check_date(album_name, i, 1)
 
             # no quantity changes on pre-released items
-            if not album_module_cycle == "pre-released":
+            if album_module_cycle != "pre-released":
                 fetched_stock = fetched_album_data[album_name]["stock"]
                 fetched_stock -= i["quantity"] # modify the stock
             else:
@@ -132,7 +132,7 @@ def verify_existing_product(loaded_albums: dict, val: dict, target: str, allow_c
                 new_value[album_name]["is_unavailable"] = True
 
         # name in cart/wishlist is exist, but the id is mismatched
-        elif not v["id"] == loaded_albums[album_name]["id"]:
+        elif v["id"] != loaded_albums[album_name]["id"]:
             new_value[album_name] = v
             new_value[album_name]["id"] = loaded_albums[album_name]["id"]
             strike += 1
@@ -167,7 +167,7 @@ def discriminate(ry: str):
 # syntax building for database
 def set_syntax_building(argument: dict|list|tuple, positional_value: list|tuple = ()):
     def initialise_build(params: dict) -> dict:
-        if not type(params) is dict:
+        if type(params) is not dict:
             raise TypeError(f"The argument or the parameter to initialising 'set' syntax structure is not in dict; got {type(params)}")
 
         key_terms = ["cart", "wishlists", "billing_info", "applied_coupon", "coupon", "used_coupons"]
@@ -186,7 +186,7 @@ def set_syntax_building(argument: dict|list|tuple, positional_value: list|tuple 
                 set_clause_value.append(json.dumps(params[tr]))
 
                 # non-existent session keywords
-                if not tr == "wishlists" or not tr == "billing_info":
+                if tr != "wishlists" or tr != "billing_info":
                     session_key[term_key_session] = params[tr]
 
         # finalising prompt
@@ -197,7 +197,7 @@ def set_syntax_building(argument: dict|list|tuple, positional_value: list|tuple 
     # *args
     if type(argument) is tuple or type(argument) is list:
         # verify if both argument and positional values were the same amount of items
-        if not len(argument) == len(positional_value):
+        if len(argument) != len(positional_value):
             raise ValueError(f"The amount of value it has, as a list for positional value, must have the same value as the amount of key argument has: {len(argument)} | {len(positional_value)}")
         
         # adding to storer dictionary via for-loop
@@ -432,7 +432,7 @@ def signin_session(email, password, msr = 0):
             retrieved_used_coupons = None
 
             # if not matched
-            if not password == uid[4]:
+            if password != uid[4]:
                 raise ValueError("Password is incorrect")
 
             # log in method
@@ -460,6 +460,7 @@ def signin_session(email, password, msr = 0):
             raise NameError(f"{email} is not found. Try double checking your email.")
 
 def calculate_total(c):
+    GST_RATE = 0.15
     # round() rule to alleviate math float inaccuracy
     cart_total = round(sum((item["price"] * item["quantity"]) for item in c.values()), 2)
     gst = round(cart_total * 0.15, 2)
@@ -479,7 +480,7 @@ def calculate_total(c):
     tl_w_disc = main_total
     has_coupon_applied = get_entry("coupon")
 
-    if not has_coupon_applied == {}:
+    if has_coupon_applied != {}:
         discount_value = has_coupon_applied["discount"]
 
         # determination by value
@@ -1062,7 +1063,7 @@ def category_price_filter(genre, price_range):
 
     # also connected if the price range exists
     text_value = px_range_post_inversion(price_range)
-    text_value = text_value.lower() if not text_value == None else text_value
+    text_value = text_value.lower() if text_value != None else text_value
 
     # Abort if genre is not found by gio = 0,
     # also inexistent price range (typed by manual and in case of typos).
@@ -1253,9 +1254,9 @@ def apply_coupons():
         sets_used_coupons = get_entry("used_coupons")
 
         # if coupon exists
-        if input_coupon in get_data_coupon and not input_coupon in sets_used_coupons:
+        if input_coupon in get_data_coupon:
 
-            if input_coupon in sets_used_coupons: # not already used
+            if not input_coupon in sets_used_coupons: # not already used
                 save_entries(coupon = {
                     "name": input_coupon,
                     "discount": get_data_coupon[input_coupon]["discount"]
@@ -1306,7 +1307,7 @@ def continue_to_review():
 
     # validation (in billing info, check if some detail(s) are missing, omitting postal code)
     if (not cart or not billing_info) or (None in billing_info.values()):
-        if not billing_info or None in billing_info.values():
+        if (cart and not billing_info) or None in billing_info.values():
             flash("You are missing with important thing. Enter your billing details so we can track your order.")
 
         return redirect(url_for("checkout"))
@@ -1343,7 +1344,7 @@ def place_order():
     if (not cart or not billing_info) or (None in billing_info.values()):
         time.sleep(0.9)
 
-        if not billing_info or None in billing_info.values(): # missing details
+        if (cart and not billing_info) or None in billing_info.values(): # missing details
             flash("You are missing with important thing. Enter your billing details so we can track your order.")
 
         return redirect(url_for("checkout"))
@@ -1460,7 +1461,7 @@ def place_order():
 @app.route("/accounts/<measure>", defaults = {"subject": None})
 @app.route("/accounts/<measure>/<subject>")
 def signup_login(measure, subject):
-    if not measure == "signup" and not measure == "login":
+    if measure != "signup" and measure != "login":
         abort(404) # not found
 
     # verify if the user was logged on
