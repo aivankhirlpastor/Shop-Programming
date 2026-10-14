@@ -61,36 +61,61 @@
                         <button type="submit" class="destructive" formaction="{{ url_for('logout') }}" formmethod="post">Logout</button>
                     </div>
                 </form>
-            {% elif msr == "signup" %}
-                <!-- SIGN UP section  -->
-                <form action="{{ url_for('signup', get_subject = sbj) }}" id="log-in" method="post">
 
-                    <!-- main content -->
-                    <div class="main-content">
-                        <h2>Sign Up</h2>
-                        <div class="form-block fr-n-fname">
-                            <label for="new-fname">First Name</label>
-                            <input type="text" name="new-fname" id="new-fname" placeholder="John" required>
+            {% else %}
+
+                {% if msr == "signup" %}
+                    {% set id_emphasis = "signup" %}
+
+                {% elif msr == "login" %}
+                    {% set id_emphasis = "login" %}
+
+                {% endif %}
+
+                <form action="{{ url_for(id_emphasis, get_subject = sbj) }}" id="{{ id_emphasis }}" method="post">
+                    {% if id_emphasis == "signup" %}
+                        <!-- SIGNUP section -->
+                        <div class="main-content">
+                            <h2>Sign Up</h2>
+                            <div class="form-block fr-n-fname">
+                                <label for="new-fname">First Name</label>
+                                <input type="text" name="new-fname" id="new-fname" placeholder="John" required>
+                            </div>
+                            <div class="form-block fr-n-lname">
+                                <label for="new-lname">Last Name</label>
+                                <input type="text" name="new-lname" id="new-lname" placeholder="Doe" required>
+                            </div>
+                            <div class="form-block fr-n-email">
+                                <label for="new-email">Email Address</label>
+                                <input type="email" name="new-email" id="new-email" placeholder="name@example.com" required>
+                            </div>
+                            <div class="form-block fr-n-password">
+                                <label for="new-password">Password</label>
+                                <input type="password" name="new-password" id="new-password" placeholder="At least 7 characters" minlength="7" maxlength="16" autocomplete="new-password" required>
+                            </div>
+                            <div class="form-block fr-n-password">
+                                <label for="new-confirm-password">Confirm Password</label>
+                                <input type="password" name="new-confirm-password" id="new-confirm-password" placeholder="Re-enter your password" minlength="7" maxlength="16" autocomplete="new-password" required>
+                            </div>
+                            <button class="complete-action" type="submit">Sign Up</button>
+                            <p>Already have an account? <a href="{{ url_for('signup_login', measure = 'login', subject = sbj) }}">Log In</a></p>
                         </div>
-                        <div class="form-block fr-n-lname">
-                            <label for="new-lname">Last Name</label>
-                            <input type="text" name="new-lname" id="new-lname" placeholder="Doe" required>
+                    {% elif id_emphasis == "login" %}
+                        <!-- LOGIN section -->
+                        <div class="main-content">
+                            <h2>Log In</h2>
+                            <div class="form-block fr-log-email">
+                                <label for="lg-email">Email Address</label>
+                                <input type="email" name="lg-email" id="lg-email" placeholder="name@example.com" autocomplete="email" required>
+                            </div>
+                            <div class="form-block fr-log-password">
+                                <label for="lg-password">Password</label>
+                                <input type="password" name="lg-password" id="lg-password" minlength="7" maxlength="16" placeholder="At least 7 characters" autocomplete="current-password" required>
+                            </div>
+                            <button class="complete-action" type="submit">Login</button>
+                            <p>New here? <a href="{{ url_for('signup_login', measure = 'signup', subject = sbj) }}">Sign Up</a></p>
                         </div>
-                        <div class="form-block fr-n-email">
-                            <label for="new-email">Email Address</label>
-                            <input type="email" name="new-email" id="new-email" placeholder="name@example.com" required>
-                        </div>
-                        <div class="form-block fr-n-password">
-                            <label for="new-password">Password</label>
-                            <input type="password" name="new-password" id="new-password" placeholder="At least 7 characters" minlength="7" maxlength="16" autocomplete="new-password" required>
-                        </div>
-                        <div class="form-block fr-n-password">
-                            <label for="new-confirm-password">Confirm Password</label>
-                            <input type="password" name="new-confirm-password" id="new-confirm-password" placeholder="Re-enter your password" minlength="7" maxlength="16" autocomplete="new-password" required>
-                        </div>
-                        <button class="complete-action" type="submit">Sign Up</button>
-                        <p>Already have an account? <a href="{{ url_for('signup_login', measure = 'login', subject = sbj) }}">Log In</a></p>
-                    </div>
+                    {% endif %}
 
                     {% if sbj == "for_awaiting_checkout" %}
                         <!-- Through Checkout -->
@@ -100,40 +125,10 @@
                         </div>
                     {% endif %}
                 </form>
-                <div class="img-block">
-                    <img>
-                    <span class="attribution-credits">Credits</span>
-                </div>
-            {% elif msr == "login" %}
-                <!-- LOG IN section -->
-                <form action="{{ url_for('login', get_subject = sbj) }}" id="log-in" method="post">
 
-                    <!-- main content -->
-                    <div class="main-content">
-                        <h2>Log In</h2>
-                        <div class="form-block fr-log-email">
-                            <label for="lg-email">Email Address</label>
-                            <input type="email" name="lg-email" id="lg-email" placeholder="name@example.com" autocomplete="email" required>
-                        </div>
-                        <div class="form-block fr-log-password">
-                            <label for="lg-password">Password</label>
-                            <input type="password" name="lg-password" id="lg-password" minlength="7" maxlength="16" placeholder="At least 7 characters" autocomplete="current-password" required>
-                        </div>
-                        <button class="complete-action" type="submit">Login</button>
-                        <p>New here? <a href="{{ url_for('signup_login', measure = 'signup', subject = sbj) }}">Sign Up</a></p>
-                    </div>
-
-                    {% if sbj == "for_awaiting_checkout" %}
-                        <!-- Through Checkout -->
-                        <div class="awaiting-checkout">
-                            <span class="label lowercase">Continue to Checkout as a guest</span>
-                            <button type="button" class="outlined" onclick="location.href = `{{ url_for('checkout') }}`">Continue to Checkout</button>
-                        </div>
-                    {% endif %}
-                </form>
                 <div class="img-block">
-                    <img>
-                    <span class="attribution-credits">Credits</span>
+                    <img src="/static/images/pexels-oandremoura-12858796.jpg">
+                    <a class="attribution-credits" href="https://www.pexels.com/photo/close-up-photo-of-vinyl-records-12858796/" target="_blank">Photo by Andre Moura</a>
                 </div>
             {% endif %}
         </section>
