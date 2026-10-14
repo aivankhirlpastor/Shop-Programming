@@ -81,9 +81,9 @@
                                 <label for="e-{{ item['id'] }}">QUANTITY</label>
 
                                 <div class="quantity-counter">
-                                    <button type="button" class="quantity-btn" id="reduce-{{ item['id'] }}">-</button>
+                                    <button type="button" class="quantity-btn" id="reduce-{{ item['id'] }}" {% if item_emphasis %}disabled{% endif %}>-</button>
                                     <input type="number" name="e-{{ item['id'] }}" id="e-{{ item['id'] }}" data-ctgnumber="{{ item['id'] }}" min="1" max="{{ quantity_max | default(5) }}" value="{{ item['quantity'] }}" {% if item_emphasis %}disabled{% endif %}>
-                                    <button type="button" class="quantity-btn" id="add-{{ item['id'] }}">+</button>
+                                    <button type="button" class="quantity-btn" id="add-{{ item['id'] }}" {% if item_emphasis %}disabled{% endif %}>+</button>
                                 </div>
 
                             </div>
