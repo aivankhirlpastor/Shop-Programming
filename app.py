@@ -62,43 +62,46 @@ def update_stock(item: dict):
 
     for album_name, i in item.items():
         if album_name in fetched_album_data:
-
             album_module_cycle = check_date(album_name, i, 1)
 
-            # no quantity changes on pre-released items
-            if album_module_cycle != "pre-released":
-                fetched_stock = fetched_album_data[album_name]["stock"]
-                fetched_stock -= i["quantity"] # modify the stock
-            else:
-                # pre-release items
-                reserved[album_name] = {
-                    "id": i["id"],
-                    "artist": i["artist"],
-                    "name": album_name,
-                    "call": "before_released",
-                    "cause_of_demand": "pre_order",
-                    "demand_tracking": f"limit: n/a | demand: {i["quantity"]}",
-                    "quantity_demand": i["quantity"]
-                }
+            # pre-released orders are subjected to change too / limiting the number or pre-orders on that product
+            fetched_stock = fetched_album_data[album_name]["stock"]
+            fetched_stock -= i["quantity"] # modify the stock
 
-                continue
+            if album_module_cycle == "pre-released": # pre-release items
+                # they can be replaced 
+                calls = "before_released"
+                demand_cause = "pre_order"
 
             # prompt when stock reached 0 or beyond
             if fetched_stock < 0:
+                calls = "suspended"
+
                 # out of stock measurement
                 if fetched_stock <= -1 * i["quantity"]:
-                    demand_cause = "out_of_stock"
+                    if album_module_cycle == "pre-released":
+                        demand_cause = ["pre_order", "out_of_stock"]
+                        calls = "before_released_yet_suspended"
+                    else:
+                        demand_cause = "out_of_stock"
 
                 # quantity demand exceeded the stock inventory
                 else:
-                    demand_cause = "exceeded"
-
+                    if album_module_cycle == "pre-released":
+                        demand_cause = ["pre_order", "exceeded"]
+                        calls = "before_released_yet_suspended"
+                    else:
+                        demand_cause = "exceeded"
+                
                 fetched_stock = 0
+
+            # dictionary append
+            if fetched_album_data[album_name]["stock"] - i["quantity"] < 0 or album_module_cycle == "pre-released":
                 reserved[album_name] = {
                     "id": i["id"],
                     "artist": i["artist"],
                     "name": album_name,
-                    "call": "suspended",
+                    "call": calls,
                     "cause_of_demand": demand_cause,
                     "demand_tracking": f"limit: {fetched_album_data[album_name]["stock"]} | demand: {i["quantity"]}",
                     "quantity_demand": i["quantity"]
@@ -1147,6 +1150,8 @@ def invoice_selection(inv_number):
                 "items_on_hold": items_on_hold,
             }
 
+            print(items_on_hold)
+
     except IndexError:
         abort(404) # not found
 
@@ -1375,7 +1380,7 @@ def place_order():
             on_hold_items = update_stock(cart)
 
             for n in on_hold_items.keys():
-                if not on_hold_items[n]["cause_of_demand"] == "pre_order":
+                if not "pre_order" in on_hold_items[n]["cause_of_demand"]:
                     stock_related_cause[n] = on_hold_items[n]
 
             if stock_related_cause:

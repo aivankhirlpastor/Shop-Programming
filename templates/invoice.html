@@ -117,7 +117,7 @@
                     <h3>Pre-Order</h3>
                     <ul class="mini-list-container vrs-3">
                         {% for sn, albm in data.get("items_on_hold").items() %}
-                            {% if albm["cause_of_demand"] == "pre_order" %}
+                            {% if "pre_order" in albm["cause_of_demand"] %}
                                 <!-- list per item -->
                                 <li class="mini-list-item">
         
@@ -146,7 +146,10 @@
                     <h3>On Hold</h3>
                     <ul class="mini-list-container vrs-3">
                         {% for sn, albm in data.get("items_on_hold").items() %}
-                            {% if not albm["cause_of_demand"] == "pre_order" %}
+                            {% set cause_demand = albm["cause_of_demand"] %}
+                            {% set demand_application = ["exceeded", "out-of-stock"] %}
+
+                            {% if not "pre_order" in cause_demand %}
                                 <!-- list per item -->
                                 {% set is_stock_related.found = True %}
 
@@ -162,7 +165,12 @@
                                     <div class="txt-const">
                                         <div class="name-artist">
                                             <p class="emphasise">{{ sn }}</p>      
-                                            <span>{{ albm["cause_of_demand"].title().replace("_", " ") }}</span>
+
+                                            {% if cause_demand[1] in demand_application %}
+                                                <span>{{ cause_demand[1].title().replace("_", " ") }}</span>
+                                            {% else %}
+                                                <span>{{ albm["cause_of_demand"].title().replace("_", " ") }}</span>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </li>
