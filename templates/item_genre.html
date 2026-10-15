@@ -118,7 +118,11 @@
                                         
                                     {% endif %}
 
-                                    <input type="number" class="emit-stock-status {{ stock_emp | default('none') }}" name="i-quantity-{{ i['id'] }}" id="i-quantity-{{ i['id'] }}" title="Stock Left: {{ stock }}" min="1" max="{{ max_range | default(5) }}" value="{{ input_value }}" {% if disable_input %}disabled{% endif %}>
+                                    <div class="quantity-counter">
+                                        <button type="button" class="quantity-btn" id="reduce-{{ i['id'] }}" {% if disable_input %}disabled{% endif %}>-</button>
+                                        <input type="number" class="emit-stock-status {{ stock_emp | default('none') }}" name="i-quantity-{{ i['id'] }}" id="i-quantity-{{ i['id'] }}" title="Stock Left: {{ stock }}" data-ctgnumber="{{ i['id'] }}" min="1" max="{{ max_range | default(5) }}" value="{{ input_value }}" {% if disable_input %}disabled{% endif %}>
+                                        <button type="button" class="quantity-btn" id="add-{{ i['id'] }}" {% if disable_input %}disabled{% endif %}>+</button>
+                                    </div>
                                     <button type="submit" title="{{ tle }}" {% if disable_button or disable_input %}disabled{% endif %}>{{ out_text | default("Add") }}</button>
                                 </form>
                             {% endwith %}
@@ -130,5 +134,8 @@
                 {% endif %}
             </div>
         </section>
+
+        <script src="{{ url_for('static', filename='js/quantity_counter.js') }}"></script>
+
     </body>
 {% endblock %}

@@ -81,6 +81,7 @@
                                         {% set tle = "Add to Cart" if album_name in cart else "" %}
                                         {% set max_range = stock if 5 > stock else 5 %}
                                         {% set disable_button = True if album_name in cart else False %}
+                                        {% set disable_input = True if album_name in cart else False %}
                                         
                                     {% else %}
                                         {% set tle = "Out of Stock" %}
@@ -88,7 +89,11 @@
                                         {% set out_text = "OOS" %}
                                     {% endif %}
 
-                                    <input type="number" class="emit-stock-status {{ stock_emp | default('none') }}" name="i-quantity-{{ tt['id'] }}" id="i-quantity-{{ tt['id'] }}" title="Stock Left: {{ stock }}" min="1" max="{{ max_range | default(5) }}" value="{{ input_value }}" {% if disable_input %}disabled{% endif %}>
+                                    <div class="quantity-counter">
+                                        <button type="button" class="quantity-btn" id="reduce-{{ tt['id'] }}" {% if disable_input %}disabled{% endif %}>-</button>
+                                        <input type="number" class="emit-stock-status {{ stock_emp | default('none') }}" name="i-quantity-{{ tt['id'] }}" id="i-quantity-{{ tt['id'] }}" title="Stock Left: {{ stock }}" data-ctgnumber="{{ tt['id'] }}" min="1" max="{{ max_range | default(5) }}" value="{{ input_value }}" {% if disable_input %}disabled{% endif %}>
+                                        <button type="button" class="quantity-btn" id="add-{{ tt['id'] }}" {% if disable_input %}disabled{% endif %}>+</button>
+                                    </div>
                                     <button type="submit" title="{{ tle }}" {% if disable_button or disable_input %}disabled{% endif %}>{{ out_text | default("Add") }}</button>
                                 </form>
                             {% endwith %}
@@ -99,5 +104,8 @@
 
             </section>
         {% endfor %}
+
+        <script src="{{ url_for('static', filename='js/quantity_counter.js') }}"></script>
+
     </body>
 {% endblock %}
