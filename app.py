@@ -62,6 +62,7 @@ def update_stock(item: dict):
 
     for album_name, i in item.items():
         if album_name in fetched_album_data:
+            pile_cycle = False
             album_module_cycle = check_date(album_name, i, 1)
 
             # pre-released orders are subjected to change too / limiting the number or pre-orders on that product
@@ -69,9 +70,11 @@ def update_stock(item: dict):
             fetched_stock -= i["quantity"] # modify the stock
 
             if album_module_cycle == "pre-released": # pre-release items
-                # they can be replaced 
+                # they can be stacked with their conjunctive issues ("out_of_stock" in list, -yet_suspended)
                 calls = "before_released"
                 demand_cause = "pre_order"
+
+                pile_cycle = True
 
             # prompt when stock reached 0 or beyond
             if fetched_stock < 0:
@@ -79,7 +82,7 @@ def update_stock(item: dict):
 
                 # out of stock measurement
                 if fetched_stock <= -1 * i["quantity"]:
-                    if album_module_cycle == "pre-released":
+                    if pile_cycle:
                         demand_cause = ["pre_order", "out_of_stock"]
                         calls = "before_released_yet_suspended"
                     else:
@@ -87,7 +90,7 @@ def update_stock(item: dict):
 
                 # quantity demand exceeded the stock inventory
                 else:
-                    if album_module_cycle == "pre-released":
+                    if pile_cycle:
                         demand_cause = ["pre_order", "exceeded"]
                         calls = "before_released_yet_suspended"
                     else:
@@ -96,7 +99,7 @@ def update_stock(item: dict):
                 fetched_stock = 0
 
             # dictionary append
-            if fetched_album_data[album_name]["stock"] - i["quantity"] < 0 or album_module_cycle == "pre-released":
+            if fetched_album_data[album_name]["stock"] - i["quantity"] < 0 or pile_cycle:
                 reserved[album_name] = {
                     "id": i["id"],
                     "artist": i["artist"],
