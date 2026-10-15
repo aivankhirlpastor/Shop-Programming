@@ -83,15 +83,17 @@
 
                         <!-- Different Labels from Stock Status (High, Low, None) -->
                         {% elif product['stock'] > 5 %}
-                            {% set label_text = "In stock" %}    
-
+                            {% set label_text = "In stock" %}
+                            
                         {% elif 6 > product['stock'] and product['stock'] > 0 %}
                             {% set label_stock_emphasis = "low" %}
                             {% set label_text = "Low Stock" %}
+                            {% set stock_emp = "low" %}
 
                         {% else %}
                             {% set label_stock_emphasis = "out-of-stock" %}
                             {% set label_text = "Out of Stock" %}
+                            {% set stock_emp = "none" %}
 
                         {% endif %}
                         <label for="quantity">QUANTITY • {% if label_stock_emphasis == "low" %}<b class="low">({{ product["stock"] }})</b>{% endif %} <span class="stock-status lowercase {{ label_stock_emphasis }}">{{ label_text }}</span></label>
@@ -105,7 +107,11 @@
 
                         {% set input_value = item_in_hold["quantity"] if already_in_cart else 1 %}
 
-                        <input type="number" id="quantity" name="quantity" min="1" max="{{ max_value }}" value="{{ input_value }}" {% if not in_stock or already_in_cart %}disabled{% endif %}>
+                        <div class="quantity-counter">
+                            <button type="button" class="quantity-btn" id="reduce-{{ product['id'] }}" {% if not in_stock %}disabled{% endif %}>-</button>
+                            <input type="number" class="emit-stock-status {{ stock_emp | default('in_stock') }}" name="quantity" id="quantity" data-ctgnumber="{{ product['id'] }}" min="1" max="{{ max_value }}" value="{{ input_value }}" {% if not in_stock %}disabled{% endif %}>
+                            <button type="button" class="quantity-btn" id="add-{{ product['id'] }}" {% if not in_stock %}disabled{% endif %}>+</button>
+                        </div>
                     </div>
 
                     <!-- Button Action -->
@@ -122,5 +128,18 @@
                 </form>
             </div>
         </section>
+
+        <!-- a panel that appears when the change was detected -->
+        <div id="config-bottom-bar">
+            <form action="{{ url_for('apply_changes', redirection = 'product_information', target = product['id']) }}" method="post" id="target-form">
+                <input name="i-invn-{{ product['id'] }}" class="input-pre-passing" id="i-invn-{{ product['id'] }}" value="0" style="display: none;">
+
+                <button type="submit" id="save-changes">Apply Changes</button>
+                <button type="button" class="neutral outlined" id="cancel">Cancel</button>
+            </form>
+        </div>
+
+        <script src="{{ url_for('static', filename='js/item_modifier.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/quantity_counter.js') }}"></script>
     </body>
 {% endblock %}

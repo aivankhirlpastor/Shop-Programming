@@ -12,6 +12,9 @@ var getUnitPrices = document.querySelectorAll("p.price.recalculation");
 var getInvisibleInputs = document.querySelectorAll("input.input-pre-passing");
 console.log(getInvisibleInputs);
 
+// Additional Buttons
+const submitBtn = document.querySelector("button.view-my-cart");
+
 // array variables by their initials
 let initialQuantity = [];
 let unitPrice = [];
@@ -22,21 +25,20 @@ function revertChange(inp, iip, unp, index) {
     inp.classList.remove("modified");
     inp.value = initialQuantity[index];
     iip.value = initialQuantity[index];
-    unp.innerHTML = `<sup>$</sup>${Math.round((unitPrice[index] * inp.value) * 100) / 100}`;
+
+    if (unp) {
+        unp.innerHTML = `<sup>$</sup>${Math.round((unitPrice[index] * inp.value) * 100) / 100}`;
+    }
+
+    if (submitBtn) {
+        submitBtn.disabled = false;
+    }
 }
 
 for (let z = 0; z < getInputs.length; z++) {
     // local variable
     const i = getInputs[z];
     const u = getUnitPrices[z];
-
-    // let addBtn = document.getElementById(`add-${i.dataset.ctgnumber}`);
-    // let removeBtn = document.getElementById(`reduce-${i.dataset.ctgnumber}`);
-
-    // let min = parseInt(i.min);
-    // let max = parseInt(i.max);
-
-    // data footing input: in-cart, display
 
     // Check whether "u" is not undefined
     if (u !== undefined) {
@@ -56,12 +58,16 @@ for (let z = 0; z < getInputs.length; z++) {
             console.log(i.value % 1, i.value % 1 == 0);
     
             // if condition to text changes
-            if ((0 < i.value && i.value <= mx) && i.value % 1 == 0) {
+            if ((0 < i.value && i.value <= mx) && (i.value % 1 == 0) && u) {
                 u.innerHTML = `<sup>$</sup>${Math.round((unitPrice[z] * i.value) * 100) / 100}`;
             }
     
             if (!configPanel.classList.contains("arise")) {
                 configPanel.classList.add("arise");
+            }
+
+            if (submitBtn) {
+                submitBtn.disabled = true;
             }
 
             // changing the value of invisible input for the purpose of sending data to Python Flask
