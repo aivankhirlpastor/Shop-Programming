@@ -41,7 +41,11 @@
     /* Stock Status */
     --stock-normal: #000000;
     --stock-low: #bb4813;
-    --stock-none: #888888;
+    --stock-none: #c1beae;
+
+    --stock-normal-bg: #00000055;
+    --stock-low-bg: #d8700e15;
+    --stock-none-bg: #1f1f1f15;
 
     /* Side Panel Frames */
     --side-frame-transition-dur: 400ms;
@@ -198,20 +202,6 @@ span.label.f14 {
     text-decoration: line-through;
 }
 
-input.emit-stock-status {
-    --input-border-color: var(--stock-normal);
-}
-
-input.emit-stock-status.low {
-    --input-border-color: var(--stock-low);
-    background-color: #d8700e15;
-}
-
-input.emit-stock-status.none {
-    --input-border-color: var(--stock-none);
-    background-color: #1f1f1f15;
-}
-
 /* Config Panel */
 #config-bottom-bar {
     display: none; /* default */
@@ -219,6 +209,7 @@ input.emit-stock-status.none {
     box-shadow: 0 3px 10px 1px #00000033;
     justify-content: center;
     padding: 12px 20px;
+    z-index: 999;
 
     position: fixed;
     bottom: 40px;
@@ -591,6 +582,96 @@ img.svg-icon {
     left: 0;
 }
 
+/* quantity counter */
+.quantity-counter {
+    --qty-input-height: 28px;
+    --qty-input-width: 35px;
+    --shift-main-color: #0d22c5;
+    --shift-btn-focus-color: #005fcc;
+
+    align-items: center;
+    border: 2px solid #00000080;
+    border-radius: 40px;
+    display: flex;
+    font-size: 18px;
+    margin-top: 2px;
+    overflow-x: hidden;
+    width: fit-content;
+    height: var(--qty-input-height);
+}
+
+/* btn counter */
+.quantity-counter button.quantity-btn {
+    background-color: transparent;
+    font-family: "Cascadia Code"; /* monospaced based-glyphs */
+    font-size: inherit;
+    outline-offset: 0px !important; /* avoiding unnecessary transition */
+    padding: 0;
+    width: var(--qty-input-height);
+    height: var(--qty-input-height);
+}
+
+.quantity-counter button.quantity-btn:not(:disabled):hover {
+    background-color: #00000022;
+}
+.quantity-counter button.quantity-btn:not(:disabled):active {
+    background-color: #00000044;
+}
+
+/* focus */
+.quantity-counter button.quantity-btn:focus-visible {
+    background-color: #005fcc66;
+    outline: none;
+}
+
+/* focus with modified value */
+.quantity-counter:has(input.modified) button.quantity-btn:focus-visible {
+    color: #FFFFFF;
+    background-color: var(--shift-btn-focus-color);
+    outline: 2px solid var(--shift-btn-focus-color);
+}
+
+/* input number properties */
+.quantity-counter input {
+    background-color: inherit;
+    border: none;
+    box-shadow: none;
+    font-size: inherit;
+    font-weight: 700;
+    padding: 0 2px;
+    text-align: center;
+    width: var(--qty-input-width);
+    height: var(--qty-input-height);
+}
+
+.quantity-counter:has(input.modified) {
+    background-color: #22c4ff2e;
+    border-color: #041593;
+}
+
+/* removing the arrows */
+.quantity-counter input[type="number"]::-webkit-inner-spin-button,
+.quantity-counter input[type="number"]::-webkit-outer-spin-button {
+    appearance: none;
+}
+
+/* color variants based on stock status emission */
+
+/* consistent colour focus */
+.quantity-counter:has(input.emit-stock-status.low) button.quantity-btn:focus-visible {
+    background-color: #005fcc66;
+}
+
+.quantity-counter:has(input.emit-stock-status.low) {
+    background-color: var(--stock-low-bg);
+    border-color: var(--stock-low);
+}
+
+.quantity-counter:has(input.emit-stock-status.none) {
+    background-color: var(--stock-none-bg);
+    border-color: var(--stock-none);
+}
+
 /* mini list version */
 ul.mini-list-container {
     padding: 0;
@@ -880,6 +961,11 @@ section.product-info #product-details > .box-acc.price-and-quantity {
     width: 225px;
 }
 
+/* quantity counter in product information */
+section.product-info #product-details > .box-acc.price-and-quantity .quantity-counter {
+    --qty-input-width: 55px;
+}
+
 /* wishlist button */
 section.product-info #product-details button.wishlist {
     align-items: center;
@@ -1019,84 +1105,6 @@ ul.item-list li.item-details > .quantity {
 /* label */
 ul.item-list li.item-details > .quantity label {
     transition: color 0.5s ease-in-out;
-}
-
-/* quantity counter */
-ul.item-list li.item-details > .quantity .quantity-counter {
-    --qty-input-height: 28px;
-    --qty-input-width: 35px;
-    --shift-main-color: #0d22c5;
-    --shift-btn-focus-color: #005fcc;
-
-    align-items: center;
-    border: 2px solid #00000066;
-    border-radius: 40px;
-    display: flex;
-    font-size: 18px;
-    margin-top: 2px;
-    overflow-x: hidden;
-    width: fit-content;
-}
-
-/* btn counter */
-ul.item-list li.item-details > .quantity
-.quantity-counter button.quantity-btn {
-    background-color: transparent;
-    font-family: "Cascadia Code"; /* monospaced based-glyphs */
-    font-size: inherit;
-    outline-offset: 0px !important; /* avoiding unnecessary transition */
-    padding: 0;
-    width: var(--qty-input-height);
-    height: var(--qty-input-height);
-}
-
-ul.item-list li.item-details > .quantity
-.quantity-counter button.quantity-btn:not(:disabled):hover {
-    background-color: #00000022;
-}
-ul.item-list li.item-details > .quantity
-.quantity-counter button.quantity-btn:not(:disabled):active {
-    background-color: #00000044;
-}
-
-/* focus */
-ul.item-list li.item-details > .quantity
-.quantity-counter button.quantity-btn:focus-visible {
-    background-color: #005fcc66;
-    outline: none;
-}
-
-/* focus with modified value */
-ul.item-list li.item-details:has(.quantity input.modified)
-> .quantity .quantity-counter button.quantity-btn:focus-visible {
-    color: #FFFFFF;
-    background-color: var(--shift-btn-focus-color);
-    outline: 2px solid var(--shift-btn-focus-color);
-}
-
-/* input number properties */
-ul.item-list li.item-details > .quantity input {
-    background-color: inherit;
-    border: none;
-    box-shadow: none;
-    font-size: inherit;
-    font-weight: 700;
-    padding: 0 2px;
-    text-align: center;
-    width: var(--qty-input-width);
-    height: var(--qty-input-height);
-}
-
-ul.item-list li.item-details > .quantity
-.quantity-counter:has(input.modified) {
-    background-color: #22c4ff2e;
-    border-color: #041593;
-}
-
-/* removing the arrows */
-ul.item-list li.item-details > .quantity input[type="number"]::-webkit-inner-spin-button,
-ul.item-list li.item-details > .quantity input[type="number"]::-webkit-outer-spin-button {
-    appearance: none;
 }
 
 /* price */
@@ -1397,6 +1405,11 @@ section.item-display form.add-to-cart-action {
     gap: 8px;
     grid-template-columns: 1.2fr 0.8fr;
     width: 100%;
+}
+
+/* quantity counter in display container */
+section.item-display form.add-to-cart-action > .quantity-counter {
+    --qty-input-width: 45px;
 }
 
 /* error message */
