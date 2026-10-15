@@ -110,6 +110,7 @@
                                         {% set tle = "Add to Cart" if album_name in cart else "" %}
                                         {% set max_range = stock if 5 > stock else 5 %}
                                         {% set disable_button = True if album_name in cart else False %}
+                                        {% set disable_input = True if album_name in cart else False %}
 
                                     {% else %}
                                         {% set tle = "Out of Stock" %}
