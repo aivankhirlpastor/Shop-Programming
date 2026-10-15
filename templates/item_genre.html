@@ -37,29 +37,52 @@
 
                 <!-- II: Filter by Price Range -->
                 <form class="filter-price-range" action="{{ url_for('filter_price', genre = genre) }}" method="post">
+                    {% if pxrange == "below-15" %}
+                        {% set check1 = True %}
+                    {% elif pxrange == "15-to-30" %}
+                        {% set check2 = True %}
+                    {% elif pxrange == "30-to-50" %}
+                        {% set check3 = True %}
+                    {% elif pxrange == "50-to-100" %}
+                        {% set check4 = True %}
+                    {% elif pxrange == "above-100" %}
+                        {% set check5 = True %}
+                    {% endif %}
+
                     <p><b>Filter by Price Range</b></p>
                     <label>
-                        <input type="radio" name="price-range" id="below-15" value="Below $15">
+                        <input type="radio" name="price-range" id="below-15" value="Below $15" {% if check1 %}checked{% endif %} >
                         Below $15
                     </label>
                     <label>
-                        <input type="radio" name="price-range" id="15-30" value="$15 to $30">
+                        <input type="radio" name="price-range" id="15-30" value="$15 to $30" {% if check2 %}checked{% endif %}>
                         $15 – $30
                     </label>
                     <label>
-                        <input type="radio" name="price-range" id="30-50" value="$30 to $50">
+                        <input type="radio" name="price-range" id="30-50" value="$30 to $50"{% if check3 %}checked{% endif %}>
                         $30 – $50
                     </label>
                     <label>
-                        <input type="radio" name="price-range" id="50-100" value="$50 to $100">
+                        <input type="radio" name="price-range" id="50-100" value="$50 to $100"{% if check4 %}checked{% endif %}>
                         $50 – $100
                     </label>
                     <label>
-                        <input type="radio" name="price-range" id="above-100" value="Above $100">
+                        <input type="radio" name="price-range" id="above-100" value="Above $100"{% if check5 %}checked{% endif %}>
                         Above $100
                     </label>
 
                     <button type="submit">Go</button>
+
+                    {% if genre == "all" %}
+                        {% set reset_route = url_for("category_all") %}
+                    {% else %}
+                        {% set reset_route = url_for("category", genre = genre) %}
+                    {% endif %}
+
+                    {% if pxrange %}
+                        <!-- reset the price range -->
+                        <a class="reset-range" href="{{ reset_route }}">Reset</a>
+                    {% endif %}
                 </form>
             </div>
 
