@@ -1682,6 +1682,7 @@ section.account-component ul.mini-list-container {
     border-right: var(--brd-account-display);
     grid-area: 1 / 1 / span 1 / span 3;
     margin-block: 30px;
+    padding-right: 30px;
 }
 
 section.account-component .account-display {
