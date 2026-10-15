@@ -45,51 +45,57 @@ for (let z = 0; z < getInputs.length; z++) {
         unitPrice.push(parseFloat(u.dataset.unitprice));
     }
 
-    // immediately respond to changes
-    i.addEventListener("input", e => {
-        let mx = parseInt(i.max); // max value
+    console.log((i.dataset.footing));
 
-        console.log(i.value, initialQuantity[z])
-
-        if (parseInt(i.value) !== initialQuantity[z]) {
-            isUnsavedChanges = true;
-            i.classList.add("modified");
+    // i.e. only works if the product is in the cart
+    if (i.dataset.footing !== "True") {
+        // immediately respond to changes
+        i.addEventListener("input", e => {
+            let mx = parseInt(i.max); // max value
     
-            console.log(i.value % 1, i.value % 1 == 0);
+            console.log(i.value, initialQuantity[z])
     
-            // if condition to text changes
-            if ((0 < i.value && i.value <= mx) && (i.value % 1 == 0) && u) {
-                u.innerHTML = `<sup>$</sup>${Math.round((unitPrice[z] * i.value) * 100) / 100}`;
-            }
+            if (parseInt(i.value) !== initialQuantity[z]) {
+                isUnsavedChanges = true;
+                i.classList.add("modified");
+        
+                console.log(i.value % 1, i.value % 1 == 0);
+        
+                // if condition to text changes
+                if ((0 < i.value && i.value <= mx) && (i.value % 1 == 0) && u) {
+                    u.innerHTML = `<sup>$</sup>${Math.round((unitPrice[z] * i.value) * 100) / 100}`;
+                }
+        
+                if (!configPanel.classList.contains("arise")) {
+                    configPanel.classList.add("arise");
+                }
     
-            if (!configPanel.classList.contains("arise")) {
-                configPanel.classList.add("arise");
-            }
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                }
+    
+                // changing the value of invisible input for the purpose of sending data to Python Flask
+                const iid = `i-invn-${i.dataset.ctgnumber}`;
+                document.getElementById(iid).value = i.value;
+    
+            } else {
+                revertChange(i, getInvisibleInputs[z], u, z);
+    
+                // Automatic cancellation process
+                let strike = 0;
+                for (let rmn = 0; rmn < getInputs.length; rmn++) {
+                    // search for elements with "modified" class
+                    strike += !getInputs[rmn].classList.contains("modified") ? 1 : 0;
+                }
+    
+                if (strike === getInputs.length) {
+                    configPanel.classList.remove("arise");
+                    isUnsavedChanges = false;
+                }
+            } 
+        });
+    }
 
-            if (submitBtn) {
-                submitBtn.disabled = true;
-            }
-
-            // changing the value of invisible input for the purpose of sending data to Python Flask
-            const iid = `i-invn-${i.dataset.ctgnumber}`;
-            document.getElementById(iid).value = i.value;
-
-        } else {
-            revertChange(i, getInvisibleInputs[z], u, z);
-
-            // Automatic cancellation process
-            let strike = 0;
-            for (let rmn = 0; rmn < getInputs.length; rmn++) {
-                // search for elements with "modified" class
-                strike += !getInputs[rmn].classList.contains("modified") ? 1 : 0;
-            }
-
-            if (strike === getInputs.length) {
-                configPanel.classList.remove("arise");
-                isUnsavedChanges = false;
-            }
-        } 
-    });
 
     initialQuantity.push(Number(i.value));
 }

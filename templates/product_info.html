@@ -109,7 +109,7 @@
 
                         <div class="quantity-counter">
                             <button type="button" class="quantity-btn" id="reduce-{{ product['id'] }}" {% if not in_stock %}disabled{% endif %}>-</button>
-                            <input type="number" class="emit-stock-status {{ stock_emp | default('in_stock') }}" name="quantity" id="quantity" data-ctgnumber="{{ product['id'] }}" min="1" max="{{ max_value }}" value="{{ input_value }}" {% if not in_stock %}disabled{% endif %}>
+                            <input type="number" class="emit-stock-status {{ stock_emp | default('in_stock') }}" name="quantity" id="quantity" data-ctgnumber="{{ product['id'] }}" data-footing="{{ not already_in_cart }}" min="1" max="{{ max_value }}" value="{{ input_value }}" {% if not in_stock %}disabled{% endif %}>
                             <button type="button" class="quantity-btn" id="add-{{ product['id'] }}" {% if not in_stock %}disabled{% endif %}>+</button>
                         </div>
                     </div>
