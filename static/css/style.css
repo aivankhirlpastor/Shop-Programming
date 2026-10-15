@@ -1035,8 +1035,11 @@ section.product-info #product-details p.price {
 /* ======== CART PAGE ======== */
 
 /* to get a proper display, the parent must be at the grid display. */
-ul.item-list {
+.cart-collections {
     grid-area: 1 / 1 / span 1 / 6;
+}
+
+ul.item-list {
     margin: 0;
     padding: 0;
 }
@@ -1195,6 +1198,11 @@ ul.item-list li.item-details:is(.out-of-stock, .unavailable) form.delete-item bu
         transform: scale(2);
         opacity: 0%;
     }
+}
+
+/* remove all items */
+.cart-collections .empty-all {
+    margin-top: 20px;
 }
 
 /* empty list message */

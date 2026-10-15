@@ -948,6 +948,17 @@ def remove_item(album_name):
 
     return redirect(url_for("cart"))
 
+@app.route("/remove_all_items", methods = ["POST"])
+def remove_all_items():
+    try:
+        remove_key("cart") # remove all items in the cart
+        flash("Removed all items in your cart.")
+    except Exception as remove_all_error:
+        logger("REMOVE ALL ITEMS ERROR", remove_all_error)
+        flash("Something went wrong while removing all the items in your cart. Try again later.")
+
+    return redirect(url_for("cart"))
+
 @app.route("/apply_changes", defaults = {"redirection": "cart", "target": "all"}, methods = ["POST"])
 @app.route("/apply_changes/<redirection>/<target>", methods = ["POST"])
 def apply_changes(redirection, target):

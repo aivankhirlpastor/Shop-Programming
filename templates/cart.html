@@ -10,98 +10,103 @@
             {% set are_some_unavailable = namespace(found = False) %}
 
             {% if cart.items() %}
-                <!-- I: ITEM LISTS -->
-                <ul class="item-list">
-                    {% for album_name, item in cart.items() %}
-                    
-                        {# verifying for availability #}
-                        {% if not item.get("is_unavailable") == True %}
-                            {% set stock = albums[album_name]["stock"] %}
-
-                            {% if not stock > 0 %}
-                                {% set item_emphasis = "out-of-stock" %}
+                <!-- I: ITEM LISTS | BUTTON -->
+                <div class="cart-collections">
+                    <ul class="item-list">
+                        {% for album_name, item in cart.items() %}
+                        
+                            {# verifying for availability #}
+                            {% if not item.get("is_unavailable") == True %}
+                                {% set stock = albums[album_name]["stock"] %}
+    
+                                {% if not stock > 0 %}
+                                    {% set item_emphasis = "out-of-stock" %}
+                                    {% set are_some_unavailable.found = True %}
+                                    {% set defunct = True %}
+                                {% endif %}
+    
+                            {% else %}
+                                {% set item_emphasis = "unavailable" %}
                                 {% set are_some_unavailable.found = True %}
                                 {% set defunct = True %}
+    
                             {% endif %}
-
-                        {% else %}
-                            {% set item_emphasis = "unavailable" %}
-                            {% set are_some_unavailable.found = True %}
-                            {% set defunct = True %}
-
-                        {% endif %}
-
-                        {# item running out of stock in greyed-out element #}
-
-                        <li class="item-details grid {{ item_emphasis | default() }}">
-                            <div class="product-img-small">
-                                <img class="img-item" src="{{ item['image'] }}" alt="{{ album_name }}">
-                            </div>
-                            <div class="name-artist-label">
-                                {% if pre_released[album_name] %}
-                                    <!-- Date Label First -->
-                                    <span class="stock-status lowercase label f14">Release date: <b>{{ pre_released[album_name]["release_date"] }}</b></span>
-
-                                <!-- Different Labels from Stock Status (High, Low, None) -->
-                                {% elif not defunct or item_emphasis == "out-of-stock" %}
-
-                                    {% if albums[album_name]['stock'] > 5 %}
-                                        <span class="stock-status lowercase label f14">In Stock</span>
-                                    {% elif 6 > albums[album_name]['stock'] and albums[album_name]['stock'] > 0 %}
-                                        <span class="stock-status low lowercase label f14"><b>({{ albums[album_name]['stock'] }})</b> Low Stock</span>
-                                    {% else %}
-                                        <span class="stock-status out-of-stock lowercase label f14">Out of Stock</span>
-                                    {% endif %}
-
-                                {% else %}
-                                    <span class="stock-status lowercase label f14">—</span>
-                                {% endif %}
-
-                                <div class="block-name-artist">
-                                    <!-- Album Name and Artist -->
-                                    <h3>
-                                        {% if not defunct or item_emphasis == "out-of-stock" %}
-                                            <a href="{{ url_for('product_information', id = item['id']) }}">{{ album_name }}</a>
+    
+                            {# item running out of stock in greyed-out element #}
+    
+                            <li class="item-details grid {{ item_emphasis | default() }}">
+                                <div class="product-img-small">
+                                    <img class="img-item" src="{{ item['image'] }}" alt="{{ album_name }}">
+                                </div>
+                                <div class="name-artist-label">
+                                    {% if pre_released[album_name] %}
+                                        <!-- Date Label First -->
+                                        <span class="stock-status lowercase label f14">Release date: <b>{{ pre_released[album_name]["release_date"] }}</b></span>
+    
+                                    <!-- Different Labels from Stock Status (High, Low, None) -->
+                                    {% elif not defunct or item_emphasis == "out-of-stock" %}
+    
+                                        {% if albums[album_name]['stock'] > 5 %}
+                                            <span class="stock-status lowercase label f14">In Stock</span>
+                                        {% elif 6 > albums[album_name]['stock'] and albums[album_name]['stock'] > 0 %}
+                                            <span class="stock-status low lowercase label f14"><b>({{ albums[album_name]['stock'] }})</b> Low Stock</span>
                                         {% else %}
-                                            {{ album_name }}
+                                            <span class="stock-status out-of-stock lowercase label f14">Out of Stock</span>
                                         {% endif %}
-                                    </h3>
-                                    <p class="artist">{{ item['artist'] }}</p>
+    
+                                    {% else %}
+                                        <span class="stock-status lowercase label f14">—</span>
+                                    {% endif %}
+    
+                                    <div class="block-name-artist">
+                                        <!-- Album Name and Artist -->
+                                        <h3>
+                                            {% if not defunct or item_emphasis == "out-of-stock" %}
+                                                <a href="{{ url_for('product_information', id = item['id']) }}">{{ album_name }}</a>
+                                            {% else %}
+                                                {{ album_name }}
+                                            {% endif %}
+                                        </h3>
+                                        <p class="artist">{{ item['artist'] }}</p>
+                                    </div>
+    
+                                    <span class="label">{{ item['label'] }}</span>
                                 </div>
-
-                                <span class="label">{{ item['label'] }}</span>
-                            </div>
-
-                            <div class="quantity">
-                                <!-- Editable Quantity Input -->
-                                {% if stock %}
-                                    {% set quantity_max = stock if 5 > stock and 5 > 0 else 5 %}
-                                {% endif %}
-
-                                <label for="e-{{ item['id'] }}">QUANTITY</label>
-
-                                <div class="quantity-counter">
-                                    <button type="button" class="quantity-btn" id="reduce-{{ item['id'] }}" {% if item_emphasis %}disabled{% endif %}>-</button>
-                                    <input type="number" name="e-{{ item['id'] }}" id="e-{{ item['id'] }}" data-ctgnumber="{{ item['id'] }}" min="1" max="{{ quantity_max | default(5) }}" value="{{ item['quantity'] }}" {% if item_emphasis %}disabled{% endif %}>
-                                    <button type="button" class="quantity-btn" id="add-{{ item['id'] }}" {% if item_emphasis %}disabled{% endif %}>+</button>
+    
+                                <div class="quantity">
+                                    <!-- Editable Quantity Input -->
+                                    {% if stock %}
+                                        {% set quantity_max = stock if 5 > stock and 5 > 0 else 5 %}
+                                    {% endif %}
+    
+                                    <label for="e-{{ item['id'] }}">QUANTITY</label>
+    
+                                    <div class="quantity-counter">
+                                        <button type="button" class="quantity-btn" id="reduce-{{ item['id'] }}" {% if item_emphasis %}disabled{% endif %}>-</button>
+                                        <input type="number" name="e-{{ item['id'] }}" id="e-{{ item['id'] }}" data-ctgnumber="{{ item['id'] }}" min="1" max="{{ quantity_max | default(5) }}" value="{{ item['quantity'] }}" {% if item_emphasis %}disabled{% endif %}>
+                                        <button type="button" class="quantity-btn" id="add-{{ item['id'] }}" {% if item_emphasis %}disabled{% endif %}>+</button>
+                                    </div>
+    
                                 </div>
-
-                            </div>
-
-                            <div class="price-action">
-                                <!-- Price -->
-                                <p class="price recalculation emphasise" data-unitprice="{{ item['price'] }}" id="atr-price-{{ item['id'] }}">
-                                    <sup>$</sup>{{ '%.2f' % (item['quantity'] * item['price']) }}
-                                </p>
-                                <form class="delete-item" action="{{ url_for('remove_item', album_name = album_name) }}" method="post">
-                                    <button type="submit" class="rounded squared destructive" title="Remove '{{ album_name }}'">
-                                        <img src="/static/icons/delete.svg" class="svg-icon">
-                                    </button>
-                                </form>
-                            </div>
-                        </li>
-                    {% endfor %}
-                </ul>
+    
+                                <div class="price-action">
+                                    <!-- Price -->
+                                    <p class="price recalculation emphasise" data-unitprice="{{ item['price'] }}" id="atr-price-{{ item['id'] }}">
+                                        <sup>$</sup>{{ '%.2f' % (item['quantity'] * item['price']) }}
+                                    </p>
+                                    <form class="delete-item" action="{{ url_for('remove_item', album_name = album_name) }}" method="post">
+                                        <button type="submit" class="rounded squared destructive" title="Remove '{{ album_name }}'">
+                                            <img src="/static/icons/delete.svg" class="svg-icon">
+                                        </button>
+                                    </form>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <form class="empty-all" action="{{ url_for('remove_all_items') }}" method="post">
+                        <button class="destructive rounded" type="submit" formmethod="post" onclick="return confirm('Are you sure you want to remove all items in your cart?')">Remove All Items</button>
+                    </form>
+                </div>
                 
                 <!-- II: ORDER DETAILS -->
                 <div class="panel-details">
