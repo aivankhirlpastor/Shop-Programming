@@ -144,8 +144,8 @@
                     <p>The following items are listed below:</p>
                     <ul class="reserved-items">
                         {% for n, items in (reserves | default({})).items() %}
-                            <!-- list only items that were released; omitting pre-released items -->
-                            {% if not items["cause_of_demand"] == "pre_order" %}
+                            <!-- list only items that were released; display only with their stock related issue, thus excludes pre-released items -->
+                            {% if not "pre_order" in items["cause_of_demand"] %}
                                 <li class="item-demand" id="{{ items['id'] }}">
                                     <b>{{ n }}</b>
                                     <span class="quantity-count">× {{ items["quantity_demand"] }}</span>
