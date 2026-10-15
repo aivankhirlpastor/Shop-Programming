@@ -1356,6 +1356,11 @@ section.item-display form.filter-price-range button {
     margin-top: 8px;
 }
 
+section.item-display form.filter-price-range a.reset-range {
+    margin-left: 16px;
+    /* border: 2px solid; */
+}
+
 /* Display Container (Element that holds the item card) */
 section.item-display > .dsp-container {
     gap: var(--display-gaps);
