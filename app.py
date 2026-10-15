@@ -965,18 +965,22 @@ def apply_changes(redirection, target):
             max_quantity = album_products[n]["stock"] if album_products[n]["stock"] < 5 else 5
             qty = int(request.form[f"i-invn-{items['id']}"])
 
-            if 0 < qty <= max_quantity and items['quantity'] != qty:
-                cart[n]["quantity"] = (qty)
+            if qty == cart[n]["quantity"]: # no changes to value
+                pass
+            elif 0 < qty <= max_quantity and items['quantity'] != qty:
+                cart[n]["quantity"] = qty
             elif qty > max_quantity:
                 flash(f"({n}) That value should not exceed more than {max_quantity} maximum.")
             elif 0 >= qty:
                 flash(f"({n}) That value should not be less than 1 minimum.")
 
         except ValueError:
-            logger("NON-INTEGER VALUE", f"({n}) Non-integer detected", "closed_log")
+            logger(False, f"NON-INTEGER VALUE: ({n})", "closed_log")
             flash(f"({n}) Please enter a number to adjust that quantity.")
 
-    # except BadRe
+        except Exception as e:
+            logger(False, f"({n}) Failed to fetch a value: {e}", "closed_log")
+            flash(f"({n}) Can't change the quantity due to an error.")
 
     save_entries(cart = cart)
 
