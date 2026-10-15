@@ -948,17 +948,20 @@ def remove_item(album_name):
 
     return redirect(url_for("cart"))
 
-@app.route("/apply_changes", methods = ["POST"])
-def apply_changes():
+@app.route("/apply_changes", defaults = {"redirection": "cart", "target": "all"}, methods = ["POST"])
+@app.route("/apply_changes/<redirection>/<target>", methods = ["POST"])
+def apply_changes(redirection, target):
     album_products = load_data_products()
     cart = get_entry("cart")
 
     for n, items in cart.items():
-        if items.get("is_unavailable"):
+        # target name constitute to the product name in order to proceed to change process
+        if items.get("is_unavailable") or (target != "all" and target != items["id"]):
             continue
 
-        # value validation
+        # value change process
         try:
+            # value validation
             max_quantity = album_products[n]["stock"] if album_products[n]["stock"] < 5 else 5
             qty = int(request.form[f"i-invn-{items['id']}"])
 
@@ -973,7 +976,12 @@ def apply_changes():
             logger("NON-INTEGER VALUE", f"({n}) Non-integer detected", "closed_log")
             flash(f"({n}) Please enter a number to adjust that quantity.")
 
+    # except BadRe
+
     save_entries(cart = cart)
+
+    if redirection == "product_information":
+        return redirect(url_for("product_information", id = target))
 
     return redirect(url_for("cart"))
 
