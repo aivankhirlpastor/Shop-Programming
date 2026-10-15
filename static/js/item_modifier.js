@@ -5,11 +5,11 @@ const cancel = document.getElementById("cancel");
 const save = document.getElementById("save-changes");
 
 // Get the element of an input and p, classed "recalculation"
-const getInputs = document.querySelectorAll("input[type=number]");
-const getUnitPrices = document.querySelectorAll("p.price.recalculation");
+var getInputs = document.querySelectorAll("input[type=number]");
+var getUnitPrices = document.querySelectorAll("p.price.recalculation");
 
 // Get the invisible input elements
-const getInvisibleInputs = document.querySelectorAll("input.input-pre-passing");
+var getInvisibleInputs = document.querySelectorAll("input.input-pre-passing");
 console.log(getInvisibleInputs);
 
 // array variables by their initials
@@ -30,56 +30,13 @@ for (let z = 0; z < getInputs.length; z++) {
     const i = getInputs[z];
     const u = getUnitPrices[z];
 
-    let addBtn = document.getElementById(`add-${i.dataset.ctgnumber}`);
-    let removeBtn = document.getElementById(`reduce-${i.dataset.ctgnumber}`);
+    // let addBtn = document.getElementById(`add-${i.dataset.ctgnumber}`);
+    // let removeBtn = document.getElementById(`reduce-${i.dataset.ctgnumber}`);
 
-    let min = parseInt(i.min);
-    let max = parseInt(i.max);
+    // let min = parseInt(i.min);
+    // let max = parseInt(i.max);
 
-    // quantity modifiers
-    addBtn.addEventListener("click", () => {
-        // below maximum
-        console.log(`${i.min} <= ${i.value} < ${i.max}`);
-        console.log(parseInt(i.min) <= parseInt(i.value) && parseInt(i.value) < parseInt(i.max));
-        if (min <= parseInt(i.value) && parseInt(i.value) < max) {
-            i.value++;
-            i.dispatchEvent(new Event("input", { bubbles: true }));
-
-        } else if (parseInt(i.value) < max) {
-            // replicating the vanilla HTML input change
-            i.value = min;
-            i.dispatchEvent(new Event("input", { bubbles: true }));
-
-        }
-    });
-
-    // accessibility
-    addBtn.addEventListener("keydown", key => {
-        if (key.key === "ArrowLeft" || key.key === "ArrowRight") {
-            removeBtn.focus();
-        }
-    })
-
-    removeBtn.addEventListener("click", () => {
-        // above minimum
-        if (max >= parseInt(i.value) && parseInt(i.value) > min) {
-            i.value--;
-            i.dispatchEvent(new Event("input", { bubbles: true }));
-
-        } else if (parseInt(i.value) > max) {
-            // replicating the vanilla HTML input change
-            i.value = max;
-            i.dispatchEvent(new Event("input", { bubbles: true }));
-            
-        }
-    });
-
-    // accessibility
-    removeBtn.addEventListener("keydown", key => {
-        if (key.key === "ArrowLeft" || key.key === "ArrowRight") {
-            addBtn.focus();
-        }
-    })
+    // data footing input: in-cart, display
 
     // Check whether "u" is not undefined
     if (u !== undefined) {
