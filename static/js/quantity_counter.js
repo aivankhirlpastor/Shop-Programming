@@ -13,8 +13,6 @@ for (let iz = 0; iz < getInputs.length; iz++) {
     // quantity modifiers
     addBtn.addEventListener("click", () => {
         // below maximum
-        // console.log(`${i.min} <= ${i.value} < ${i.max}`);
-        // console.log(parseInt(i.min) <= parseInt(i.value) && parseInt(i.value) < parseInt(i.max));
         if (min <= parseInt(i.value) && parseInt(i.value) < max) {
             i.value++;
             i.dispatchEvent(new Event("input", { bubbles: true }));
