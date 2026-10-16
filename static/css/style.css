@@ -1261,7 +1261,7 @@ section.my-cart .panel-details > .cost-precalc {
 
 /* Form - Route to Checkout */
 section.my-cart .panel-details > .route-to-checkout {
-    padding-top: 30px;
+    padding-top: 10px;
 }
 
 /* text span "Notes" */
