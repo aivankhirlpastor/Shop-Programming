@@ -869,7 +869,7 @@ def add_to_cart(catalogue_id, product_name, input_selector, pole_end):
         # when input is not applicable, default is 1 /*/ validate whether the user have entered a number
         quantity = 1 if input_selector == "-1" else int(request.form[input_selector])
 
-        if 0 < quantity <= 5:
+        if 0 < quantity <= albums[product_name]["stock"]:
             # 1. Check whether the requested catalogue ID exists.
             for _, mvt in albums.items():
                 if catalogue_id == mvt["id"]:
@@ -880,7 +880,7 @@ def add_to_cart(catalogue_id, product_name, input_selector, pole_end):
                 flash(f"Item '{catalogue_id}' could not be found. Double check that the catalogue ID exists.")
 
         else:
-            flash(f"Please enter a quantity between 1 to 5.")
+            flash(f"Please enter a quantity between 1 to {albums[product_name]["stock"]}.")
 
     except ValueError:
         flash("We could not add that item. Please enter a number in integer only.")
@@ -997,6 +997,25 @@ def apply_changes(redirection, target):
 
     if redirection == "product_information":
         return redirect(url_for("product_information", id = target))
+
+    return redirect(url_for("cart"))
+
+@app.route("/accept_changes", methods = ["POST"])
+def accept_changes():
+    get_albums = load_data_products()
+    cart = get_entry("cart")
+
+    try:
+        for album_name, v in cart.items():
+            if v["quantity"] > get_albums[album_name]["stock"]:
+                cart[album_name]["quantity"] = get_albums[album_name]["stock"]
+
+        save_entries(cart = cart)
+
+        flash("Quantity successfully changed.")
+
+    except:
+        logger("ACCEPT CHANGE ERROR", "Failed to make changes to the products.")
 
     return redirect(url_for("cart"))
 

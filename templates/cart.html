@@ -8,6 +8,7 @@
         <section class="grid grid-display my-cart">
             
             {% set are_some_unavailable = namespace(found = False) %}
+            {% set exceeded_quantity = namespace(found = False) %}
 
             {% if cart.items() %}
                 <!-- I: ITEM LISTS | BUTTON -->
@@ -35,6 +36,8 @@
                             {# item running out of stock in greyed-out element #}
     
                             <li class="item-details grid {{ item_emphasis | default() }}">
+                                <!-- {# quantity exceeded the amount #} -->
+
                                 <div class="product-img-small">
                                     <img class="img-item" src="{{ item['image'] }}" alt="{{ album_name }}">
                                 </div>
@@ -52,6 +55,10 @@
                                             <span class="stock-status low lowercase label f14"><b>({{ albums[album_name]['stock'] }})</b> Low Stock</span>
                                         {% else %}
                                             <span class="stock-status out-of-stock lowercase label f14">Out of Stock</span>
+                                        {% endif %}
+
+                                        {% if not stock >= item['quantity'] %}
+                                            {% set exceeded_quantity.found = True %}
                                         {% endif %}
     
                                     {% else %}
@@ -173,6 +180,24 @@
                                 {% endfor %}
                             </ul>
                             <p>Remove any items from your cart that might not be shipped in order to finish your purchase.</p>
+                        </form>
+
+                    {% elif exceeded_quantity.found %}
+
+                        <!-- items exceeded the remaining stock -->
+                        <form class="accept-change" action="{{ url_for('accept_changes') }}" method="post">
+                            <p>Some of your items have been exceeded to what is remaining. You can see through the list below in which they can be set to a maximum value:</p>
+                            <ul class="exceeded-demand">
+                                {% for listed, exc in cart.items() %}
+                                    {% if exc["quantity"] > albums[listed]["stock"] %}
+                                        <li>
+                                            <b>{{ listed }}</b>
+                                            <span style="display: block;">{{ exc["quantity"] }} ==> {{ albums[listed]["stock"] }}</span>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                            <button type="submit">Accept Changes</button>
                         </form>
 
                     {% else %}
