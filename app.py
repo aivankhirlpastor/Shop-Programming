@@ -519,13 +519,23 @@ def remove_coupon_action():
 def coupon_validity():
     try:
         coupon = get_entry("coupon")
-        cpn_name = coupon["name"]
-        get_data_coupon = load_data_coupons()
 
-        if cpn_name not in get_data_coupon:
-            is_removed = remove_coupon_action()
+        if coupon:
+            cpn_name = coupon["name"]
+            get_data_coupon = load_data_coupons()
 
-            flash(f"The coupon you have, {cpn_name}, is no longer valid.")
+            # invalid coupon
+            if cpn_name not in get_data_coupon:
+                is_removed = remove_coupon_action()
+
+                flash(f"The coupon you have, {cpn_name}, is no longer valid.")
+
+            # dissimiliar discount value
+            elif coupon["discount"] != get_data_coupon[cpn_name]["discount"]:
+                coupon["discount"] = get_data_coupon[cpn_name]["discount"]
+
+                save_entries(coupon = coupon)
+
     except Exception as validate_coupon_error:
         logger(False, f"Failed to validate coupon: {validate_coupon_error}", "closed_log")
 
@@ -789,18 +799,6 @@ def logger(types: str = "ERROR", cause = None, sector = "error"):
 
     elif sector == "closed_log":
         print(f"\33[2m{cause}\33[0m")
-
-# --------------------------------------
-
-# PRE variable declaration \ via research
-@app.before_request
-def before_load_function():
-
-    # coupon validity
-    if session.get("coupon", {}):
-        coupon_validity()
-
-# --------------------------------------
 
 # ROUTES <------------------->
 @app.route("/")
@@ -1272,9 +1270,11 @@ def cart():
     # Get cart via session.get
     cart = verify_existing_product(albums, get_entry("cart"), "cart")
     _, pr = album_date_modules(albums, 1)
+    coupon_validity()
 
     # Get price calculation
     __n, subtotal, gst, ship_fee, discount, __n2 = calculate_total(cart)
+
 
     return render_template("cart.html", cart = cart, albums = albums,
                            subtotal = subtotal, gst = gst, discount = discount,
@@ -1337,6 +1337,8 @@ def remove_coupon():
 @app.route("/checkout")
 def checkout():
     cart, billing_info = get_entry("cart", "billing_info")
+    coupon_validity()
+
     total, subtotal, gst, ship_fee, discount, total_with_discount = calculate_total(cart)
 
     if not cart:
@@ -1353,6 +1355,8 @@ def checkout():
 @app.route("/continue_to_review")
 def continue_to_review():
     cart, billing_info = get_entry("cart", "billing_info")
+    coupon_validity()
+
     total, subtotal, gst, ship_fee, discount, total_with_discount = calculate_total(cart)
 
     # validation (in billing info, check if some detail(s) are missing, omitting postal code)
