@@ -737,13 +737,13 @@ def check_date(n: str, albm: dict, refer: int):
             if 0 <= (current - album_release_date).days <= RLSD:
                 return "released"
 
-            # featured: calculated value == remainder
-            elif (id_mid // DAY_CURRENT % 10) == (id_prime % 10):
-                return "featured"
-
             # pre-released
             elif PRE_RLSD >= (album_release_date - current).days > 0:
                 return "pre-released"
+            
+            # featured: calculated value == remainder
+            elif (id_mid // DAY_CURRENT % 10) == (id_prime % 10):
+                return "featured"
 
         # refer to date only; identify either released or pre-released
         if refer == 1:
