@@ -1128,13 +1128,19 @@ def category_price_filter(genre, price_range):
 
 @app.route("/filter_price/<string:genre>", methods = ["POST"])
 def filter_price(genre):
-    selected_range = request.form["price-range"]
+    try:
+        selected_range = request.form["price-range"]
+        srg = f"{selected_range.replace(' ', '_').replace('$', '')}".lower() # in snake case, naming convention
+    except:
+        flash("Select a range to filter out products based on price.")
 
-    # in snake case, naming convention
-    srg = f"{selected_range.replace(' ', '_').replace('$', '')}".lower()
+        if genre == "all":
+            return redirect(url_for("category_all"))
+        else:
+            return redirect(url_for("category", genre = genre))
 
     # redirect with filtering item in price
-    return(redirect(url_for("category_price_filter", genre = genre, price_range = srg)))
+    return redirect(url_for("category_price_filter", genre = genre, price_range = srg))
 
 # Invoice Page
 @app.route("/invoice-<int:inv_number>")
@@ -1390,7 +1396,7 @@ def get_details():
 
     save_entries(billing_info = billing_info)
 
-    return(redirect(url_for("continue_to_review")))
+    return redirect(url_for("continue_to_review"))
 
 # Placing Order
 @app.route("/place_order", methods = ["POST"])
@@ -1590,7 +1596,7 @@ def signup(get_subject):
         
         return redirect(url_for("index"))
 
-    # redirect to checkout via "get_subject"
+    # return to checkout via "get_subject"
     if get_subject == "for_awaiting_checkout":
         return redirect(url_for("checkout"))
 
@@ -1615,7 +1621,7 @@ def login(get_subject):
 
         return redirect(url_for("signup_login", measure = 'login', subject = get_subject))
 
-    # redirect to checkout via "get_subject"
+    # return to checkout via "get_subject"
     if get_subject == "for_awaiting_checkout":
         return redirect(url_for("checkout"))
 
