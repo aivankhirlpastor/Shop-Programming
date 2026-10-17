@@ -1327,7 +1327,7 @@ def apply_coupons():
                 flash("Oops! You've already used that coupon.")
 
         else:
-            flash("Coupon does not exist")
+            flash(f"Coupon '{input_coupon}' does not exist")
             
     except Exception as apply_coupon_error:
         logger("APPLY COUPON ERROR:", apply_coupon_error)
