@@ -98,6 +98,17 @@
         "price": 29.99,
         "stock": 0
     },
+    "Sandstone Dwarf (Deluxe Edition)": {
+        "artist": "Orinoi Liz",
+        "id": "998 1573 D",
+        "release_date": "27-02-2026",
+        "label": "Spirit Soul",
+        "tracks": 24,
+        "genre": "Acoustic",
+        "image": "/static/images/sandstone-dwarf.jpg",
+        "price": 70.99,
+        "stock": 23
+    },
     "Waterwell Stream": {
         "artist": "Dynamic Tussell",
         "id": "930 6014 D",
