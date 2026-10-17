@@ -1297,14 +1297,17 @@ def wishlist():
 # Applying Coupons
 @app.route("/apply_coupons", methods = ["POST"])
 def apply_coupons():
-    get_data_coupon = load_data_coupons() # get the data of the coupons
-    input_coupon = request.form["coupon"] # get user's input
-
     try:
+        input_coupon = request.form["coupon"].upper() # get user's input
+        get_data_coupon = load_data_coupons() # get the data of the coupons
         sets_used_coupons = get_entry("used_coupons")
 
+        # blank input
+        if input_coupon == "":
+            flash("Please enter a coupon name")
+
         # if coupon exists
-        if input_coupon in get_data_coupon:
+        elif input_coupon in get_data_coupon:
 
             if not input_coupon in sets_used_coupons: # not already used
                 save_entries(coupon = {
