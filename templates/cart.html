@@ -129,7 +129,7 @@
                     {% endif %}
     
                     <form id="coupon-layout" action="{{ url_for('apply_coupons') }}", method="post">
-                        <input type="text" name="coupon" id="coupon" placeholder="Enter coupon here" value="{% if cpn %}{{ cpn['name'] }}{% endif %}" {% if cpn %}disabled{% endif %}>
+                        <input type="text" name="coupon" id="coupon" pattern="[A-Za-z0-9]+" title="Please enter a coupon name in letters and numbers only." placeholder="Enter coupon here" value="{% if cpn %}{{ cpn['name'] }}{% endif %}" {% if cpn %}disabled{% endif %}>
     
                         {% if cpn %}
                             <button type="submit" formaction="{{ url_for('remove_coupon') }}">Remove</button>
