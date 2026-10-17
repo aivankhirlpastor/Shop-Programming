@@ -1250,6 +1250,7 @@ section.my-cart .panel-details > #coupon-layout {
 
 /* Coupon Input Textbox */
 section.my-cart .panel-details > #coupon-layout input[type=text] {
+    font-family: monospace;
     width: 100%;
 }
 
