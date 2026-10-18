@@ -1644,6 +1644,14 @@ def logout():
 
     return redirect(url_for("signup_login", measure = 'login'))
 
+@app.route("/attribution")
+def attribution():
+    # load the attributions
+    with open("data/attribution.json") as attr:
+        loaded_attributon = json.load(attr)
+
+    return render_template("attribution.html", attr = loaded_attributon)
+
 if __name__ == "__main__":
     initialise_database()
 

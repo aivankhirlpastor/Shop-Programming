@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Attribution - The Music Shop{% endblock %}
+
+{% block content %}
+    <body>
+        <h2>ATTRIBUTION</h2>
+        <p>For the purposes of the assessments 91896 and 91897, those photos are displayed as a music cover, with a blend of filtering and editing from the original, by borrowing those images from the respective proprietors through a reputable distributor. Some music covers I’ve designed are not from stock images, so not all other music covers’ sources are mentioned.</p>
+        <p>All rights belong to their respective owners, as well as the self-designed covers (in which they are not listed in the attribution).</p>
+
+        <hr>
+        <ol class="attr-credits">
+            {% for n, properties in attr.items() %}
+
+                {% if properties["distributor"] %}
+                    {% set dtr = " from " + properties["distributor"]  %}
+                {% endif %}
+
+                {% if properties["details"] %}
+                    {% set dtls = properties["details"] %}
+                {% endif %}
+
+                <li>{{ n }}{% if dtls %} ({{dtls}}){% endif %} — Photo by <a href="{{ properties['url'] }}" target="_blank">{{ properties["owner"] if properties["owner"] else "unknown" }}{{ dtr }}</a>.</li>
+            {% endfor %}
+        </ol>
+    </body>
+{% endblock %}
