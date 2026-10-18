@@ -222,6 +222,11 @@
 
                 document.getElementById("btn-continued").addEventListener("click", closure);
                 blackOverlay.addEventListener("click", closure);
+                window.addEventListener("keydown", n => {
+                    if (panel && n.key === "Escape") {
+                        closure();
+                    }
+                });
             </script>
         {% endwith %}
     {% endif %}
