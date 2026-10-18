@@ -40,7 +40,7 @@
     --stock-none: #c1beae;
 
     --stock-normal-bg: #00000055;
-    --stock-low-bg: #d8700e15;
+    --stock-low-bg: #d7680015;
     --stock-none-bg: #1f1f1f15;
 
     /* Side Panel Frames */
@@ -97,6 +97,11 @@ button:hover:not(:disabled) {
 
 button:active:not(:disabled) {
     --btn-lightness: 40%;
+}
+
+button:disabled {
+    color: inherit;
+    opacity: 50%;
 }
 
 button.rounded {
@@ -1254,6 +1259,7 @@ section.my-cart .panel-details > .route-to-checkout {
 
 /* text notes above the checkout btn */
 section.my-cart .panel-details > .route-to-checkout span {
+    display: block;
     opacity: 75%;
 }
 
