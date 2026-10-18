@@ -1440,19 +1440,28 @@ def place_order():
     # Save order history to SQLite Database
     with sqlite3.connect("order_history.db") as conn:
         try:
+            cursor = conn.cursor()
+
             # either partial fulfillment or backorder process
-            stock_related_cause = {}
             on_hold_items = update_stock(cart)
 
-            for n in on_hold_items.keys():
-                if not "pre_order" in on_hold_items[n]["cause_of_demand"]:
-                    stock_related_cause[n] = on_hold_items[n]
+             # first, it checks for existing column
+            try:
+                cursor.execute(f"SELECT items_on_hold FROM orders")
+                stock_related_cause = {}
 
-            if stock_related_cause:
-                flash("%.show_panel_3;")
-                flash(on_hold_items) # critical for side panel key access
+                for n in on_hold_items.keys():
+                    if not "pre_order" in on_hold_items[n]["cause_of_demand"]:
+                        stock_related_cause[n] = on_hold_items[n]
 
-            cursor = conn.cursor()
+                if stock_related_cause:
+                    flash("%.show_panel_3;")
+                    flash(on_hold_items) # critical for side panel key access
+
+            except Exception as stock_related_process_error:
+                logger(False, f"Failed to store reserved items, and therefore skipped. ({stock_related_process_error})", "closed_log")
+                on_hold_items = {} # skip storing reserved items to the database
+
             cursor.execute("""
                 INSERT INTO orders (date, customer, items, subtotal, gst, ship_fee, discount, total_charges, items_on_hold)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
