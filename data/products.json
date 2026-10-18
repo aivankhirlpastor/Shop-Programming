@@ -8,7 +8,7 @@
         "genre": "Ambience",
         "image": "/static/images/the-ushers-place.jpg",
         "price": 45.99,
-        "stock": 14
+        "stock": 17
     },
     "Little Life": {
         "artist": "Michell Park",
@@ -30,7 +30,7 @@
         "genre": "Ambience",
         "image": "/static/images/lives-in-nature.jpg",
         "price": 39.99,
-        "stock": 20
+        "stock": 3
     },
     "Echoes": {
         "artist": "Luke O.",
@@ -63,7 +63,7 @@
         "genre": "Ambience",
         "image": "/static/images/dandellion.jpg",
         "price": 24.99,
-        "stock": 13
+        "stock": 11
     },
     "West Country's Mankind": {
         "artist": "Richard Tyson",
@@ -74,7 +74,7 @@
         "genre": "Acoustic",
         "image": "/static/images/west-countrys-mankind.jpg",
         "price": 18.39,
-        "stock": 3
+        "stock": 4
     },
     "Aerial View": {
         "artist": "Sophia T.",
@@ -85,7 +85,7 @@
         "genre": "Acoustic",
         "image": "/static/images/aerial-view.jpg",
         "price": 15.99,
-        "stock": 13
+        "stock": 15
     },
     "Adreline Soundtrack": {
         "artist": "Dynamic Tussell",
@@ -96,7 +96,7 @@
         "genre": "Acoustic",
         "image": "/static/images/adreline-soundtrack.jpg",
         "price": 29.99,
-        "stock": 0
+        "stock": 1
     },
     "Sandstone Dwarf (Deluxe Edition)": {
         "artist": "Orinoi Liz",
@@ -140,7 +140,7 @@
         "genre": "Classical",
         "image": "/static/images/the-lines.jpg",
         "price": 11.99,
-        "stock": 11
+        "stock": 2
     },
     "Fantasia Winter": {
         "artist": "Zuucschenci L.",
@@ -151,7 +151,7 @@
         "genre": "Classical",
         "image": "/static/images/fantasia-winter.jpg",
         "price": 13.49,
-        "stock": 6
+        "stock": 10
     },
     "Under Cave": {
         "artist": "Bjorn Rian",
@@ -162,7 +162,7 @@
         "genre": "Classical",
         "image": "/static/images/under-cave.jpg",
         "price": 26.99,
-        "stock": 14
+        "stock": 6
     },
     "A Time Of Night": {
         "artist": "Rose Wellington",
@@ -173,7 +173,7 @@
         "genre": "Classical",
         "image": "/static/images/a-time-of-night.jpg",
         "price": 13.99,
-        "stock": 10
+        "stock": 8
     },
     "Zen": {
         "artist": "Ben Laurache",
@@ -195,7 +195,7 @@
         "genre": "Lo-Fi",
         "image": "/static/images/the-key-to-withstand.jpg",
         "price": 34.99,
-        "stock": 9
+        "stock": 16
     },
     "Lo-Fi Beats Study Time": {
         "artist": "Hi-Tech Companion",
@@ -217,7 +217,7 @@
         "genre": "Lo-Fi",
         "image": "/static/images/rain-on-4pm.jpg",
         "price": 10.99,
-        "stock": 12
+        "stock": 17
     },
     "Soft Breeze": {
         "artist": "Shawn W.",
@@ -239,7 +239,7 @@
         "genre": "Lo-Fi",
         "image": "/static/images/vase.jpg",
         "price": 27.99,
-        "stock": 19
+        "stock": 12
     },
     "Scarlet Sunset Sky": {
         "artist": "Madison Myriad",
