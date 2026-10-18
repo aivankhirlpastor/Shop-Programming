@@ -1,5 +1,3 @@
-/* @import url('https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&display=swap'); */
-/* @import url('https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap'); */
 @import url('https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&family=Cascadia+Code:ital,wght@0,200..700;1,200..700&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 :root {
@@ -17,16 +15,14 @@
     --color-4: #d80e1f;
     --color-5: #916b50;
 
-    /* anchor <a> color */
-    --anchor-color: #000000;
-    --anchor-hover-color: #784200;
-
-    /* text color */
-
-    /* for header */
+    /* header */
     --title-size: 20px;
     --header-border-width: 2px;
     --header-encapsulated-el-padding: calc(10px - var(--header-border-width));
+
+    /* anchor <a> color */
+    --header-anchor-color: #000000;
+    --header-anchor-hover-color: #784200;
 
     /* Buttons (hue and saturation) */
     --btn-destructive: 4, 92%;
@@ -115,7 +111,6 @@ button.outlined {
     color: #000000;
 }
 
-
 /* blank container or image */
 img {
     background-color: var(--color-2);
@@ -138,6 +133,7 @@ input:not([type=radio]):focus {
     outline: none;
 }
 
+/* classification container */
 .classif-cont {
     display: flex;
     flex-direction: column;
@@ -217,6 +213,7 @@ span.label.f14 {
     right: 30%;
 }
 
+/* apply changes | cancel button */
 #config-bottom-bar > form {
     display: flex;
     gap: 16px;
@@ -227,7 +224,6 @@ span.label.f14 {
 }
 
 /* Generals */
-
 .pads {
     padding-block: 8px;
 }
@@ -239,6 +235,10 @@ label {
 .artist {
     display: block;
     margin: 0;
+}
+
+.centre {
+    text-align: center;
 }
 
 span.quantity-count {
@@ -274,7 +274,6 @@ span.quantity-count {
 
 .text-nudge {
     align-items: baseline;
-    /* align-items: end; */
     display: flex;
     justify-content: space-between;
     margin-block: 4px;
@@ -296,7 +295,7 @@ span.quantity-count {
     align-items: baseline;
 }
 
-/* inline v. */
+/* inline version */
 .text-nudge.nudge-block {
     gap: 20px;
     justify-content: start;
@@ -306,7 +305,7 @@ span.quantity-count {
     min-width: 125px;
 }
 
-/* for monetary cost value */
+/* monetary cost value */
 .text-nudge#overall-total {
     display: grid;
     grid-template: repeat(2, 1fr) / repeat(2, 1fr);
@@ -321,10 +320,6 @@ span.quantity-count {
     grid-area: 2 / 1 / span 1 / span 2;
 }
 
-.centre {
-    text-align: center;
-}
-
 /* category hypertext anchor style */
 :is(.shop-by-genre, .sort-by-genre) {
     display: inline-flex;
@@ -336,8 +331,8 @@ span.quantity-count {
     font-weight: 600;
 }
 
-/* thematic break <hr> */
-:is(.shop-by-genre, .sort-by-genre) > hr {
+/* thematic break <hr> in */
+.sort-by-genre hr {
     width: 100%;
     border: 1.5px solid #000000aa;
 }
@@ -351,7 +346,7 @@ a:active {
     color: #cb4705;
 }
 
-/* anchor buttons */
+/* anchor element as styled buttons */
 a.anchor-btn-flair {
     --anchor-transtion-model: 0.2s ease-in-out;
     
@@ -433,7 +428,7 @@ img.svg-icon {
 /* Flash Message Styling */
 .toast-flash {
     position: fixed;
-    top: var(--main-pad-block);
+    top: calc(var(--main-pad-block) + 10px);
     right: calc(var(--body-margin) + var(--main-pad-inline));
     z-index: 99;
 }
@@ -447,20 +442,20 @@ img.svg-icon {
     opacity: 1;
     padding: 8px 16px;
     width: 250px;
-    transform: none; /* closing effect */
 
     /* GLASS EFFECT */
     box-shadow: 0 3px 3px #00000024;
     backdrop-filter: blur(5px) saturate(1280%) contrast(95%);
 
-    transition: transform 0.3s ease-out,
-                opacity 0.25s ease-out;
+    transition: opacity 0.25s ease-out;
 }
 
+/* clear message button */
 .toast-flash > button {
     background-color: #eeeeeecc;
     border-color: #7d766722;
     font-weight: 400;
+    filter: none;
     position: absolute;
     padding: 2px 0;
     width: 150px;
@@ -468,8 +463,6 @@ img.svg-icon {
     top: -35px;
     right: 0;
     transform: scale(1);
-
-    filter: none;
 
     /* special transition effect */
     transition: transform 0.15s ease,
@@ -488,7 +481,6 @@ img.svg-icon {
 
 /* closing effect */
 .toast-flash.closing-flash > *:not(button) {
-    transform: translateX(50px);
     opacity: 0;
 }
 
@@ -569,6 +561,20 @@ img.svg-icon {
     top: 0;
 }
 
+/* empty list message */
+.empty-stack {
+    border: 2px solid #00000055;
+    border-left: none;
+    border-right: none;
+    grid-area: 1 / 1 / span 1 / 9;
+    justify-items: center;
+    padding-block: 20px;
+}
+
+.empty-stack > a {
+    display: block;
+}
+
 .tag-label {
     background-color: var(--color-4);
     box-shadow: 4px 4px 10px #00000055;
@@ -610,21 +616,19 @@ img.svg-icon {
     width: var(--qty-input-height);
     height: var(--qty-input-height);
 }
-
 .quantity-counter button.quantity-btn:not(:disabled):hover {
     background-color: #00000022;
 }
 .quantity-counter button.quantity-btn:not(:disabled):active {
     background-color: #00000044;
 }
-
-/* focus */
 .quantity-counter button.quantity-btn:focus-visible {
+    /* focus */
     background-color: #005fcc66;
     outline: none;
 }
 
-/* focus with modified value */
+/* focus in modified value */
 .quantity-counter:has(input.modified) button.quantity-btn:focus-visible {
     color: #FFFFFF;
     background-color: var(--shift-btn-focus-color);
@@ -741,7 +745,6 @@ ul.mini-list-container.vrs-3 li.mini-list-item {
     --list-item-space: 8px;
 }
 
-
 /* album name */
 ul.mini-list-container.vrs-2 .txt-const span.emphasise {
     font-size: 18px;
@@ -816,29 +819,31 @@ header > * {
 
 /* all <a> anchor element */
 header a {
-    color: var(--anchor-color);
+    color: var(--header-anchor-color);
     font-weight: 700;
     text-decoration: none;
     position: relative;
 }
 
 header a:hover {
-    color: var(--anchor-hover-color);
+    color: var(--header-anchor-hover-color);
 }
 
+/* cart of total items */
 header a .counter {
     background-color: var(--color-3);
     top: -8px;
     right: -8px;
 }
 
+/* navigational container */
 header nav ul {
     list-style: none;
     margin: 0;
     padding: 0;
 }
 
-/* Lists of all quick directable links */
+/* navigational, quick directable links */
 header nav ul li {
     display: inline;
     margin-inline: 18px;
@@ -872,7 +877,6 @@ section#static-banner {
 }
 
 section#static-banner > img {
-    /* aspect-ratio: 25 / 9; */
     width: 100%;
     height: var(--banner-height);
     background-color: #475cfb;
@@ -885,7 +889,6 @@ section#static-banner > div {
 }
 
 /* ======== PRODUCT INFO PAGE ======== */
-
 section.grid-display {
     gap: 16px;
     grid-template-columns: repeat(8, 1fr);
@@ -1020,7 +1023,6 @@ section.product-info #product-details button.wishlist.item-in-wishlist:hover {
 section.product-info #product-details button.wishlist.item-in-wishlist:active {
     background-color: #cd575770;
 }
-
 
 /* text for detail */
 section.product-info #product-details :is(h2, p) {
@@ -1205,20 +1207,6 @@ ul.item-list li.item-details:is(.out-of-stock, .unavailable) form.delete-item bu
     margin-top: 20px;
 }
 
-/* empty list message */
-.empty-stack {
-    border: 2px solid #00000055;
-    border-left: none;
-    border-right: none;
-    grid-area: 1 / 1 / span 1 / 9;
-    justify-items: center;
-    padding-block: 20px;
-}
-
-.empty-stack > a {
-    display: block;
-}
-
 /* PANEL DETAILS */
 .panel-details {
     background-color: var(--color-2);
@@ -1259,13 +1247,12 @@ section.my-cart .panel-details > .cost-precalc {
     margin-top: 30px;
 }
 
-
 /* Form - Route to Checkout */
 section.my-cart .panel-details > .route-to-checkout {
     padding-top: 10px;
 }
 
-/* text span "Notes" */
+/* text notes above the checkout btn */
 section.my-cart .panel-details > .route-to-checkout span {
     opacity: 75%;
 }
@@ -1367,7 +1354,6 @@ section.item-display form.filter-price-range button {
 
 section.item-display form.filter-price-range a.reset-range {
     margin-left: 16px;
-    /* border: 2px solid; */
 }
 
 /* Display Container (Element that holds the item card) */
@@ -1405,7 +1391,7 @@ section.item-display .item-card .album-txt-info .album-title {
     height: 74px;
 }
 
-/* remove the default style for anchor links in card*/
+/* remove the default style for anchor links in card */
 section.item-display .item-card > a {
     color: #000000;
     text-decoration: none;
@@ -1488,8 +1474,7 @@ section.checkout ul.mini-list-container {
     width: auto;
 }
 
-/* user invalid */
-
+/* invalid input value */
 .form-block input:user-invalid {
     --input-border-color: #ff0000;
     background-color: #FF000012;
@@ -1588,7 +1573,6 @@ section.order-history table td.form-action form > button {
     font-size: 14px;
     padding-block: 4px;
 }
-
 
 /* ======== SIGN UP / LOG IN ======== */
 section.account-component {
@@ -1711,6 +1695,33 @@ section.account-component .buttons {
     display: inline-flex;
     gap: 16px;
     margin-block: 16px;
+}
+
+/* ======== SIGN UP / LOG IN ======== */
+ol.attr-credits {
+    font-size: 18px;
+}
+
+ol.attr-credits li {
+    margin-block: 15px;
+}
+
+/* anchor element (author and distributor) */
+ol.attr-credits li > a {
+    text-decoration: none;
+    background-color: #feffae;
+    border-radius: 5px;
+    color: var(--color-5);
+    filter: saturate(100%);
+    font-size: 110%;
+    padding: 2px 5px;
+    font-weight: 700;
+    transition: filter 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+
+ol.attr-credits li > a:hover {
+    background-color: #ffe48d;
+    filter: saturate(240%);
 }
 
 /* FOOTER */
