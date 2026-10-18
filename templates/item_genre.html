@@ -86,10 +86,9 @@
                 </form>
             </div>
 
+            <!-- I: Item Card Container -->
             <div class="grid dsp-container">
-                <!-- I: Item Card Container -->
                 {% if imported_data %}
-                    <!-- If imported_data have it -->
                     {% for album_name, i in imported_data.items() %}
                         <div class="item-card" id="card-model-{{ i['id'] }}">
                             <!-- Row I: Clickable Info -->
@@ -153,7 +152,6 @@
                         </div>
                     {% endfor %}
                 {% else %}
-                    <!-- Just display a text -->
                     <p><b>No results found for items ranging {{ text_value }}.</b></p>
                 {% endif %}
             </div>

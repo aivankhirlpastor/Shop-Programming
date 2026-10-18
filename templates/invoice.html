@@ -95,21 +95,20 @@
             </table>
         </section>
         
-        <!-- Items On Hold List -->
         {% if data.get("items_on_hold") %}
-
-            <!-- 'namespace' through research -->
+            {# 'namespace' through research #}
             {% set is_stock_related = namespace(found = False) %}
-            <!-- <span>{{ data.get("items_on_hold") }}</span> -->
+            
             <hr>
             
+            <!-- Items On Hold List -->
             <section class="invoice-reserved-replica grid" id="items-reserved">
+                <!-- Information -->
                 <div class="item-text-info">
                     <h2>Reserved Items</h2>
-                    <p>Depending on the production flow, reserved Items are held on either partial fulfillment or backorder process</p>
+                    <p>Depending on the production flow, reserved items are held on either partial fulfillment or backorder process</p>
                     <hr>
                     <p>Pre-order items are listed as well under the reserved items</p>
-                    <!-- <p>Pre-order items are listed under the reserved items</p> -->
                 </div>
 
                 <!-- Pre-Order Display List -->
@@ -150,7 +149,7 @@
                             {% set demand_application = ["exceeded", "out-of-stock"] %}
 
                             {% if not "pre_order" in cause_demand %}
-                                <!-- list per item -->
+                                {# list per item #}
                                 {% set is_stock_related.found = True %}
 
                                 <li class="mini-list-item">
@@ -183,6 +182,7 @@
             <hr>
 
             {% if is_stock_related.found %}
+                <!-- Stock Related Issue Notice -->
                 <section class="notice" id="stock-change-notice">
 
                     <h2>Notice to Stock Change</h2>

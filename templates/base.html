@@ -85,9 +85,8 @@
     </footer>
 
     {% if key_param and key_param["show"] == True %}
-        <!-- Side Panel -->
-
-        <!-- heading name -->
+        
+        {# heading names #}
         {% if key_param["when"] == 1 %}
             {% set heading_3 = "Item Added" %}
         {% elif key_param["when"] == 2 %}
@@ -98,6 +97,7 @@
 
         {% with by_item = key_param["by"] %}
             <div id="panel-frame" data-when="{{ key_param['when'] }}">
+                <!-- Side Panel -->
                 <h3>{{ heading_3 }}</h3>
                 <hr>
 
@@ -131,7 +131,7 @@
                         {% endfor %}
                     </ul>
 
-                <!-- within invoice page -->
+                {# <!-- within invoice page --> #}
                 {% elif key_param["when"] == 3 %}
                     {% if data %}
                         {% set reserves = data["items_on_hold"] %}

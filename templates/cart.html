@@ -16,7 +16,7 @@
                     <ul class="item-list">
                         {% for album_name, item in cart.items() %}
                         
-                            {# verifying for availability #}
+                            {# verifying for availability | item running out of stock or unavailable as greyed-out element #}
                             {% if not item.get("is_unavailable") == True %}
                                 {% set stock = albums[album_name]["stock"] %}
     
@@ -33,11 +33,7 @@
     
                             {% endif %}
     
-                            {# item running out of stock in greyed-out element #}
-    
                             <li class="item-details grid {{ item_emphasis | default() }}">
-                                <!-- {# quantity exceeded the amount #} -->
-
                                 <div class="product-img-small">
                                     <img class="img-item" src="{{ item['image'] }}" alt="{{ album_name }}">
                                 </div>
@@ -93,7 +89,6 @@
                                         <input type="number" name="e-{{ item['id'] }}" id="e-{{ item['id'] }}" data-ctgnumber="{{ item['id'] }}" min="1" max="{{ quantity_max | default(5) }}" value="{{ item['quantity'] }}" {% if item_emphasis %}disabled{% endif %}>
                                         <button type="button" class="quantity-btn" id="add-{{ item['id'] }}" {% if item_emphasis %}disabled{% endif %}>+</button>
                                     </div>
-    
                                 </div>
     
                                 <div class="price-action">
@@ -128,6 +123,7 @@
                         {% set cpn = None %}
                     {% endif %}
     
+                    <!-- a. COUPON -->
                     <form id="coupon-layout" action="{{ url_for('apply_coupons') }}", method="post">
                         <input type="text" name="coupon" id="coupon" {% if not cpn %}pattern="[A-Za-z0-9]+" title="Please enter a coupon name in letters and numbers only."{% endif %} maxlength="12" placeholder="Enter coupon here" value="{% if cpn %}{{ cpn['name'] }}{% endif %}" {% if cpn %}disabled{% endif %}>
     
@@ -136,8 +132,9 @@
                         {% else %}
                             <button type="submit">Apply</button>
                         {% endif %}
-    
                     </form>
+
+                    <!-- b. COST PRE-CALCULATION -->
                     <div class="cost-precalc">
                         <div class="text-nudge">
                             <span>Subtotal</span>
@@ -167,8 +164,7 @@
                     <hr>
 
                     {% if are_some_unavailable.found %}
-                        <!-- Message about some item being unavailable -->
-                        
+                        <!-- c. Message about some item being unavailable -->
                         <form class="unavailable-reminder">
                             <p>Some item has been found to be unavailable, in which is listed below:</p>
     
@@ -183,8 +179,7 @@
                         </form>
 
                     {% elif exceeded_quantity.found %}
-
-                        <!-- items exceeded the remaining stock -->
+                        <!-- c. Items exceeded the remaining stock -->
                         <form class="accept-change" action="{{ url_for('accept_changes') }}" method="post">
                             <p>Some of your items have been exceeded to what is remaining. You can see through the list below in which they can be set to a maximum value:</p>
                             <ul class="exceeded-demand">
@@ -201,7 +196,7 @@
                         </form>
 
                     {% else %}
-                        <!-- Form Route to Checkout Page -->
+                        <!-- c. Form Route to Checkout Page -->
                         <form class="route-to-checkout" action="{{ url_for('checkout') }}">
                             <span>Include GST. Shipping will be calculated at checkout. Delivery fee included.</span>
                             <button type="submit">Go To Checkout</button>

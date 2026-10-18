@@ -9,6 +9,7 @@
             <form class="info-reiteration" action="{{ url_for('place_order') }}" method="post">
                 <p>Please review your billing details and your items before placing your order. If you need to make any changes or add anything, feel free to go back to checkout page.</p>
 
+                <!-- billing details -->
                 <div class="details-container billing-details">
                     <div class="text-nudge nudge-block">
                         <span>First Name</span>
@@ -35,6 +36,8 @@
                         <p class="emphasise">{{ saved_billing_info["postal_code"] }}</p>
                     </div>
                 </div>
+
+                <!-- monetary orders -->
                 <div class="details-container monetary-cost">
                     {% if subtotal %}
                         <div class="text-nudge nudge-block c-subtotal">
@@ -73,6 +76,7 @@
 
                     <hr>
 
+                    <!-- total cost -->
                     <div class="text-nudge nudge-block total">
                         <span>Total</span>
                         {% if total == total_with_discount %}
@@ -91,8 +95,9 @@
             <div class="panel-details">
                 <span class="legend-top">Order Summary</span>
                 <ul class="mini-list-container vrs-2">
+
+                    {# list per item #}
                     {% for n, alb in cart.items() %}
-                                                <!-- list per item -->
                         <li class="mini-list-item">
 
                             <!-- I: Image and Quantity -->
@@ -173,8 +178,6 @@
                     {% endif %}
                 </div>
             </div>
-
         </section>
-            
     </body>
 {% endblock %}

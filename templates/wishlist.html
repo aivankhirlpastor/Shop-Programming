@@ -20,17 +20,20 @@
                         {% endif %}
 
                         <li class="item-details grid {{ item_emphasis }}">
+                            <!-- I: Image -->
                             <div class="product-img-small">
                                 <img class="img-item" src="{{ item['image'] }}" alt="{{ album_name }}">
                             </div>
+
+                            <!-- II: Name, Artist, Labels -->
                             <div class="name-artist-label">
-                                <!-- Date Label First -->
+                                <!-- top label -->
                                 {% if pre_released[album_name] %}
                                     <span class="stock-status lowercase label f14">Release date: <b>{{ pre_released[album_name]["release_date"] }}</b></span>
 
-                                <!-- Different Labels from Stock Status (High, Low, None) -->
                                 {% elif not defunct or item_emphasis == "out-of-stock" %}
-                                    
+                                    {# Different Labels from Stock Status (High, Low, None) #}
+                                
                                     {% if albums[album_name]["stock"] > 5 %}
                                         <span class="stock-status lowercase label f14">In Stock</span>
                                     {% elif 6 > albums[album_name]["stock"] and albums[album_name]["stock"] > 0 %}
@@ -43,8 +46,8 @@
                                     <span class="stock-status lowercase label f14">—</span>
                                 {% endif %}
 
+                                <!-- Album Name and Artist -->
                                 <div class="block-name-artist">
-                                    <!-- Album Name and Artist -->
                                     <h3>
                                         {% if not defunct %}
                                             <a href="{{ url_for('product_information', id = item['id']) }}">{{ album_name }}</a>
@@ -57,10 +60,13 @@
 
                                 <span class="label">{{ item["label"] }}</span>
                             </div>
+
+                            <!-- III. Price -->
                             <div class="price-action">
-                                <!-- Price -->
                                 <p class="price emphasise"><sup>$</sup>{{ '%.2f' % item["price"] }}</p>
                             </div>
+
+                            <!-- IV. Wishlist Item Action -->
                             <form class="wishlist-grid-action">
                                 {% if not defunct %}
                                     {% if stock is number and 0 >= stock %}
@@ -87,9 +93,6 @@
                     <a class="anchor-btn-flair f18 medium-pad" href="{{ url_for('category_all') }}">SHOP NOW</a>    
                 </div>
             {% endif %}
-
         </section>
-
-        
     </body>
 {% endblock %}

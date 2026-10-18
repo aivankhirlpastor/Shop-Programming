@@ -4,8 +4,8 @@
 
 {% block content %}
     <body>
+        <!-- Filled Up Image at the Entire Section -->
         <section id="static-banner">
-            <!-- Filled Up Image in the Entire Section -->
             <img src="/static/images/static-banner.jpg">
         </section>
 
@@ -33,8 +33,8 @@
             </a>
         </section>
 
+        <!-- Segment Module -->
         {% for sg, t in segment_modules.items() %}
-            <!-- Segment Heading -->
             <h2>{{ sg.title().replace("_", " ") }}</h2>
             <section class="grid grid-display item-display">
                 <!-- expansion -->
@@ -97,7 +97,6 @@
                     {% endif %}
 
                 {% endfor %}
-
             </section>
         {% endfor %}
 
