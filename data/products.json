@@ -8,7 +8,7 @@
         "genre": "Ambience",
         "image": "/static/images/the-ushers-place.jpg",
         "price": 45.99,
-        "stock": 17
+        "stock": 16
     },
     "Little Life": {
         "artist": "Michell Park",
@@ -19,7 +19,7 @@
         "genre": "Ambience",
         "image": "/static/images/little-life.jpg",
         "price": 36.99,
-        "stock": 13
+        "stock": 11
     },
     "Lives In Nature": {
         "artist": "Zeenchenburg Z.",
@@ -41,7 +41,7 @@
         "genre": "Ambience",
         "image": "/static/images/echoes.jpg",
         "price": 17.99,
-        "stock": 17
+        "stock": 12
     },
     "Daydream": {
         "artist": "Austin Santos",
@@ -74,7 +74,7 @@
         "genre": "Acoustic",
         "image": "/static/images/west-countrys-mankind.jpg",
         "price": 18.39,
-        "stock": 4
+        "stock": 1
     },
     "Aerial View": {
         "artist": "Sophia T.",
@@ -96,7 +96,7 @@
         "genre": "Acoustic",
         "image": "/static/images/adreline-soundtrack.jpg",
         "price": 29.99,
-        "stock": 1
+        "stock": 0
     },
     "Sandstone Dwarf (Deluxe Edition)": {
         "artist": "Orinoi Liz",
@@ -107,7 +107,7 @@
         "genre": "Acoustic",
         "image": "/static/images/sandstone-dwarf-deluxe-edition.jpg",
         "price": 70.99,
-        "stock": 22
+        "stock": 15
     },
     "Waterwell Stream": {
         "artist": "Dynamic Tussell",
@@ -151,7 +151,7 @@
         "genre": "Classical",
         "image": "/static/images/fantasia-winter.jpg",
         "price": 13.49,
-        "stock": 10
+        "stock": 7
     },
     "Under Cave": {
         "artist": "Bjorn Rian",
@@ -162,7 +162,7 @@
         "genre": "Classical",
         "image": "/static/images/under-cave.jpg",
         "price": 26.99,
-        "stock": 6
+        "stock": 3
     },
     "A Time Of Night": {
         "artist": "Rose Wellington",
@@ -184,7 +184,7 @@
         "genre": "Lo-Fi",
         "image": "/static/images/zen.jpg",
         "price": 25.49,
-        "stock": 7
+        "stock": 0
     },
     "The Key To Withstand": {
         "artist": "Oblong Communion",
@@ -206,7 +206,7 @@
         "genre": "Lo-Fi",
         "image": "/static/images/lo-fi-beats-study.jpg",
         "price": 40.49,
-        "stock": 7
+        "stock": 5
     },
     "Rain on 4pm": {
         "artist": "Aune Elizabeth",
@@ -239,7 +239,7 @@
         "genre": "Lo-Fi",
         "image": "/static/images/vase.jpg",
         "price": 27.99,
-        "stock": 12
+        "stock": 11
     },
     "Scarlet Sunset Sky": {
         "artist": "Madison Myriad",
@@ -250,7 +250,7 @@
         "genre": "Upbeat",
         "image": "/static/images/scarlet-sunset-sky.jpg",
         "price": 30.99,
-        "stock": 10
+        "stock": 9
     },
     "Feelz": {
         "artist": "Paul Rewire",
