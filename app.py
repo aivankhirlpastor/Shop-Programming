@@ -32,7 +32,8 @@ def initialise_database():
                     gst REAL,
                     ship_fee FLOAT,
                     discount FLOAT,
-                    total_charges REAL
+                    total_charges REAL,
+                    items_on_hold TEXT
                     )
         """)
 
