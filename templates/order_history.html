@@ -68,7 +68,7 @@
                     </tbody>
 
                 </table>
-            {% elif (error_strikes.catch | length) == (orders | length) %}
+            {% elif (error_strikes.catch | length) == (orders | length) and (orders | length) != 0 %}
                 <!-- Error Message -->
                 <div class="empty-stack order-history-error">
                     <h3>Something went wrong.</h3>

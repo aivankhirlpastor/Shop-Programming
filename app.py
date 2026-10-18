@@ -1215,7 +1215,7 @@ def order_history():
     def check_error_strikes(orders):
         # logging message through full error strikes
         error_strikes = sum(1 if "error" in pr.keys() else 0 for pr in orders)
-        if error_strikes == len(order_history_results):
+        if error_strikes == len(order_history_results) and len(order_history_results) != 0:
             logger("ORDER HISTORY ERROR", "Strike reached fully due to persistent errors; order history table can't be displayed.")
 
     with sqlite3.connect("order_history.db") as conn:
