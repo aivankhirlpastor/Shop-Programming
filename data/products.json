@@ -74,7 +74,7 @@
         "genre": "Acoustic",
         "image": "/static/images/west-countrys-mankind.jpg",
         "price": 18.39,
-        "stock": 1
+        "stock": 0
     },
     "Aerial View": {
         "artist": "Sophia T.",
@@ -129,7 +129,7 @@
         "genre": "Classical",
         "image": "/static/images/mozarts-theme.jpg",
         "price": 12.99,
-        "stock": 19
+        "stock": 18
     },
     "The Lines": {
         "artist": "Elizabeth R.",
@@ -239,7 +239,7 @@
         "genre": "Lo-Fi",
         "image": "/static/images/vase.jpg",
         "price": 27.99,
-        "stock": 11
+        "stock": 10
     },
     "Scarlet Sunset Sky": {
         "artist": "Madison Myriad",
