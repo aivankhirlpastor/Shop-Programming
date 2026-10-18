@@ -19,7 +19,7 @@
         "genre": "Ambience",
         "image": "/static/images/little-life.jpg",
         "price": 36.99,
-        "stock": 16
+        "stock": 13
     },
     "Lives In Nature": {
         "artist": "Zeenchenburg Z.",
@@ -52,7 +52,7 @@
         "genre": "Ambience",
         "image": "/static/images/daydream.jpg",
         "price": 14.99,
-        "stock": 10
+        "stock": 8
     },
     "dandellion": {
         "artist": "North C.",
@@ -107,7 +107,7 @@
         "genre": "Acoustic",
         "image": "/static/images/sandstone-dwarf-deluxe-edition.jpg",
         "price": 70.99,
-        "stock": 23
+        "stock": 22
     },
     "Waterwell Stream": {
         "artist": "Dynamic Tussell",
@@ -184,7 +184,7 @@
         "genre": "Lo-Fi",
         "image": "/static/images/zen.jpg",
         "price": 25.49,
-        "stock": 9
+        "stock": 7
     },
     "The Key To Withstand": {
         "artist": "Oblong Communion",
@@ -261,7 +261,7 @@
         "genre": "Upbeat",
         "image": "/static/images/feelz.jpg",
         "price": 13.99,
-        "stock": 5
+        "stock": 0
     },
     "Get UP!": {
         "artist": "Aracchia A.",
