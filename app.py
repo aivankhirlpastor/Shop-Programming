@@ -63,7 +63,7 @@ def update_stock(item: dict):
     for album_name, i in item.items():
         if album_name in fetched_album_data:
             pile_cycle = False
-            album_module_cycle = check_date(album_name, i, 1)
+            album_module_cycle = check_date(i, 1)
 
             # pre-released orders are subjected to change too / limiting the number or pre-orders on that product
             fetched_stock = fetched_album_data[album_name]["stock"]
@@ -204,7 +204,7 @@ def set_syntax_building(argument: dict|list|tuple, positional_value: list|tuple 
     if type(argument) is tuple or type(argument) is list:
         # verify if both argument and positional values were the same amount of items
         if len(argument) != len(positional_value):
-            raise ValueError(f"The amount of value it has, as a list for positional value, must have the same value as the amount of key argument has: {len(argument)} | {len(positional_value)}")
+            raise AssertionError(f"The amount of value it has, as a list for positional value, must have the same value as the amount of key argument has: {len(argument)} | {len(positional_value)}")
         
         # adding to storer dictionary via for-loop
         for j in range(len(argument)):
@@ -259,7 +259,7 @@ def make_change_to_database(syntax_structure: list, syntax_val: list, key_sessio
 
 # use 'get_entry' function when dealing with two sides
 def get_entry(*args):
-    result = []
+    result = [] # fetched keywords
     has_session_key = session.get("session_key", {})
 
     try:
@@ -304,7 +304,7 @@ def get_entry(*args):
 
         result = [{} for _ in args]
 
-    return result[0] if len(args) == 1 else result # fetched keywords
+    return result[0] if len(args) == 1 else result
 
 # saving their entries via session or database |  multiple kws, required argument: (key = value)
 def save_entries(**kwargs):
@@ -414,8 +414,7 @@ def remove_key(*args):
             return make_change_to_database(syntaxes, stx_value, sess_key)
 
     except Exception as delete_error:
-        logger("DELETE ERROR", delete_error)
-        print(f"An error occurred while attempting to make configuration.")
+        logger("DELETE ERROR", f"An error occurred while attempting to make configuration. {delete_error}")
         return None # unsuccessful pop deletion
 
 # -----------------------------------------------------------------------------------
@@ -437,12 +436,11 @@ def signin_session(email, password, msr = 0):
             retrieved_coupon = None
             retrieved_used_coupons = None
 
-            # if not matched
-            if password != uid[4]:
-                raise ValueError("Password is incorrect")
-
             # log in method
             if msr == 1:
+                if password != uid[4]: # not matched
+                    raise ValueError("Password is incorrect")
+                
                 # retrieving the column values
                 retrieved_coupon = json.loads(uid[8])
                 retrieved_used_coupons = json.loads(uid[9])
@@ -461,13 +459,14 @@ def signin_session(email, password, msr = 0):
 
             session["session_key"] = session_key # define the session key
             session.modified = True
+
         else:
             # empty post_identifier
             raise NameError(f"{email} is not found. Try double checking your email.")
 
 def calculate_total(c):
     GST_RATE = 0.15
-    # round() rule to alleviate math float inaccuracy
+    # round() rule to prevent math float inaccuracy
     cart_total = round(sum((item["price"] * item["quantity"]) for item in c.values()), 2)
     gst = round(cart_total * 0.15, 2)
     shipping_fee = 0 # initial
@@ -700,7 +699,7 @@ def panel_access_from_flash():
             "type": "show_specific_items"
             }
 
-def check_date(n: str, albm: dict, refer: int):
+def check_date(albm: dict, refer: int):
     # timeline
     DAY_CURRENT = 20
     current = datetime.datetime(2026, 4, DAY_CURRENT)
@@ -760,7 +759,7 @@ def album_date_modules(loaded_album, rfr):
         ahrd, bhrd, chrd = [{} for _ in range(3)]
 
         for na, albm_a in loaded_album.items():
-            section_cycle = check_date(na, albm_a, rfr)
+            section_cycle = check_date(albm_a, rfr)
 
             if section_cycle == "released":
                 ahrd[na] = albm_a
@@ -776,7 +775,7 @@ def album_date_modules(loaded_album, rfr):
         rlrd, prrd = [{} for _ in range(2)]
 
         for nb, albm_b in loaded_album.items():
-            date_cycle = check_date(nb, albm_b, rfr)
+            date_cycle = check_date(albm_b, rfr)
 
             if date_cycle == "released":
                 rlrd[nb] = albm_b
@@ -801,6 +800,8 @@ def logger(types: str = "ERROR", cause = None, sector = "error"):
         print(f"\33[2m{cause}\33[0m")
 
 # ROUTES <------------------->
+
+# ===== HOME PAGE
 @app.route("/")
 def index():
     load_albums = load_data_products()
@@ -824,6 +825,7 @@ def index():
                            segment_modules = segment_modules,
                            cart = cart, key_param = key)
 
+# ===== MUSIC ALBUM PRODUCT INFORMATION
 @app.route("/category/item/<id>")
 def product_information(id):
     albums = load_data_products()
@@ -833,7 +835,7 @@ def product_information(id):
     for name, mv in albums.items():
         if id.lower() == mv["id"].lower():
             album_name = name
-            album_cycle = check_date(name, mv, 1)
+            album_cycle = check_date(mv, 1)
             pack_data = mv
             
             break
@@ -941,6 +943,7 @@ def remove_item(album_name):
 
         if remove_status:
             flash(f"Removed all '{album_name}' in your cart")
+        
     else:
         flash(f"'{album_name}' was not found in your cart or was already removed.")
 
@@ -951,6 +954,7 @@ def remove_all_items():
     try:
         remove_key("cart") # remove all items in the cart
         flash("Removed all items in your cart.")
+        
     except Exception as remove_all_error:
         logger("REMOVE ALL ITEMS ERROR", remove_all_error)
         flash("Something went wrong while removing all the items in your cart. Try again later.")
@@ -1062,6 +1066,7 @@ def toggle_wishlist(catalogue_id, album_name, pole_end, force_removal):
 
             if wishlist_remove_status:
                 flash(f"{album_name} removed from your wishlist")
+            
     except:
         flash("Sorry, but there was a problem when we tried to adjust your wishlist. Try again later.")
 
@@ -1071,7 +1076,7 @@ def toggle_wishlist(catalogue_id, album_name, pole_end, force_removal):
 
     return redirect(url_for("product_information", id = catalogue_id))
 
-# Item Genre: display all items
+# ===== ITEM GENRE (display all items)
 @app.route("/category/item")
 def category_all():
     get_albums = load_data_products()
@@ -1084,7 +1089,7 @@ def category_all():
                            imported_data = result, cart = cart,
                            key_param = key, pr = pr)
 
-# Item Genre: specific genre
+# ===== ITEM GENRE (specific genre)
 @app.route("/category/item-<string:genre>")
 def category(genre):
     result = item_display_by_genre(genre) # get the result via genre
@@ -1101,7 +1106,7 @@ def category(genre):
                            imported_data = result, cart = cart,
                            key_param = key, pr = pr)
 
-# Item Genre: Filter Price Range
+# ===== ITEM GENRE (filtered price range)
 @app.route("/category/item-<string:genre>/<price_range>")
 def category_price_filter(genre, price_range):
     result, gio = item_display_by_genre(None if genre == "all" else genre, price_range) # get the result via genre and price
@@ -1111,8 +1116,7 @@ def category_price_filter(genre, price_range):
     text_value = px_range_post_inversion(price_range)
     text_value = text_value.lower() if text_value != None else text_value
 
-    # Abort if genre is not found by gio = 0,
-    # also inexistent price range (typed by manual and in case of typos).
+    # genre is not found or price range is not exists
     if gio <= 0 or text_value == None:
         abort(404)
 
@@ -1142,7 +1146,7 @@ def filter_price(genre):
     # redirect with filtering item in price
     return redirect(url_for("category_price_filter", genre = genre, price_range = srg))
 
-# Invoice Page
+# ===== INVOICE PAGE
 @app.route("/invoice-<int:inv_number>")
 def invoice_selection(inv_number):
     # sqlite3 \
@@ -1156,18 +1160,17 @@ def invoice_selection(inv_number):
             load_items = json.loads(rows[3])
             items_on_hold = {}
             items = {}
+            s = 0 # used for listing
             
             # items on hold
             if rows[9]:
                 items_on_hold = json.loads(rows[9])
 
-            s = 0 # used for listing
-
             albums = load_data_products()
             _, pr = album_date_modules(albums, 1)
             key = panel_access_from_flash()
 
-            # at index registration
+            # index registration
             for album_name, m in load_items.items():
                 s += 1
                 items[album_name] = {
@@ -1199,8 +1202,6 @@ def invoice_selection(inv_number):
                 "items_on_hold": items_on_hold,
             }
 
-            print(items_on_hold)
-
     except IndexError:
         abort(404) # not found
 
@@ -1208,6 +1209,7 @@ def invoice_selection(inv_number):
                            data = fetched_data, key_param = key,
                            pr = pr)
 
+# ===== ORDER HISTORY PAGE
 @app.route("/order_history")
 def order_history():
     def check_error_strikes(orders):
@@ -1249,7 +1251,7 @@ def order_history():
 
     return render_template("order_history.html", orders = order_history_results)
 
-# order History deletion
+# Order History Deletion
 @app.route("/delete_invoice/<int:order_id>", methods = ["POST"])
 def delete_invoice(order_id):
     with sqlite3.connect("order_history.db") as conn:
@@ -1269,6 +1271,7 @@ def delete_invoice(order_id):
 
     return redirect(url_for("order_history"))
 
+# ===== CART PAGE
 @app.route("/cart")
 def cart():
     albums = load_data_products()
@@ -1279,13 +1282,14 @@ def cart():
     coupon_validity()
 
     # Get price calculation
-    __n, subtotal, gst, ship_fee, discount, __n2 = calculate_total(cart)
+    __n, subtotal, gst, __n2, discount, __n3 = calculate_total(cart)
 
 
     return render_template("cart.html", cart = cart, albums = albums,
                            subtotal = subtotal, gst = gst, discount = discount,
                            pre_released = pr)
 
+# ===== WISHLIST PAGE
 @app.route("/wishlist")
 def wishlist():
     albums = load_data_products()
@@ -1331,7 +1335,7 @@ def apply_coupons():
             
     except Exception as apply_coupon_error:
         logger("APPLY COUPON ERROR:", apply_coupon_error)
-        print("An error has occurred while trying to apply the coupon. Try again later.")
+        flash("An error has occurred while trying to apply the coupon. Try again later.")
 
     return redirect(url_for("cart"))
 
@@ -1343,6 +1347,7 @@ def remove_coupon():
 
     return redirect(url_for("cart"))
 
+# ===== CHECKOUT PAGE
 @app.route("/checkout")
 def checkout():
     cart, billing_info = get_entry("cart", "billing_info")
@@ -1361,6 +1366,7 @@ def checkout():
                            total_with_discount = total_with_discount,
                            saved_billing_info = billing_info)
 
+# ===== ORDER REVIEW PAGE
 @app.route("/continue_to_review")
 def continue_to_review():
     cart, billing_info = get_entry("cart", "billing_info")
@@ -1459,14 +1465,13 @@ def place_order():
             conn.rollback() # reverts the changes
 
             logger("PLACE ORDER ERROR", place_order_error)
-            print(f"Something went wrong: {place_order_error}")
+            flash(f"An error has occurred while placing your order. DEBUG TRACE: {place_order_error}")
 
             return redirect(url_for("index"))
         
     # write an invoice in .txt version
     with open(invoice_filename, "w") as f:
         try:
-            invoice_file = f"{invoice_filename}"
             f.write("<-----> The Music Shop <----->\n")
 
             f.write(f"Invoice Number: {invoice_date}\n")
@@ -1496,12 +1501,11 @@ def place_order():
         if coupon:
             coupon_name = coupon["name"]
 
-            # None as a placeholder
-            # since there is nothing to refer or access their value
+            # None as a placeholder since there is nothing to access their value
             sets_used_coupons[coupon_name] = None
             save_entries(used_coupons = sets_used_coupons)
     except:
-        print("Unable to add coupon to used coupons.")
+        logger(False, "Unable to add coupon to used coupons", "closed_log")
 
     # take out all items in cart, and coupon
     remove_key("cart", "coupon")
@@ -1521,6 +1525,7 @@ def place_order():
 
     return redirect(url_for("index"))
 
+# ===== SIGNUP/LOGIN PAGE
 @app.route("/accounts/<measure>", defaults = {"subject": None})
 @app.route("/accounts/<measure>/<subject>")
 def signup_login(measure, subject):
@@ -1534,6 +1539,7 @@ def signup_login(measure, subject):
 
     return render_template("account_access.html", msr = measure, sbj = subject)
 
+# sign up process
 @app.route("/signup", defaults = {"get_subject": None}, methods = ["POST"])
 @app.route("/signup/<get_subject>", methods = ["POST"])
 def signup(get_subject):
@@ -1543,7 +1549,6 @@ def signup(get_subject):
         except Exception as billing_err:
             logger(False, f"Failed to save billing details to newly created account: {billing_err}", "closed_log")
 
-    # leading whitespaces removed; capitalised words
     fname = request.form["new-fname"].strip().title()
     lname = request.form["new-lname"].strip().title()
     email = request.form["new-email"]
@@ -1559,13 +1564,12 @@ def signup(get_subject):
         "postal_code": None
     }
 
-    # full name
-    name = f"{fname} {lname}"
+    name = f"{fname} {lname}" # full name
     date = datetime.datetime.now().strftime("%Y-%m-%d")
 
     # Complete Registration to Database
     try:
-        # verify a password
+        # confirming a password
         if password == confirm_password:
             cart = session.get("cart", {})
             wishlists = session.get("wishlists", {})
@@ -1602,6 +1606,7 @@ def signup(get_subject):
 
     return redirect(url_for("index"))
 
+# login process
 @app.route("/login", defaults = {"get_subject": None}, methods = ["POST"])
 @app.route("/login/<get_subject>", methods = ["POST"])
 def login(get_subject):
@@ -1627,6 +1632,7 @@ def login(get_subject):
 
     return redirect(url_for("index"))
 
+# ===== MY ACCOUNT PAGE
 @app.route("/accounts/my_account")
 def my_account():
     has_session_key = session.get("session_key", {})
@@ -1644,11 +1650,16 @@ def logout():
 
     return redirect(url_for("signup_login", measure = 'login'))
 
+# ===== ATTRIBUTION PAGE
 @app.route("/attribution")
 def attribution():
-    # load the attributions
-    with open("data/attribution.json") as attr:
-        loaded_attributon = json.load(attr)
+    try:
+        with open("data/attribution.json") as attr:
+            loaded_attributon = json.load(attr)
+
+    except Exception as load_attribution_error:
+        logger("LOAD ATTRIBUTION ERROR", load_attribution_error)
+        loaded_attributon = {}
 
     return render_template("attribution.html", attr = loaded_attributon)
 
