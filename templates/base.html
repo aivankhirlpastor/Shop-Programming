@@ -34,13 +34,11 @@
         </a>
     </header>
 
-    <!-- debugging -->
-    <!-- <p>{{ session["session_key"] }}</p> -->
-
+    {# flash message #}
     {% with messages = get_flashed_messages() %}
         {% if messages %}
             <div class="toast-flash">
-                <button type="button" id="close-flash">Close Message</button>
+                <button type="button" id="close-flash">Clear Message(s)</button>
 
                 <!-- 'flash' message from Python Flask -->
                 {% for m in messages %}
@@ -61,7 +59,7 @@
             <ul class="organisation">
                 <li><a>Service</a></li>
                 <li><a>Blogs</a></li>
-                <li><a>Attribution</a></li>
+                <li><a href="{{ url_for('attribution') }}" target="_blank">Attribution</a></li>
                 <li><a>Contact Us</a></li>
             </ul>
         </section>
@@ -206,6 +204,7 @@
                         const assignedCTLG = listItem[0].getAttribute("data-base-ctlg");
                         const cardModel = document.getElementById(`card-model-${assignedCTLG}`);
 
+                        // scrolling to the card where item was added to cart
                         if (cardModel) {
                             window.scrollBy(0, cardModel.getBoundingClientRect().top - 100);    
                         }
@@ -235,7 +234,6 @@
 
             // at click of close flash
             closeFlash.addEventListener("click", e => {
-                // 
                 document.querySelector(".toast-flash").classList.add("closing-flash");
 
                 // remove flash container
@@ -257,7 +255,6 @@
                     flashChildren[m].remove();
                 }
             }
-
         </script>
     {% endif %}
 </body>
