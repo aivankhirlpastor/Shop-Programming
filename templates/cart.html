@@ -181,7 +181,7 @@
                     {% elif exceeded_quantity.found %}
                         <!-- c. Items exceeded the remaining stock -->
                         <form class="accept-change" action="{{ url_for('accept_changes') }}" method="post">
-                            <p>Some of your items have been exceeded to what is remaining. You can see through the list below in which they can be set to a maximum value:</p>
+                            <p>Some of your items have been exceeded to what is remaining. We don't have enough stock for this. You can see through the list below in which they can be set to a maximum value:</p>
                             <ul class="exceeded-demand">
                                 {% for listed, exc in cart.items() %}
                                     {% if exc["quantity"] > albums[listed]["stock"] %}
