@@ -8,7 +8,7 @@
         "genre": "Ambience",
         "image": "/static/images/the-ushers-place.jpg",
         "price": 45.99,
-        "stock": 16
+        "stock": 15
     },
     "Little Life": {
         "artist": "Michell Park",
@@ -41,7 +41,7 @@
         "genre": "Ambience",
         "image": "/static/images/echoes.jpg",
         "price": 17.99,
-        "stock": 12
+        "stock": 9
     },
     "Daydream": {
         "artist": "Austin Santos",
@@ -74,7 +74,7 @@
         "genre": "Acoustic",
         "image": "/static/images/west-countrys-mankind.jpg",
         "price": 18.39,
-        "stock": 0
+        "stock": 5
     },
     "Aerial View": {
         "artist": "Sophia T.",
@@ -96,7 +96,7 @@
         "genre": "Acoustic",
         "image": "/static/images/adreline-soundtrack.jpg",
         "price": 29.99,
-        "stock": 0
+        "stock": 1
     },
     "Sandstone Dwarf (Deluxe Edition)": {
         "artist": "Orinoi Liz",
@@ -107,7 +107,7 @@
         "genre": "Acoustic",
         "image": "/static/images/sandstone-dwarf-deluxe-edition.jpg",
         "price": 70.99,
-        "stock": 15
+        "stock": 14
     },
     "Waterwell Stream": {
         "artist": "Dynamic Tussell",
@@ -151,7 +151,7 @@
         "genre": "Classical",
         "image": "/static/images/fantasia-winter.jpg",
         "price": 13.49,
-        "stock": 7
+        "stock": 5
     },
     "Under Cave": {
         "artist": "Bjorn Rian",
@@ -250,7 +250,7 @@
         "genre": "Upbeat",
         "image": "/static/images/scarlet-sunset-sky.jpg",
         "price": 30.99,
-        "stock": 9
+        "stock": 10
     },
     "Feelz": {
         "artist": "Paul Rewire",
