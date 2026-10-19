@@ -123,11 +123,17 @@
                                     {% set input_value = cart[album_name]['quantity'] if album_name in cart else 1 %}
 
                                     {% if stock > 0 %}
-                                        {% if (pr is mapping and album_name in pr) and stock > 0 %}
+                                        {% if 6 > stock and stock > 0 %}
+
+                                            {% if pr is mapping and album_name in pr %}
+                                                {% set stock_emp = "in-stock" %}
+                                            {% else %}
+                                                {% set stock_emp = "low" %}
+                                            {% endif %}
+
+                                        {% else %}
                                             {% set stock_emp = "in-stock" %}
-                                        {% elif 6 > stock and stock > 0 %}
-                                            {% set stock_emp = "low" %}
-                                        {% endif %}
+                                        {% endif%}
 
                                         {% set tle = "Add to Cart" if album_name in cart else "" %}
                                         {% set max_range = stock if 5 > stock else 5 %}

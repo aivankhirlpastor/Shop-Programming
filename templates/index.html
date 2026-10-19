@@ -67,12 +67,18 @@
                                 <form action="{{ url_for('add_to_cart', catalogue_id = tt['id'], product_name = album_name, input_selector = 'i-quantity-' + tt['id'], pole_end = 'index') }}" method="post" class="add-to-cart-action">
                                     {% set input_value = cart[album_name]['quantity'] if album_name in cart else 1 %}
 
+                                    {# Pre-Order Label #}
                                     {% if stock > 0 %}
-                                    
-                                        {% if album_name in segment_modules["pre-order"] and stock > 0 %}
+                                        {% if 6 > stock and stock > 0 %}
+
+                                            {% if album_name in segment_modules["pre-order"] %}
+                                                {% set stock_emp = "in-stock" %}
+                                            {% else %}
+                                                {% set stock_emp = "low" %}
+                                            {% endif %}
+
+                                        {% else %}
                                             {% set stock_emp = "in-stock" %}
-                                        {% elif 6 > stock and stock > 0 %}
-                                            {% set stock_emp = "low" %}
                                         {% endif %}
 
                                         {% set tle = "Add to Cart" if album_name in cart else "" %}
