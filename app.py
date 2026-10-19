@@ -162,7 +162,7 @@ def verify_existing_product(loaded_albums: dict, val: dict, target: str, allow_c
 
     return val
 
-# variant words or terms; both severely returns in <term, term for key session>
+# different words or terms; both severely returns in <term, term for key session>
 def discriminate(ry: str):
     if ry == "cart":
         return "items", "cart"
@@ -287,6 +287,7 @@ def get_entry(*args):
                 }
 
                 for tr in args:
+                    # preparing items to be delivered
                     try:
                         term, _ = discriminate(tr)
 
@@ -325,8 +326,8 @@ def save_entries(**kwargs):
 
         # session with user being logged on
         else:
-            syntaxes, stx_value, sess_key = set_syntax_building(kwargs)
-            return make_change_to_database(syntaxes, stx_value, sess_key) # updating database table
+            syntaxes, stx_value, session_key = set_syntax_building(kwargs)
+            return make_change_to_database(syntaxes, stx_value, session_key) # updating database table
 
     except Exception as save_error:
         logger("SAVE ERROR", save_error)
@@ -385,8 +386,8 @@ def remove_specific_key(**kwargs):
                         del used_coupons[key]
                         value_to_save.append(used_coupons)
 
-            syntaxes, stx_value, sess_key = set_syntax_building(tuple(kwargs.keys()), value_to_save)
-            return make_change_to_database(syntaxes, stx_value, sess_key)
+            syntaxes, stx_value, session_key = set_syntax_building(tuple(kwargs.keys()), value_to_save)
+            return make_change_to_database(syntaxes, stx_value, session_key)
             
     except Exception as remove_key_error:
         logger("REMOVE SPECIFIC KEY(S) ERROR", remove_key_error)
@@ -411,8 +412,8 @@ def remove_key(*args):
 
         # session with user being logged on
         else:
-            syntaxes, stx_value, sess_key = set_syntax_building(args, ({},) * len(args))
-            return make_change_to_database(syntaxes, stx_value, sess_key)
+            syntaxes, stx_value, session_key = set_syntax_building(args, ({},) * len(args))
+            return make_change_to_database(syntaxes, stx_value, session_key)
 
     except Exception as delete_error:
         logger("DELETE ERROR", f"An error occurred while attempting to make configuration. {delete_error}")
