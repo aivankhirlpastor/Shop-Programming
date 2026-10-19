@@ -729,7 +729,7 @@ def item_display_by_genre(gnr: str = None, px_range: str = None):
     
     Parameter:
     |   genre (str; default is None) to select only items
-    |   genre (str; default is None) alongside the price range
+    |   pxrange (str; default is None) alongside the price range
 
     actions:
     |   adds the selected item via matching genre.
@@ -928,7 +928,7 @@ def panel_access_from_flash():
         return {
             "show": False,
             "type": "show_specific_items"
-            }
+        }
 
 
 def check_date(albm: dict, refer: int):
