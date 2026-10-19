@@ -157,7 +157,7 @@ def streamlined_demand(rsv):
     """
     Streamlined Demand uses the reserved items
     by going through cause of demands, to
-    display the side panel to the stock issues.
+    display the side panel for the stock issues.
 
     The process intake is either partial fulfillment
     or backorder process.
