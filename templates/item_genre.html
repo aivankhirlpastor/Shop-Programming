@@ -94,7 +94,7 @@
                             <!-- Row I: Clickable Info -->
                             <a href="{{ url_for('product_information', id = i['id']) }}">
                                 <!-- I: Album Image -->
-                                <img class="img-item" src="{{ i['image'] }}" alt="{{ album_name }}">
+                                <img class="img-item" src="{{ i['image'] }}" alt="{{ album_name }}" loading="lazy">
 
                                 {% if pr is mapping and album_name in pr %}
                                     <span class="tag-label">Pre-Order</span>
