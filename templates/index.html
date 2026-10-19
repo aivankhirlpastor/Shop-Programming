@@ -68,7 +68,10 @@
                                     {% set input_value = cart[album_name]['quantity'] if album_name in cart else 1 %}
 
                                     {% if stock > 0 %}
-                                        {% if 6 > stock and stock > 0 %}
+                                    
+                                        {% if album_name in segment_modules["pre-order"] %}
+                                            {% set stock_emp = "in-stock" %}
+                                        {% elif 6 > stock and stock > 0 %}
                                             {% set stock_emp = "low" %}
                                         {% else %}
                                             {% set stock_emp = "in-stock" %}
