@@ -1367,7 +1367,7 @@ def apply_changes(redirection, target):
 
         except ValueError:
             logger(False, f"NON-INTEGER VALUE: ({n})", "closed_log")
-            flash(f"({n}) Please enter a number to adjust that quantity.")
+            flash(f"({n}) Please enter a number in integers only to adjust that quantity.")
 
         except Exception as e:
             logger(False, f"({n}) Failed to fetch a value: {e}", "closed_log")
