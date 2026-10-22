@@ -1269,8 +1269,10 @@ def add_to_cart(catalogue_id, product_name, input_selector, pole_end):
     try:
         # when input is not applicable, default is 1 /*/ validate whether the user have entered a number
         quantity = 1 if input_selector == "-1" else int(request.form[input_selector])
+        stock = albums[product_name]["stock"]
+        limit = 5 if 5 < stock else stock
 
-        if 0 < quantity <= albums[product_name]["stock"]:
+        if 0 < quantity <= limit:
 
             # 1. Check whether the requested catalogue ID exists.
             for _, mvt in albums.items():
@@ -1282,8 +1284,14 @@ def add_to_cart(catalogue_id, product_name, input_selector, pole_end):
             else:
                 flash(f"Item '{catalogue_id}' could not be found. Double check that the catalogue ID exists.")
 
-        else:
-            flash(f"Please enter a quantity between 1 to {albums[product_name]["stock"]}.")
+        else:            
+            if quantity > 0:
+                if limit == 1:
+                    flash(f"Our stock for {product_name} is not enough for order placement; it has {limit} left.")
+                else:
+                    flash(f"Please enter a quantity between 1 to {limit}.")
+            else:
+                flash(f"Please enter a quantity equal to 1.")
 
     except ValueError:
         flash("We could not add that item. Please enter a number in integer only.")
