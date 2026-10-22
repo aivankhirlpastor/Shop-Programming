@@ -70,9 +70,7 @@ def logger(types: str | bool = "ERROR", cause: str = "", sector: str = "error"):
     Args:
         types (str | bool): Types of error; bool can be set to False for
                             closed_logs. e.g. ``ADD TO CART ERROR``
-        
         cause (str): A cause of statement; blank in default.
-        
         sector (str): Areas in displaying different format or coloured
                       texts.
     """
@@ -85,7 +83,6 @@ def logger(types: str | bool = "ERROR", cause: str = "", sector: str = "error"):
     elif sector == "closed_log":
         print(f"\33[2m{cause}\33[0m")
 
-# logger()
 
 def update_stock(item: dict) -> dict:
     """Update the stock of the following product items.
