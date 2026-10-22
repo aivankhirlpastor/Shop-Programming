@@ -1284,14 +1284,22 @@ def add_to_cart(catalogue_id, product_name, input_selector, pole_end):
             else:
                 flash(f"Item '{catalogue_id}' could not be found. Double check that the catalogue ID exists.")
 
-        else:            
+        else:
+            # flash message composition for outside boundary
+            inner = "Please enter a quantity"
+            bound = " " + f"between 1 to {limit}."
+            singular = 1
+
             if quantity > 0:
-                if limit == 1:
-                    flash(f"Our stock for {product_name} is not enough for order placement; it has {limit} left.")
-                else:
-                    flash(f"Please enter a quantity between 1 to {limit}.")
+                if limit == singular:
+                    inner = f"Our stock for {product_name} is not enough for order placement; it has {limit} left."
+                    bound = ""
+
             else:
-                flash(f"Please enter a quantity equal to 1.")
+                if limit == singular:
+                    bound = " " + "equal to 1."
+
+            flash(f"{inner}{bound}")
 
     except ValueError:
         flash("We could not add that item. Please enter a number in integer only.")
