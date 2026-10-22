@@ -58,14 +58,23 @@ def initialise_database():
         """)
 
 
-def logger(types: str = "ERROR", cause = None, sector = "error"):
+def logger(types: str | bool = "ERROR", cause: str = "", sector: str = "error"):
     """Display error message on terminal output in coloured variants.
 
-    Parameters:
-    |   types in string ("ERROR" in default)
-    |   statement cause (None in default)
-    |   sector or areas in displaying different coloured texts
+    **SECTORS:**
 
+    ``error`` is to display an error message in red types and purple statement.
+    ``warning`` is to display an warning message in yellow types and blue-italicised statement.
+    ``closed_log`` is to display a log or message in gray text.
+
+    Args:
+        types (str | bool): Types of error; bool can be set to False for
+                            closed_logs. e.g. ``ADD TO CART ERROR``
+        
+        cause (str): A cause of statement; blank in default.
+        
+        sector (str): Areas in displaying different format or coloured
+                      texts.
     """
     if sector == "error":
         print(f"\33[1m\33[91m{types}{f": \33[0m\33[35m{cause}\33[0m" if cause else ""}")
@@ -76,30 +85,28 @@ def logger(types: str = "ERROR", cause = None, sector = "error"):
     elif sector == "closed_log":
         print(f"\33[2m{cause}\33[0m")
 
+# logger()
 
-def update_stock(item: dict):
+def update_stock(item: dict) -> dict:
     """Update the stock of the following product items.
 
-    Then, append the calls of each of reserved items
-    when they are pre-released, exceeded the stock
-    limit, or run out of stock.
+    Then, append the calls of each of reserved items when they are
+    pre-released, exceeded the stock limit, or run out of stock.
 
-    In pre-order cycle, they can be stacked with their
-    conjunctive terms ("out_of_stock" in list,
-    -yet_suspended in string) when they have a stock related
-    issues like exceeded (reaching beyond 0) or
-    ordering an item that is out of stock.
+    In pre-order cycle, they can be stacked with their conjunctive
+    terms ("out_of_stock" in list, -yet_suspended in string) when
+    they have a stock related issues like exceeded (reaching beyond 0)
+    or ordering an item that is out of stock.
 
-    Parameters:
-    |   album products (dict), as cart
+    The process intake is either partial fulfillment
+    or backorder process.
 
-        product_name: {
-            '...': '...'
-        }, ...
+    Args:
+        item (dict): A collection of music albums in the cart.
 
     Returns:
-        listed calls in dict for each reserved items
-
+        reserved (dict): Listed calls, including limits and music
+                         properties, in dict for each reserved items.
     """
     reserved = {}  # on partial fulfillment or backorder
 
@@ -167,17 +174,14 @@ def update_stock(item: dict):
 def streamlined_demand(rsv):
     """Use the reserved items to display the side panel.
 
-    This relies on going through cause of demands
-    key in each of product items in dictionary.
+    This relies on going looking for value, "pre-order" in cause of
+    demands key for each of product items inside dictionary.
 
-    The process intake is either partial fulfillment
-    or backorder process.
-
-    Parameters:
-    |   reserved items (dict)
+    Args:
+        rsv (dict): The collection of reserved items.
 
     Returns:
-        original parameter of rsv, or {} if exception
+        dict: The original parameter of **rsv**, or ``{}`` if exception.
     """
     with sqlite3.connect("order_history.db") as conn:
         try:
@@ -201,22 +205,48 @@ def streamlined_demand(rsv):
             return {}  # skip storing reserved items to the database
 
 
-def verify_existing_product(loaded_albums: dict, val: dict, target: str, allow_change=True):
+def verify_existing_product(loaded_albums: dict, album: dict, target: str, allow_change=True):
     """Verify if the product in cart/wishlist is exists.
 
-    it is used to overcome throwing KeyError when music
-    album is assumed to be missing and mismatched catalogue
-    id.
+    It is used to overcome throwing KeyError when music album is assumed
+    to be missing and the catalogue id is mismatched.
 
-    e.g. 'dict object' has no attribute
-    'The Key To Withstand' (over 'The Key To Withtand')
+    **MISSPELT OR MISSING MUSIC ALBUM**
+    This will evaluate whether the name of the music album exists. When
+    it happens, it will compare two catalogue IDs between two items
+    (in ``cart/wishlist`` to ``loaded_albums``) to look for similarities.
+    If those IDs are identical, change the name of an item from
+    cart/wishlist. Otherwise, it will be identified as unavailable or
+    defunct.
 
+    **MISMATCHED ID**
+    The name of the album from the cart/wishlist is matched, but those two
+    catalogue IDs are mismatched, causing a 404 error when trying to redirect
+    to the product information. When this happened, it will change a
+    non-existent ID of an item from cart/wishlist into an original source
+    (``loaded_album``).
+
+    When accessing the data, especially the name, this should prevent the
+    system from raising an error:
+
+    e.g. ``'dict object' has no attribute
+    'The Key To Withstand'`` (instead of 'The Key To Withtand')
+
+    Args:
+        loaded_albums (dict): A full collection of existing music albums.
+        album (dict): A specific music album.
+        target (str): A key name on session or column on database.
+        allow_change (bool): True as default to force change the value;
+                             False to get a preview of data.
+
+    Returns:
+        dict: new data or original data
     """
     new_value = {}
     strike = 0
 
-    for album_name, v in val.items():
-        # if the name within 'val' is not found
+    for album_name, v in album.items():
+        # misspelt or missing music album from loaded_albums
         if not loaded_albums.get(album_name):
             strike += 1
 
@@ -240,29 +270,29 @@ def verify_existing_product(loaded_albums: dict, val: dict, target: str, allow_c
             if "is_unavailable" in v:
                 new_value[album_name].pop("is_unavailable")
 
-    if strike > 0 and allow_change:
-        if target == "cart":
+    if strike > 0:
+        if target == "cart" and allow_change:
             save_entries(cart=new_value)
-        elif target == "wishlists":
+        elif target == "wishlists" and allow_change:
             save_entries(wishlists=new_value)
 
         return new_value
 
-    return val
+    return album
 
 
 def discriminate(ry: str):
     """Determine the variety of terms with their difference.
 
-    Parameters:
-    |   "ry" column name (string)
-
-    Return a column key and session key name.
-    <term>, <term-key-session>
-
     If there is no difference between them, then return the
     same, original parameter.
 
+    Args:
+        ry (str): A column name
+
+    Returns:
+        term (str): A column name
+        term_key_session (str): A key for session key on logged in account.
     """
     if ry == "cart":
         return "items", "cart"
@@ -273,21 +303,28 @@ def discriminate(ry: str):
 
 
 # syntax building for database
-def set_syntax_building(argument: dict | list | tuple, positional_value: list|tuple = ()):
-    """Build a syntax for preparing a database saving action.
+def set_syntax_building(argument: dict | list | tuple, positional_value: list | tuple = ()):
+    """Build a syntax query for preparing a database saving action.
 
-    Parameters: 
-        argument // (dict|list|tuples) column name on database
-        positional values // (list|tuple) using values to modify
+    Args:
+        argument (dict | list | tuple): A list of column names on database.
+        positional_values (list | tuple): A list of data for values to be
+                                          modified.
 
     Returns:
-        structured syntax SQL (list) containing like '<column> = ?'
-        syntax values to modify data (list)
-        modified session_keys (dict)
+        set_clause_statement (list): A list of syntax queries in SQL.
+        set_clause_value (list): A list of data to save into SQL in each
+                                 column.
+        session_keys (dict): A modified session key.
 
+    Raises:
+        AssertionError: If imbalanced length within dict, list, or tuple.
+                        ``Length of argument \u2260 Length of positional
+                        values``
+        TypeError: If the "argument" is not dict, list, or tuple.
     """
     def initialise_build(params: dict):
-        if type(params) is not dict:
+        if type(params) is not dict:  # double verification
             raise TypeError(f"The argument or the parameter to initialising 'set' syntax structure is not in dict; got {type(params)}")
 
         key_terms = ["cart", "wishlists", "billing_info", "applied_coupon", "coupon", "used_coupons"]
@@ -314,7 +351,7 @@ def set_syntax_building(argument: dict | list | tuple, positional_value: list|tu
 
     storer = {}
 
-    # *args
+    # passed from *args
     if type(argument) is tuple or type(argument) is list:
         # verify if both argument and positional values were the same amount of items
         if len(argument) != len(positional_value):
@@ -324,7 +361,7 @@ def set_syntax_building(argument: dict | list | tuple, positional_value: list|tu
         for j in range(len(argument)):
             storer[argument[j]] = positional_value[j]
         
-    # **kwargs
+    # passed from **kwargs
     elif type(argument) is dict:
         storer = argument
 
@@ -336,17 +373,17 @@ def set_syntax_building(argument: dict | list | tuple, positional_value: list|tu
     return initialise_build(storer)
 
 
-def make_change_to_database(syntax_structure: list, syntax_val: list, key_session):
+def make_change_to_database(syntax_structure: list, syntax_val: list, key_session: dict) -> bool:
     """Update a column value to the database of a currently logged on account.
 
-    Parameters:
-    |   syntax structure (from set_syntax_building function)
-    |   syntax values (from set_syntax_building function)
-    |   modified key session
+    Args:
+        syntax_structure (list): Used for assembling SQL query structure.
+                                 `column1 = ?` is the form for it.
+        syntax_values (list): Used for saving values onto database.
+        key_session (dict): A modified key session.
 
     Returns:
-        status (success, or fail on errors)
-
+        status (bool): success as True, or fail as False on save failure
     """
     session_key = session.get("session_key", {})
 
@@ -366,33 +403,28 @@ def make_change_to_database(syntax_structure: list, syntax_val: list, key_sessio
             conn.commit()
 
             # successful saving action
-            return {
-                "is_saved": "database",
-                "status": 1
-            }
+            return True
 
         except sqlite3.Error as make_changes_error:
             conn.rollback()
             logger("SAVE DATABASE ERROR", make_changes_error)
 
             # unsuccessful saving action due to exception
-            return None
+            return False
 
 
 # use 'get_entry' function when dealing with two sides
-def get_entry(*args):
+def get_entry(*args: str):
     """Fetch the value with the appropriate name of the session/column.
 
-    Strict Searching in registered accounts
-    requires the name to be listed under
-    existing columns from database accounts.
+    Strict Searching in registered accounts requires the name to be listed
+    under existing columns from database accounts.
 
-    Parameters *args:
-    |   name of the session/column
+    Args:
+        *args (str): Key name(s) on session or column(s) on database
 
     Returns:
-    |   value from session.get // looping to get data
-
+        value: The data from session or database
     """
     try:
         result = []  # fetched keywords
@@ -442,22 +474,21 @@ def get_entry(*args):
     return result[0] if len(args) == 1 else result
 
 
-def save_entries(**kwargs):
-    """Save values either on session or database.
+def save_entries(**kwargs) -> bool:
+    """Save the values either on session or database.
+    
+    _Note that the layout of **kwargs for saving an entry is_
+    ``{name1/column1: value1, ...}``
 
-    Parameters **kwargs:
-    |   name of the <key> in dictionary
-    |   the <value> for the key
-    |
-    |   {column1: key1, ...}
+    Considering:
+    ``session[kwargs-key] = kwargs-item`` for guest entry
 
-    action:
-        (guest) session[column] = value //
-        (registered) save through database
+    Args:
+        kwargs-key: Target key name(s) in dictionary.
+        kwargs-item: Value(s) for the key.
 
     Returns:
-        status (either boolean or dict version) unless exception
-
+        status (bool): success as True, or fail as False on save failure
     """
     try:
         has_session_key = session.get("session_key", {})
@@ -468,10 +499,7 @@ def save_entries(**kwargs):
                 session[tg] = value
 
             session.modified = True  # finalising by saving the session
-            return {
-                "is_saved": "session",
-                "status": 1
-            }
+            return True
 
         # session with user being logged on
         else:
@@ -482,21 +510,28 @@ def save_entries(**kwargs):
         logger("SAVE ERROR", save_error)
         flash(f"An error occurred while attempting to save configuration.")
 
+        return False  # unsuccessful saving
 
-def remove_specific_key(**kwargs):
+
+def remove_specific_key(**kwargs) -> bool:
     """Delete a specific key on dictionary.
 
-    Parameters **kwargs:
-    |   name of session/column
-    |   name of the key ()
-    |
-    |   {column1: key1, ...}
+    _Note that the layout of **kwargs for removing a specific key is_
+    ``{column1: key1, ...}``
 
-    action:
-        del session/column[key]
+    Considering:
+    ``del session.get(kwargs-key, {})[kwargs-item]`` for guest entry.
+
+    While:
+    ``del column[kwargs-item]`` for logged in account from database.
+
+    Args:
+        kwargs-key: A name on session or column on database.
+        kwargs-item: A key name for the session or column.
 
     Returns:
-        status (success in dict, False)
+        status (bool): success as True, or fail as False on deletion or save
+                       failure
     """
     try:
         has_session_key = session.get("session_key", {})
@@ -510,10 +545,7 @@ def remove_specific_key(**kwargs):
                 session[session_name] = vs
 
             session.modified = True
-            return {
-                "is_saved": "session",
-                "status": True
-            }
+            return True
 
         # session with user being logged on
         else:
@@ -561,19 +593,21 @@ def remove_specific_key(**kwargs):
         logger("REMOVE SPECIFIC KEY(S) ERROR", remove_key_error)
         flash(f"An error occurred while attempting to remove specific key(s).")
 
-        return None  # unsuccessful deletion of specific key
+        return False  # unsuccessful deletion of specific key
 
 
-def remove_key(*args):
-    """Replace a dictionary data with an empty value {}.
+def remove_key(*args: str) -> bool:
+    """Replace a dictionary data of name with an empty value {}.
 
-    Parameters *args:
-    |   name of session/column
+    **(guest)** Pops the key name from session method.
+    **(registered)** Uses an empty dictionary {} through updating database.
 
-    action:
-        (guest) pop the key name of session
-        (registered) saved with empty {} through database
+    Args:
+        *args (str): Key name(s) on session or column(s) on database
 
+    Returns:
+        status (bool): success as True, or fail as False on removal or save
+                       failure
     """
     try:
         has_session_key = session.get("session_key", {})
@@ -584,10 +618,7 @@ def remove_key(*args):
                 session.pop(session_name, None)
 
             session.modified = True
-            return {
-                "is_changed": "session",
-                "status": True
-            }
+            return True
 
         # session with user being logged on
         else:
@@ -596,20 +627,21 @@ def remove_key(*args):
 
     except Exception as delete_error:
         logger("DELETE ERROR", f"An error occurred while attempting to make configuration. {delete_error}")
-        return None  # unsuccessful pop deletion
+        return False  # unsuccessful pop deletion
 
 # -----------------------------------------------------------------------------------
 
-def signin_session(email, password, msr=0):
+def signin_session(email: str, password: str, msr: int = 0):
     """Apply a session key when user is signing up or logging in.
 
-    Conditions:
-    |   (login) password is identical to stored user's password on database
+    For users who are logging in, password must be identical to stored user's
+    password on database.
 
-    Parameters:
-    |   email (string)
-    |   password (validated on login only)
-    |   "msr": method (int)
+    Args:
+        email (str): An email address
+        password (str): A password to verify matches from stored user's
+                        password on database.
+        msr (int): A method: signup/login
     """
     with sqlite3.connect("accounts.db") as conn:
         cursor = conn.cursor()
@@ -656,28 +688,32 @@ def signin_session(email, password, msr=0):
 
 
 def calculate_total(c):
-    """Calculate the main price from items in cart.
+    """Calculate the price from items in cart.
 
-    This involves selecting the price by the quantity of
-    its processed item to calculate the subtotal.
+    This involves selecting the price and the quantity of its processed item
+    to calculate the subtotal.
 
     GST is added as a surcharge of 15%.
 
     Delivery fee is determined by the subtotal price boundary.
 
-    Discount is included when user has applied a valid coupon.
+    Discount is included when user has applied a valid coupon. If the discount
+    value ``is more than`` 1, then the total price will be taken away by the
+    discount value. Whereas, if the discount value ``is less than or equal
+    to`` 1, then the total price will be reduced by discount value in
+    percentage.
 
-    Parameters:
-    |   cart (dict)
+    Args:
+        cart (dict): A collection of music albums in the cart.
 
     Returns:
-    |   main total,
-    |   subtotal,
-    |   GST,
-    |   delivery/shipping fee (if possible),
-    |   discount value (if possible)
-    |   total with discount // main total
-
+        main_total (float): A total without a discount.
+        subtotal (float): A subtotal calculated from the cart.
+        gst (float): GST
+        shipping_fee (float | Literal[0]): Delivery fee
+        discount_value (float | int | Literal[0]): Discount value, either
+                                                   whole number or percentage.
+        tl_w_disc (float): A total price, from main total with discount.
     """
     def get_shipping_fee(cart_total):
         # Shipping Fee: Determined by subtotal
@@ -725,12 +761,12 @@ def calculate_total(c):
     return main_total, cart_total, gst, shipping_fee, discount_value, tl_w_disc
 
 
-def remove_coupon_action():
-    """Remove a coupon from the user.
+def remove_coupon_action() -> dict | bool:
+    """Remove a coupon from the user, or out on the system.
 
     Returns:
-        status (success, fail on removal failure or exception)
-
+        status (dict | bool): success as dict, fail as False on removal failure
+                       or error
     """
     try:
         cpn_name = get_entry("coupon")["name"]  # get the dict value first, then the coupon name
@@ -740,10 +776,10 @@ def remove_coupon_action():
             "removed_cpn_name": cpn_name
         }
 
-        return status if removal_status else None
+        return status if removal_status else False
 
     except KeyError:
-        return None
+        return False
 
 
 def spike_used_coupon(cpn):
@@ -788,26 +824,31 @@ def coupon_validity():
         logger(False, f"Failed to validate coupon: {validate_coupon_error}", "closed_log")
 
 
-def item_display_by_genre(gnr: str = None, px_range: str = None):
+def item_display_by_genre(gnr: str = "all", px_range = None):
     """Get the product items by a specified genre, alongside with an optional price range.
 
-    This evaluates the genre of a processed product items,
-    alongside the price range filtering.
+    This evaluates the genre of a processed product items, alongside the price
+    range filtering if given, adding the selected item to a result.
 
-    Parameter:
-    |   genre (str; default is None) to select only items
-    |   pxrange (str; default is None) alongside the price range
+    "io" counts when product genre through for-loop is matched to a specific
+    genre.
 
-    actions:
-    |   adds the selected item via matching genre.
-    |   'io' counts when product genre through for-loop
-        is matched to a specified genre.
+    Args:
+        gnr (str): A specific genre. Pass ``all`` to get all items.
+        px_range: A price range. None to prevent price filtering.
 
     Returns:
-        (ordinary returns) selected item
+        stored_data: The results from stored albums given by specific genre
+                     or price range.
+        io (int): A count where the item with matching genre is found.
 
-        (with filters of price range)
-        |   io (int)
+    Example:
+        If genre "gnr" is classical, then look for the items with its their
+        genre classified, "classical" and add them to the result.
+
+        If "gnr" is lo-fi and there is a price range specified, $30-$50, then
+        look for the items with their genre "lo-fi" and their price that
+        ranges between $30 to $50, and add them to the result.
     """
     # checking their price range
     def check_price_range(ap):
@@ -836,7 +877,7 @@ def item_display_by_genre(gnr: str = None, px_range: str = None):
 
     # Get all the products based on the genre given.
     for album_name, u in data_album.items():
-        if (str(gnr).lower() == str(u["genre"]).lower()) or gnr is None:
+        if (str(gnr).lower() == str(u["genre"]).lower()) or gnr == "all":
             io += 1
 
             # filtering items based on price range
@@ -855,7 +896,7 @@ def item_display_by_genre(gnr: str = None, px_range: str = None):
     return stored_data
 
 
-def px_range_post_inversion(r):
+def px_range_post_inversion(r: str):
     """Invert a name from snake case and return a non-technical naming convention."""
     if r == "below_15":
         return "Below $15"
@@ -871,10 +912,16 @@ def px_range_post_inversion(r):
         return None
 
 
-def add_to_cart_action(mdl, product, qty):
-    """Add a specific items into a cart, via dictionary, if the conditions are met."""
+def add_to_cart_action(albums: dict, product: str, qty: int):
+    """Add a specific items into a cart, via dictionary.
+    
+    Args:
+        albums (dict): A full collection of existing music albums.
+        product (str): A music album title or name.
+        qty (int): The quantity.
+    """
     cart = get_entry("cart")
-    unit_product = mdl[product]
+    unit_product = albums[product]
 
     if unit_product["stock"] > 0:  # validate their stock
 
@@ -916,29 +963,31 @@ def add_to_cart_action(mdl, product, qty):
 def pole_end_redirect(pole_end: str, alb: dict, ctd_id):
     """Pole End is a method for same route redirection.
 
-    A pole_end is just another way whether to
-    redirect the user back into the same page they
-    are after the action.
+    A pole_end is just another way whether to redirect the user back into the
+    same page they are after the action.
 
-    The pattern is only applicable for item_genre page;
-    these pattern must correspond to the pole_end
-    as string.
+    The pattern is only applicable for item_genre page; these pattern must
+    correspond to the pole_end as string.
 
-    actions:
-        (1) First condition identifies whether
-            to redirect user back to item genre.
-        (1) It fetches the genre and price range
-            if have one, at index [2]).
-        (1) Now prompt the user back to the item
-            genre ("all" or specific genre). For
-            specific genre, it verified whether
-            it exists.
-        (~) The rest of the pole_end is
-            recognised as route name.
+    First condition identifies whether to redirect user back to item genre.
+
+    It fetches the genre and price range if have one, at index ``2``.
+    
+    Now prompt the user back to the item genre ("all"or specific genre). For
+    specific genre, it verified whether it exists.
+
+    The rest of the pole_end through else-if condition is recognised as a
+    route name.
+
+    Args:
+        pole_end (str): Pole end; a route name or technical force name for
+                        item_genre page for route redirection to the same
+                        page.
+        alb (dict): A full collection of existing music albums.
+        ctd_id: A catalogue ID; used to redirecting to product information.
 
     Returns:
-    |   redirect routes
-
+        flask route: Redirection route.
     """
     def validate_price_range():
         # validate if price_range is included and apply
@@ -997,22 +1046,28 @@ def pole_end_redirect(pole_end: str, alb: dict, ctd_id):
 def panel_access_from_flash():
     """Get the access key to build side panel template across HTML page.
 
-    Prerequisites:
-    |   for <fragment> requires "%.show_panel_<int>" to be present.
-    |   for <by_pair>, it requires the value as a dict
-        to be adjacent below the fragment and to be present.
+    **PREREQUISITES**:
 
-    actions:
-    |   executes code inside for-block loop if contains flashed message.
-    |   selects the flash message and looks for the pattern:
-        >   %.show_panel
-    |   prepare the acccess key if <by_pair> is dictionary
+    ``fragment`` is formatted as "%.show_panel_(int)"; it must be present when
+    getting flashed messages.
 
-    returns:
-        side panel access key //
-        -- or --
-        None (no flash message or prerequisites are not met, or error happens)
+    for ``by_pair``, it requires the value as a ``dict`` to be adjacent below
+    the ``fragment`` and to be present.
 
+    **ACTIONS**:
+
+    The function executes code inside for-block loop if contains flashed
+    message.
+
+    Then, it selects the flash message and looks for the pattern:
+    ``%.show_panel``.
+
+    Prepare the acccess key if ``by_pair`` is dictionary.
+
+    Returns:
+        key_access: Containing "show" key as ``True`` in bool when flash message
+                    or prerequisites are met. Otherwise, the "show" key will
+                    be ``False``.
     """
     def when_collection(wn, aa):
         # 1 = Item Added to Cart
@@ -1079,16 +1134,14 @@ def panel_access_from_flash():
 
 
 def check_date(albm: dict, refer: int):
-    """Gather an album date from dict and return the date emphasis.
+    """Gather an album date from dict and return the date cycle.
 
-    Parameters:
-    |   album values (dict)
-    |   reffering value (int) to work in what method
+    Args:
+        albm (dict): A specific music album.
+        refer (int): Referring value to work out what method.
 
     Returns:
-    |   refer = 0 | "released", "pre-released", "featured"
-    |   refer = 1 | "released", "pre-released"
-    |   invalid | None
+        int: The date cycle in which date released has been working towards.
 
     """
     # constants
@@ -1142,19 +1195,24 @@ def check_date(albm: dict, refer: int):
             return "pre-released"
 
 
-def album_date_modules(loaded_album, rfr):
+def album_date_modules(loaded_album, rfr: int):
     """Identify all albums via their date, provided with ther referring value.
 
-    Parameters:
-    |   albums (dict)
-    |   referring value
+    **(0)** Latest Release, Featured, Pre-released
 
-    referring value, Returns:
-    |   (0) Latest Release, Featured, Pre-released (dict)
-    |   (1) Released, Pre-released
+    **(1)** Released, Pre-released
 
+    Args:
+        loaded_album: A full collection of existing music albums.
+        rfr (int): Referring method to work out which selector.
+
+    Returns:
+        dict: The module groups
+
+    Raises:
+        ValueError: If a given referring value is not mentioned.
     """
-    # refer to three_sections only
+    # refer to three_sections selector only
     if rfr == 0:
         ahrd, bhrd, chrd = [{} for _ in range(3)]
 
@@ -1170,7 +1228,7 @@ def album_date_modules(loaded_album, rfr):
 
         return ahrd, bhrd, chrd
 
-    # refer to date only
+    # refer to date selector only
     if rfr == 1:
         rlrd, prrd = [{} for _ in range(2)]
 
@@ -1258,11 +1316,11 @@ def product_information(id):
 def add_to_cart(catalogue_id, product_name, input_selector, pole_end):
     """Add a specific items to a cart.
 
-    actions:
-    |   It validates the type of value quantity, then the boundary limits.
-    |   It checks for the existing catalogue ID exists.
-    |   Then, proceed to the action.
+    It validates the type of value quantity, then the boundary limits.
 
+    It checks for the existing catalogue ID exists.
+
+    Then, proceed to the action.
     """
     albums = load_data_products()
 
@@ -1285,7 +1343,7 @@ def add_to_cart(catalogue_id, product_name, input_selector, pole_end):
                 flash(f"Item '{catalogue_id}' could not be found. Double check that the catalogue ID exists.")
 
         else:
-            # flash message composition for outside boundary
+            # flash message composition for quantity outside the boundary
             inner = "Please enter a quantity"
             bound = " " + f"between 1 to {limit}."
             singular = 1
@@ -1417,6 +1475,11 @@ def toggle_wishlist(catalogue_id, album_name, pole_end, force_removal):
 
     This is supported only one item per action.
 
+    Args:
+        catalogue_id: An ID identifier for music album.
+        album_name (str): A music album title or name.
+        pole_end (str): A technical force name or route name.
+        force_removal: True to remove item out from wishlist.
     """
     albums = load_data_products()
     wishlists = get_entry("wishlists")
@@ -1534,9 +1597,9 @@ def category_price_filter(genre, price_range):
                            key_param=key, pr=pr)
 
 
-# get the filter price as string version
 @app.route("/filter_price/<string:genre>", methods=["POST"])
 def filter_price(genre):
+    """Get the filter price, and convert it into snake case."""
     try:
         selected_range = request.form["price-range"]
 
@@ -1844,7 +1907,7 @@ def place_order():
 
     time.sleep(2.4)  # time delay
 
-    # define the details and order info via order placement
+    # define the details and order info for order placement
     customer_name = f"{billing_info["first_name"]} {billing_info["surname"]}"
     customer = {
         "name": customer_name,
@@ -1887,7 +1950,7 @@ def place_order():
             flash(f"An error has occurred while placing your order. DEBUG TRACE: {place_order_error}")
 
             return redirect(url_for("index"))
-        
+
     # write an invoice in .txt version
     with open(invoice_filename, "w") as f:
         try:
